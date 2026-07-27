@@ -37,8 +37,9 @@ function renderVideo(s){
     </div>
 
     <div class="section-head" style="margin-bottom:12px">
-      <h2 style="font-size:16px">${icon('tag', 'icon-sm')} 영상 속 아이템 ${s.products.length ? `(${s.products.length})` : ''}</h2>
+      <h2 style="font-size:16px">${icon('tag', 'icon-sm')} 영상 속 아이템 종류 ${s.products.length ? `(${s.products.length})` : ''}</h2>
     </div>
+    ${s.products.length ? `<p class="sub" style="margin:-4px 0 var(--space-3)">정확히 같은 제품이 아니라, 비슷한 종류를 검색해서 보여드려요.</p>` : ''}
     <div class="product-list" id="product-list"></div>
 
     <a href="detail.html?id=${dest.id}" class="btn btn-outline btn-block">
@@ -65,15 +66,9 @@ function renderVideo(s){
       <div class="product-thumb">🛍️</div>
       <div class="product-info">
         <div class="product-name">${p.name}</div>
-        <div class="product-price">${p.store} · <strong>${/^\d/.test(p.price) ? '₩' + p.price : p.price}</strong></div>
+        <div class="product-price">${p.store}에서 비슷한 상품 찾아보기</div>
       </div>
-      <button class="btn btn-primary btn-sm buy-btn">구매</button>
+      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">검색</a>
     </div>
   `).join('');
-
-  document.querySelectorAll('.buy-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      showToast('실제 구매 링크 연동은 PART 2(제휴 API)에서 진행돼요');
-    });
-  });
 }
