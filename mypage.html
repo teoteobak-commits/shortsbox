@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var saved = localStorage.getItem('shortsbox_theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>저장한 목록 — 쇼츠박스</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pagestyles.css">
+</head>
+<body data-page="mypage">
+
+<header id="site-header" class="site-header"></header>
+
+<section class="profile-hero" id="profile-hero"></section>
+
+<div class="stat-row" id="stat-row"></div>
+
+<main>
+  <section class="container section" style="padding-top:var(--space-5)">
+    <div class="section-head">
+      <h2>저장한 여행지</h2>
+      <a href="explore.html" class="more-link">여행지 더 보기</a>
+    </div>
+    <div class="card-grid" id="saved-destinations"></div>
+
+    <div class="section-head" style="margin-top:var(--space-7)">
+      <h2>저장한 꿀템 쇼츠</h2>
+    </div>
+    <div class="shorts-grid" id="saved-shorts"></div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/supabase-client.js" defer></script>
+<script src="assets/icons.js" defer></script>
+<script src="js/data.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/nav.js" defer></script>
+<script src="js/lightbox.js" defer></script>
+<script src="js/mypage-page.js" defer></script>
+</body>
+</html>

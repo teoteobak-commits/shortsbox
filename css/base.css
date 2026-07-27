@@ -1,0 +1,58 @@
+/* 폰트: Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html{-webkit-text-size-adjust:100%}
+
+body{
+  font-family:'Poppins',sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding-bottom:var(--bottomnav-h);
+}
+
+@media (min-width:900px){
+  body{padding-bottom:0}
+}
+
+/* 테마(라이트/다크) 전환 순간에는 모든 transition을 잠깐 꺼서 색상이 즉시 바뀌도록 한다 */
+.theme-switching,.theme-switching *{transition:none !important}
+
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;font-size:inherit;appearance:none;-webkit-appearance:none;background:none}
+ul,ol{list-style:none}
+img,svg{display:block;max-width:100%}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+
+h1,h2,h3{font-weight:700;line-height:1.3}
+h1{font-size:32px}
+h2{font-size:24px}
+h3{font-size:18px}
+p{color:var(--text)}
+
+.container{
+  max-width:var(--container-w);
+  margin:0 auto;
+  padding:0 20px;
+}
+
+.sub{color:var(--sub);font-size:14px}
+
+.visually-hidden{
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;
+}
+
+.grad-text{
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.section{padding:var(--space-7) 0}
+@media (max-width:600px){.section{padding:var(--space-6) 0}}

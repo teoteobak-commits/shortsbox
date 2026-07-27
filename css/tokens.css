@@ -1,0 +1,61 @@
+/* ==========================================================================
+   디자인 시스템 토큰 — 색 조합: 인스타 · 그라데이션 / 버튼: 라운드 / 폰트: Poppins
+   ========================================================================== */
+:root{
+  color-scheme:light;
+
+  /* 색 */
+  --primary:#0095F6;
+  --primary-dark:#0077C8;
+  --grad:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF,#515BD4);
+  --text:#262626;
+  --sub:#8E8E8E;
+  --bg:#FAFAFA;
+  --surface:#FFFFFF;
+  --border:#DBDBDB;
+  --danger:#ED4956;
+  --success:#2ECC71;
+  --toast-bg:#262626;
+  --toast-text:#FFFFFF;
+
+  /* 라운드 버튼 */
+  --radius-sm:8px;
+  --radius:10px;
+  --radius-lg:18px;
+  --radius-full:999px;
+
+  /* 그림자 */
+  --shadow-sm:0 1px 3px rgba(38,38,38,.08);
+  --shadow-md:0 6px 20px rgba(38,38,38,.10);
+  --shadow-lg:0 12px 32px rgba(38,38,38,.16);
+
+  /* 간격 */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+  --space-7:48px;
+  --space-8:64px;
+
+  /* 레이아웃 */
+  --header-h:64px;
+  --bottomnav-h:60px;
+  --container-w:1120px;
+}
+
+/* 다크모드 — 헤더 토글로 전환, localStorage에 저장된 값을 초기 로드 시 <html data-theme>에 반영 */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+
+  --text:#F2F2F2;
+  --sub:#9A9CA3;
+  --bg:#0F1012;
+  --surface:#1B1C20;
+  --border:#2E2F34;
+
+  --shadow-sm:0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 6px 20px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.5);
+}

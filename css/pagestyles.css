@@ -1,0 +1,181 @@
+/* ==========================================================================
+   홈
+   ========================================================================== */
+.hero{padding-top:var(--space-8)}
+.hero-inner{max-width:640px}
+.hero h1{margin-bottom:var(--space-4);font-size:30px}
+@media (min-width:640px){.hero h1{font-size:38px}}
+.hero-desc{font-size:15px;margin-bottom:var(--space-5);max-width:520px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+@media (max-width:600px){
+  #featured-grid.card-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ==========================================================================
+   탐색 페이지
+   ========================================================================== */
+.explore-head{padding-top:var(--space-6);padding-bottom:var(--space-3)}
+.explore-head h1{font-size:24px;margin-bottom:4px}
+
+.filter-bar{
+  display:flex;flex-wrap:wrap;
+  align-items:center;gap:10px;
+  padding-bottom:var(--space-3);
+}
+.filter-bar .select{flex-shrink:0}
+.filter-bar .reset-link{
+  font-size:13px;font-weight:700;color:var(--sub);
+  margin-left:auto;
+}
+.filter-bar .reset-link:hover{color:var(--danger)}
+
+.result-count{font-size:13px;color:var(--sub);margin-bottom:var(--space-4)}
+.result-count strong{color:var(--text)}
+
+@media (max-width:600px){
+  #explore-grid.card-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ==========================================================================
+   상세 페이지
+   ========================================================================== */
+.detail-hero{
+  background:var(--grad);
+  padding:var(--space-6) 0 var(--space-5);
+  color:#fff;
+}
+.detail-hero .container{display:flex;align-items:flex-start;gap:var(--space-4)}
+.detail-cover{
+  width:72px;height:72px;flex-shrink:0;
+  background:rgba(255,255,255,.2);
+  border-radius:var(--radius-lg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+}
+.detail-info h1{font-size:20px;margin-bottom:8px}
+.detail-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:rgba(255,255,255,.9);margin-bottom:12px}
+.detail-actions{display:flex;gap:10px}
+.detail-actions .btn-outline{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5);color:#fff}
+.detail-actions .btn-outline:hover{background:rgba(255,255,255,.25)}
+.detail-actions .btn-outline.saved{background:#fff;color:#262626;border-color:#fff}
+
+.related-section{margin-top:var(--space-7)}
+
+/* 아고다 숙소 제휴 배너 */
+.agoda-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:var(--space-4) var(--space-5);
+  transition:.15s;
+}
+.agoda-banner:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.agoda-banner-tag{
+  display:inline-block;font-size:10px;font-weight:700;color:var(--sub);
+  border:1px solid var(--border);border-radius:var(--radius-full);
+  padding:2px 8px;margin-bottom:8px;
+}
+.agoda-banner-title{font-size:15px;font-weight:700;margin-bottom:2px}
+.agoda-banner-sub{font-size:12.5px;color:var(--sub)}
+.agoda-banner-icon{font-size:32px;flex-shrink:0}
+
+.shorts-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:var(--space-4);
+  margin-bottom:var(--space-6);
+}
+@media (min-width:640px){.shorts-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:960px){.shorts-grid{grid-template-columns:repeat(4,1fr)}}
+
+.shorts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:.15s}
+.shorts-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.shorts-thumb{position:relative;aspect-ratio:9/16;background:var(--bg);overflow:hidden}
+.shorts-thumb img{width:100%;height:100%;object-fit:cover}
+.shorts-thumb .play-badge{
+  position:absolute;bottom:8px;right:8px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.shorts-thumb .common-badge{
+  position:absolute;top:8px;left:8px;
+  font-size:10px;font-weight:700;color:#fff;
+  background:rgba(0,0,0,.55);padding:3px 8px;border-radius:var(--radius-full);
+}
+.shorts-thumb .rank-badge{
+  position:absolute;top:8px;left:8px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--grad);color:#fff;
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.shorts-card-body{padding:10px 12px}
+.shorts-card-title{font-size:12.5px;font-weight:700;line-height:1.4;margin-bottom:6px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.shorts-card-meta{font-size:11px;color:var(--sub)}
+
+.empty-shorts{
+  grid-column:1/-1;
+  text-align:center;padding:var(--space-6) var(--space-4);
+  color:var(--sub);font-size:13px;
+  background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-lg);
+}
+
+/* ==========================================================================
+   쇼츠(영상) 상세 페이지
+   ========================================================================== */
+.video-layout{max-width:420px;margin:0 auto}
+.video-embed{
+  width:100%;aspect-ratio:9/16;
+  background:#000;border-radius:var(--radius-lg);overflow:hidden;
+  margin-bottom:var(--space-4);
+}
+.video-embed iframe{width:100%;height:100%;border:none}
+.video-yt-link{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;color:var(--sub);margin-bottom:var(--space-4)}
+.video-meta-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.video-title{font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.4}
+.video-channel{font-size:13px;color:var(--sub);margin-bottom:6px}
+.video-hashtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-5)}
+.video-hashtags span{font-size:12px;color:var(--primary);font-weight:600}
+
+.product-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:var(--space-6)}
+.product-row{display:flex;align-items:center;gap:12px;padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--bg)}
+.product-row:last-child{border-bottom:none}
+.product-thumb{width:44px;height:44px;border-radius:var(--radius-sm);background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
+.product-info{flex:1;min-width:0}
+.product-name{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-price{font-size:12.5px;color:var(--sub)}
+.product-price strong{color:var(--primary);font-weight:700}
+
+/* ==========================================================================
+   마이페이지
+   ========================================================================== */
+.profile-hero{
+  background:var(--grad);
+  padding:var(--space-6) 0;
+  color:#fff;
+}
+.profile-hero .container{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap}
+
+.stat-row{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  background:var(--surface);border-bottom:1px solid var(--border);
+}
+.stat-cell{
+  text-align:center;padding:var(--space-4) var(--space-2);
+  border-right:1px solid var(--border);
+}
+.stat-cell:last-child{border-right:none}
+.stat-cell .num{font-size:20px;font-weight:700;display:block;margin-bottom:2px}
+.stat-cell .label{font-size:12px;color:var(--sub)}
+
+.mypage-empty{
+  text-align:center;padding:var(--space-7) var(--space-4);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.mypage-empty .icon{width:44px;height:44px;color:var(--border);margin:0 auto var(--space-3)}
+.mypage-empty p{color:var(--sub);margin-bottom:var(--space-4)}

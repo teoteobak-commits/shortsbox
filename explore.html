@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var saved = localStorage.getItem('shortsbox_theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>여행지 탐색 — 쇼츠박스</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pagestyles.css">
+</head>
+<body data-page="explore">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section class="container explore-head">
+    <h1>여행지 탐색</h1>
+    <p class="sub" id="explore-query-desc">여행지를 검색해서 꿀템 쇼츠를 찾아보세요.</p>
+  </section>
+
+  <section class="container">
+    <div class="filter-bar">
+      <select class="select" id="filter-sort">
+        <option value="shorts">꿀템 쇼츠 많은순</option>
+        <option value="name">가나다순</option>
+      </select>
+      <a href="explore.html" class="reset-link" id="filter-reset">필터 초기화</a>
+    </div>
+
+    <p class="result-count" id="result-count"></p>
+
+    <div class="card-grid" id="explore-grid"></div>
+    <div class="empty-state" id="explore-empty" style="display:none"></div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/supabase-client.js" defer></script>
+<script src="assets/icons.js" defer></script>
+<script src="js/data.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/nav.js" defer></script>
+<script src="js/explore-page.js" defer></script>
+</body>
+</html>

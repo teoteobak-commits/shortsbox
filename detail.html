@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var saved = localStorage.getItem('shortsbox_theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>여행지 상세 — 쇼츠박스</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pagestyles.css">
+</head>
+<body data-page="detail">
+
+<header id="site-header" class="site-header"></header>
+
+<section class="detail-hero" id="detail-hero"></section>
+
+<main>
+  <section class="container" style="padding-top:var(--space-5)">
+    <div id="agoda-banner"></div>
+  </section>
+
+  <section class="container section" style="padding-top:var(--space-5)">
+    <div class="section-head">
+      <h2>여행 꿀템 쇼츠</h2>
+    </div>
+    <div id="shorts-grid" class="shorts-grid"></div>
+
+    <div class="related-section">
+      <div class="section-head">
+        <h2>다른 여행지도 둘러보세요</h2>
+      </div>
+      <div class="card-grid" id="related-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/supabase-client.js" defer></script>
+<script src="assets/icons.js" defer></script>
+<script src="js/data.js" defer></script>
+<script src="js/affiliate-config.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/nav.js" defer></script>
+<script src="js/lightbox.js" defer></script>
+<script src="js/detail-page.js" defer></script>
+</body>
+</html>
