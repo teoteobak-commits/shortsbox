@@ -125,7 +125,8 @@ function renderDestinationCard(d){
   return `
     <a href="${destinationUrl(d)}" class="card">
       <div class="card-cover" style="background:var(--grad)">
-        <span>${d.emoji}</span>
+        <span class="card-airport-code">${destinationAirport(d.id)}</span>
+        <span class="card-emoji-tag">${d.emoji}</span>
         <button class="save-btn ${saved ? 'saved' : ''}" data-dest-id="${d.id}" aria-label="여행지 저장">${icon('bookmark')}</button>
       </div>
       <div class="card-body">

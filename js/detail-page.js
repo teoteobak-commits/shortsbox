@@ -49,11 +49,15 @@ function renderDetail(d){
 
   document.getElementById('detail-hero').innerHTML = `
     <div class="container">
-      <div class="detail-cover">${d.emoji}</div>
+      <div class="detail-cover">
+        <span>${d.emoji}</span>
+        <span class="airport-code">${destinationAirport(d.id)}</span>
+      </div>
       <div class="detail-info">
         <h1>${d.name} 여행 꿀템</h1>
         <div class="detail-meta">
           <span>${d.country}</span>
+          <span>${destinationAirport(d.id)}</span>
         </div>
         <div class="detail-actions">
           <button class="btn btn-outline ${saved ? 'saved' : ''}" id="save-btn">${icon('bookmark', 'icon-sm')}${saved ? '저장됨' : '저장'}</button>

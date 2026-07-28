@@ -12,8 +12,26 @@ const DESTINATION_SLUGS = {
   10: 'hawaii',
 };
 
+/* 여행지 대표 공항 IATA 코드 — 카드/상세 페이지에 탑승권 스타일 표기용 */
+const DESTINATION_AIRPORT = {
+  1: 'CJU',
+  2: 'KIX',
+  3: 'NRT',
+  4: 'BKK',
+  5: 'DAD',
+  6: 'CNX',
+  7: 'CDG',
+  8: 'ZRH',
+  9: 'DPS',
+  10: 'HNL',
+};
+
 function destinationSlug(id){
   return DESTINATION_SLUGS[id] || `id-${id}`;
+}
+
+function destinationAirport(id){
+  return DESTINATION_AIRPORT[id] || '???';
 }
 
 /* 매핑에 없는 슬러그는 없다고 본다 — 새 여행지 추가 시 위 맵에도 슬러그를 등록해야 함 */
@@ -31,5 +49,5 @@ function videoUrl(s){
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { DESTINATION_SLUGS, destinationSlug, destinationIdFromSlug, destinationUrl, videoUrl };
+  module.exports = { DESTINATION_SLUGS, DESTINATION_AIRPORT, destinationSlug, destinationAirport, destinationIdFromSlug, destinationUrl, videoUrl };
 }

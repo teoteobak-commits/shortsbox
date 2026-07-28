@@ -1,12 +1,12 @@
-/* 폰트: Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+/* 폰트: IBM Plex Sans KR(본문) + IBM Plex Mono(코드/숫자 — 공항 코드, 조회수, 가격 등) */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 html{-webkit-text-size-adjust:100%}
 
 body{
-  font-family:'Poppins',sans-serif;
+  font-family:var(--font-body);
   color:var(--text);
   background:var(--bg);
   line-height:1.5;

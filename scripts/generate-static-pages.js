@@ -10,7 +10,7 @@ const path = require('path');
 const { icon } = require('../assets/icons.js');
 const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
 const { getAgodaUrl } = require('../js/affiliate-config.js');
-const { destinationSlug } = require('../js/slugs.js');
+const { destinationSlug, destinationAirport } = require('../js/slugs.js');
 
 const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
 /* anon(공개) 키 — RLS로 읽기 전용만 허용됨. js/supabase-client.js에도 동일하게 이미 공개돼있음 */
@@ -93,7 +93,8 @@ function destinationCardHtml(d, shortsCountByDest){
   return `
     <a href="/travel/${destinationSlug(d.id)}/" class="card">
       <div class="card-cover" style="background:var(--grad)">
-        <span>${d.emoji}</span>
+        <span class="card-airport-code">${destinationAirport(d.id)}</span>
+        <span class="card-emoji-tag">${d.emoji}</span>
       </div>
       <div class="card-body">
         <div class="card-title">${escapeHtml(d.name)}</div>
@@ -174,10 +175,13 @@ ${head}
 
 <section class="detail-hero" id="detail-hero">
   <div class="container">
-    <div class="detail-cover">${d.emoji}</div>
+    <div class="detail-cover">
+      <span>${d.emoji}</span>
+      <span class="airport-code">${destinationAirport(d.id)}</span>
+    </div>
     <div class="detail-info">
       <h1>${escapeHtml(d.name)} 여행 꿀템</h1>
-      <div class="detail-meta"><span>${escapeHtml(d.country)}</span></div>
+      <div class="detail-meta"><span>${escapeHtml(d.country)}</span><span>${destinationAirport(d.id)}</span></div>
       <div class="detail-actions">
         <button class="btn btn-outline" id="save-btn">${icon('bookmark', 'icon-sm')}저장</button>
         <button class="btn btn-outline" id="share-btn">${icon('share', 'icon-sm')}공유</button>
