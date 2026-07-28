@@ -62,6 +62,21 @@
 
 .related-section{margin-top:var(--space-7)}
 
+/* 여행지 에디터 가이드 — 쇼츠박스 자체 작성 콘텐츠 */
+.editorial-guide{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:var(--space-5);
+}
+.editorial-guide-tag{
+  display:inline-block;font-size:10px;font-weight:700;color:var(--brand,var(--sub));
+  border:1px solid var(--border);border-radius:var(--radius-full);
+  padding:2px 8px;margin-bottom:10px;
+}
+.editorial-guide h3{font-size:16px;margin-bottom:8px}
+.editorial-guide p{font-size:14px;line-height:1.6;color:var(--sub)}
+
 /* 아고다 숙소 제휴 배너 */
 .agoda-banner{
   display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);

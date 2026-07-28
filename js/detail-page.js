@@ -38,6 +38,15 @@ function renderDetail(d){
     </div>
   `;
 
+  const guide = getDestinationGuide(d.id);
+  document.getElementById('destination-guide').innerHTML = guide ? `
+    <div class="editorial-guide">
+      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
+      <h3>${guide.title}</h3>
+      <p>${guide.body}</p>
+    </div>
+  ` : '';
+
   document.getElementById('agoda-banner').innerHTML = `
     <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner">
       <div class="agoda-banner-text">
