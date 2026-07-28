@@ -1,0 +1,9 @@
+{
+  "name": "shortsbox",
+  "private": true,
+  "version": "1.0.0",
+  "description": "쇼츠박스 — 정적 페이지 생성 스크립트",
+  "scripts": {
+    "generate": "node scripts/generate-static-pages.js"
+  }
+}

@@ -46,3 +46,7 @@ const DESTINATION_GUIDES = {
 function getDestinationGuide(id){
   return DESTINATION_GUIDES[id] || null;
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { DESTINATION_GUIDES, getDestinationGuide };
+}

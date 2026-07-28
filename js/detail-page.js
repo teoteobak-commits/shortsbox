@@ -3,9 +3,17 @@ initLayout('detail');
 
 const detailParams = new URLSearchParams(window.location.search);
 
+/* /detail.html?id=3 (레거시)과 /travel/{slug}/ (신규 clean URL) 둘 다 지원 */
+function resolveDestinationId(){
+  const fromQuery = detailParams.get('id');
+  if(fromQuery) return fromQuery;
+  const match = window.location.pathname.match(/\/travel\/([^/]+)\/?$/);
+  return match ? destinationIdFromSlug(match[1]) : null;
+}
+
 (async () => {
   await loadData();
-  const destination = getDestination(detailParams.get('id'));
+  const destination = getDestination(resolveDestinationId());
 
   if(!destination){
     document.getElementById('detail-hero').innerHTML = `
@@ -20,6 +28,23 @@ const detailParams = new URLSearchParams(window.location.search);
 
 function renderDetail(d){
   document.title = `${d.name} 여행 꿀템 — 쇼츠박스`;
+  const guideForMeta = getDestinationGuide(d.id);
+  const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guideForMeta ? ' ' + guideForMeta.body.slice(0, 80) : ''}`;
+  const canonicalUrl = `https://shortsbox.kr${destinationUrl(d)}`;
+  setPageMeta({
+    description,
+    ogTitle: `${d.name} 여행 꿀템 — 쇼츠박스`,
+    ogDescription: description,
+    url: canonicalUrl,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'TouristAttraction',
+      name: `${d.name} 여행 꿀템`,
+      description,
+      url: canonicalUrl,
+      touristType: '여행객',
+    },
+  });
   const saved = isDestinationSaved(d.id);
 
   document.getElementById('detail-hero').innerHTML = `

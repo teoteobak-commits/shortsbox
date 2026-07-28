@@ -28,3 +28,7 @@ const ICONS = {
 function icon(name, cls){
   return `<span class="icon ${cls||''}" aria-hidden="true">${ICONS[name]||''}</span>`;
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { ICONS, icon };
+}

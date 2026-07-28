@@ -24,3 +24,7 @@ function getAgodaUrl(destination){
   });
   return `https://www.agoda.com/ko-kr/search?${params.toString()}`;
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { AGODA_CID, AGODA_CITY_NAME, getAgodaUrl };
+}

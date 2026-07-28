@@ -36,7 +36,7 @@ function openVideoLightbox(youtubeId){
   `;
   document.getElementById('lightbox-title').textContent = s.title;
   document.getElementById('lightbox-meta').textContent = `${s.channelHandle} · 조회수 ${formatViews(s.views)}`;
-  document.getElementById('lightbox-detail-link').href = `video.html?v=${s.youtubeId}`;
+  document.getElementById('lightbox-detail-link').href = videoUrl(s);
 
   document.getElementById('video-lightbox-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';

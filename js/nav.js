@@ -121,7 +121,7 @@ function renderDestinationCard(d){
   const shortsCount = SHORTS.filter(s => s.destinationId === d.id).length;
   const saved = isDestinationSaved(d.id);
   return `
-    <a href="detail.html?id=${d.id}" class="card">
+    <a href="${destinationUrl(d)}" class="card">
       <div class="card-cover" style="background:var(--grad)">
         <span>${d.emoji}</span>
         <button class="save-btn ${saved ? 'saved' : ''}" data-dest-id="${d.id}" aria-label="여행지 저장">${icon('bookmark')}</button>
@@ -147,7 +147,7 @@ function renderShortsCard(s, rank){
     ? `<span class="rank-badge">${rank}</span>`
     : `<span class="common-badge">${d.emoji} ${d.name}</span>`;
   return `
-    <a href="video.html?v=${s.youtubeId}" class="shorts-card" data-youtube-id="${s.youtubeId}">
+    <a href="${videoUrl(s)}" class="shorts-card" data-youtube-id="${s.youtubeId}">
       <div class="shorts-thumb">
         <img src="${thumbUrl(s)}" alt="${s.title}" loading="lazy">
         ${badge}

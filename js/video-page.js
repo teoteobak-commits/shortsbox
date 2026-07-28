@@ -6,9 +6,17 @@ const CURATION_NOTE = '쇼츠박스는 여행 유튜버들이 직접 추천한 �
 
 const videoParams = new URLSearchParams(window.location.search);
 
+/* /video.html?v=xxx (레거시)과 /watch/{youtubeId}/ (신규 clean URL) 둘 다 지원 */
+function resolveVideoId(){
+  const fromQuery = videoParams.get('v');
+  if(fromQuery) return fromQuery;
+  const match = window.location.pathname.match(/\/watch\/([^/]+)\/?$/);
+  return match ? match[1] : null;
+}
+
 (async () => {
   await loadData();
-  const short = getShort(videoParams.get('v'));
+  const short = getShort(resolveVideoId());
 
   if(!short){
     document.getElementById('video-layout').innerHTML = `
@@ -24,6 +32,22 @@ function renderVideo(s){
   document.title = `${s.title} — 쇼츠박스`;
 
   const dest = getDestination(s.destinationId);
+  const description = `${dest.name} 여행 꿀템 쇼츠 "${s.title}" — 영상 속 아이템${s.products.length ? `(${s.products.map(p => p.name).slice(0, 3).join(', ')} 등)` : ''}과 구매처를 확인하세요.`;
+  setPageMeta({
+    description,
+    ogTitle: `${s.title} — 쇼츠박스`,
+    ogDescription: description,
+    url: `https://shortsbox.kr${videoUrl(s)}`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: s.title,
+      description,
+      thumbnailUrl: `https://i.ytimg.com/vi/${s.youtubeId}/hqdefault.jpg`,
+      embedUrl: `https://www.youtube.com/embed/${s.youtubeId}`,
+      uploadDate: s.uploadedAt || undefined,
+    },
+  });
   const saved = isVideoSaved(s.youtubeId);
 
   document.getElementById('video-layout').innerHTML = `
@@ -52,7 +76,7 @@ function renderVideo(s){
 
     ${renderDestinationGuideBlock(dest)}
 
-    <a href="detail.html?id=${dest.id}" class="btn btn-outline btn-block">
+    <a href="${destinationUrl(dest)}" class="btn btn-outline btn-block">
       ${icon('compass', 'icon-sm')}${dest.name} 여행 꿀템 더 보기
     </a>
   `;

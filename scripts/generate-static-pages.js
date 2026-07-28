@@ -1,0 +1,408 @@
+/* 여행지/영상 상세 페이지를 빌드 시점에 실제 콘텐츠가 채워진 정적 HTML로 미리 생성한다.
+   JS를 실행하지 않는 크롤러(GPTBot, ClaudeBot, PerplexityBot 등)도 실제 콘텐츠를 볼 수 있게 하기 위함.
+   기존 detail.html/video.html과 완전히 동일한 <script> 태그를 포함시켜서, 브라우저에서는
+   기존 client-side 렌더링이 그대로 이 위에 하이드레이션(덮어쓰기)된다 — 인터랙션(저장/공유 등)은
+   기존과 동일하게 동작함. */
+
+const fs = require('fs');
+const path = require('path');
+
+const { icon } = require('../assets/icons.js');
+const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
+const { getAgodaUrl } = require('../js/affiliate-config.js');
+const { destinationSlug } = require('../js/slugs.js');
+
+const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
+/* anon(공개) 키 — RLS로 읽기 전용만 허용됨. js/supabase-client.js에도 동일하게 이미 공개돼있음 */
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmdG9saW52aHd4ZGNjbHJ0YXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NTY3NzQsImV4cCI6MjEwMDAzMjc3NH0.HMZ4-yf6SPty4wdQKJon8nRi9GfWpgFIeMx2PXF5RhU';
+
+const ROOT = path.join(__dirname, '..');
+const SITE_URL = 'https://shortsbox.kr';
+
+const CURATION_NOTE = '쇼츠박스는 여행 유튜버들이 직접 추천한 여행 아이템만 모아서 보여드려요. 영상 속 정확한 제품을 특정하기 어려운 경우가 많아서, 특징이 비슷한 상품을 대신 연결해드리고 있어요. 실제 구매 전에는 영상 설명란이나 판매 페이지에서 제품 정보를 한 번 더 확인해보시는 걸 추천해요.';
+
+async function fetchTable(table, query){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+  if(!res.ok) throw new Error(`${table} fetch 실패: ${res.status} ${await res.text()}`);
+  return res.json();
+}
+
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function formatViews(n){
+  if(n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '만';
+  return Number(n).toLocaleString();
+}
+
+function thumbUrl(s){
+  return s.thumbnail_url || `https://i.ytimg.com/vi/${s.youtube_id}/hqdefault.jpg`;
+}
+
+function headHtml({ title, description, ogTitle, ogDescription, ogType, canonicalUrl, jsonLd }){
+  return `<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var saved = localStorage.getItem('shortsbox_theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>${escapeHtml(title)}</title>
+<meta name="description" content="${escapeHtml(description)}">
+<link rel="canonical" href="${canonicalUrl}">
+<meta property="og:title" content="${escapeHtml(ogTitle || title)}">
+<meta property="og:description" content="${escapeHtml(ogDescription || description)}">
+<meta property="og:type" content="${ogType || 'website'}">
+<meta property="og:url" content="${canonicalUrl}">
+<script type="application/ld+json" id="page-jsonld">${JSON.stringify(jsonLd)}</script>
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/pagestyles.css">`;
+}
+
+function scriptsHtml(pageScript, extra = []){
+  const common = [
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+    '/js/supabase-client.js',
+    '/assets/icons.js',
+    '/js/data.js',
+    ...extra,
+    '/js/utils.js',
+    '/js/slugs.js',
+    '/js/nav.js',
+  ];
+  const tags = common.map(src => `<script src="${src}" defer></script>`).join('\n');
+  return `${tags}
+<script src="/js/lightbox.js" defer></script>
+<script src="${pageScript}" defer></script>
+<script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>`;
+}
+
+function destinationCardHtml(d, shortsCountByDest){
+  return `
+    <a href="/travel/${destinationSlug(d.id)}/" class="card">
+      <div class="card-cover" style="background:var(--grad)">
+        <span>${d.emoji}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${escapeHtml(d.name)}</div>
+        <div class="card-meta"><span>${escapeHtml(d.country)}</span></div>
+        <div class="card-footer"><span class="stat">${icon('tag', 'icon-sm')}꿀템 쇼츠 ${shortsCountByDest[d.id] || 0}개</span></div>
+      </div>
+    </a>`;
+}
+
+function shortsCardHtml(s, rank){
+  return `
+    <a href="/watch/${s.youtube_id}/" class="shorts-card" data-youtube-id="${s.youtube_id}">
+      <div class="shorts-thumb">
+        <img src="${thumbUrl(s)}" alt="${escapeHtml(s.title)}" loading="lazy">
+        <span class="rank-badge">${rank}</span>
+        <span class="play-badge">${icon('play', 'icon-sm')}</span>
+      </div>
+      <div class="shorts-card-body">
+        <div class="shorts-card-title">${escapeHtml(s.title)}</div>
+        <div class="shorts-card-meta">${escapeHtml(s.channel_name)} · 조회수 ${formatViews(s.views)}</div>
+      </div>
+    </a>`;
+}
+
+function productRowHtml(p){
+  return `
+    <div class="product-row">
+      <div class="product-thumb">🛍️</div>
+      <div class="product-info">
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        <div class="product-price">${escapeHtml(p.store)}에서 비슷한 상품 찾아보기</div>
+      </div>
+      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">검색</a>
+    </div>`;
+}
+
+function buildDestinationPage(d, { topShorts, related, shortsCountByDest }){
+  const guide = DESTINATION_GUIDES[d.id] || null;
+  const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guide ? ' ' + guide.body.slice(0, 80) : ''}`;
+  const canonicalUrl = `${SITE_URL}/travel/${destinationSlug(d.id)}/`;
+
+  const head = headHtml({
+    title: `${d.name} 여행 꿀템 — 쇼츠박스`,
+    description,
+    ogType: 'website',
+    canonicalUrl,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'TouristAttraction',
+      name: `${d.name} 여행 꿀템`,
+      description,
+      url: canonicalUrl,
+      touristType: '여행객',
+    },
+  });
+
+  const guideBlock = guide ? `
+    <div class="editorial-guide">
+      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
+      <h3>${escapeHtml(guide.title)}</h3>
+      <p>${escapeHtml(guide.body)}</p>
+    </div>` : '';
+
+  const shortsGrid = topShorts.length
+    ? topShorts.map((s, idx) => shortsCardHtml(s, idx + 1)).join('')
+    : `<div class="empty-shorts">아직 꿀템 쇼츠가 없어요. 곧 추가할게요!</div>`;
+
+  const relatedGrid = related.map(r => destinationCardHtml(r, shortsCountByDest)).join('');
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+${head}
+</head>
+<body data-page="detail">
+
+<header id="site-header" class="site-header"></header>
+
+<section class="detail-hero" id="detail-hero">
+  <div class="container">
+    <div class="detail-cover">${d.emoji}</div>
+    <div class="detail-info">
+      <h1>${escapeHtml(d.name)} 여행 꿀템</h1>
+      <div class="detail-meta"><span>${escapeHtml(d.country)}</span></div>
+      <div class="detail-actions">
+        <button class="btn btn-outline" id="save-btn">${icon('bookmark', 'icon-sm')}저장</button>
+        <button class="btn btn-outline" id="share-btn">${icon('share', 'icon-sm')}공유</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section class="container" style="padding-top:var(--space-5)">
+    <div id="destination-guide">${guideBlock}</div>
+  </section>
+
+  <section class="container" style="padding-top:var(--space-5)">
+    <div id="agoda-banner">
+      <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner">
+        <div class="agoda-banner-text">
+          <span class="agoda-banner-tag">제휴 · AD</span>
+          <div class="agoda-banner-title">${escapeHtml(d.name)} 숙소 최저가 보기</div>
+          <div class="agoda-banner-sub">아고다에서 지금 예약하면 더 저렴해요</div>
+        </div>
+        <span class="agoda-banner-icon">🏨</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="container section" style="padding-top:var(--space-5)">
+    <div class="section-head">
+      <h2>여행 꿀템 쇼츠</h2>
+    </div>
+    <div id="shorts-grid" class="shorts-grid">${shortsGrid}</div>
+
+    <div class="ad-slot">
+      <span class="ad-slot-label">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-x83Zj1FkAxgtkkHL"
+        data-ad-width="300"
+        data-ad-height="250"></ins>
+    </div>
+
+    <div class="related-section">
+      <div class="section-head">
+        <h2>다른 여행지도 둘러보세요</h2>
+      </div>
+      <div class="card-grid" id="related-grid">${relatedGrid}</div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+${scriptsHtml('/js/detail-page.js', ['/js/destination-guides.js', '/js/affiliate-config.js'])}
+</body>
+</html>
+`;
+}
+
+function buildVideoPage(s, dest, products){
+  const guide = DESTINATION_GUIDES[dest.id] || null;
+  const description = `${dest.name} 여행 꿀템 쇼츠 "${s.title}" — 영상 속 아이템${products.length ? `(${products.map(p => p.name).slice(0, 3).join(', ')} 등)` : ''}과 구매처를 확인하세요.`;
+  const canonicalUrl = `${SITE_URL}/watch/${s.youtube_id}/`;
+
+  const head = headHtml({
+    title: `${s.title} — 쇼츠박스`,
+    description,
+    ogType: 'video.other',
+    canonicalUrl,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: s.title,
+      description,
+      thumbnailUrl: thumbUrl(s),
+      embedUrl: `https://www.youtube.com/embed/${s.youtube_id}`,
+    },
+  });
+
+  const guideBlock = guide ? `
+    <div class="editorial-guide" style="margin-bottom:var(--space-4)">
+      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
+      <h3>${escapeHtml(guide.title)}</h3>
+      <p>${escapeHtml(guide.body)}</p>
+    </div>` : '';
+
+  const productList = products.length
+    ? products.map(productRowHtml).join('')
+    : `<div class="empty-state" style="padding:var(--space-5)">${icon('tag', 'icon-lg')}<p>제품 정보는 아직 준비 중이에요.<br>영상에서 직접 확인해주세요.</p></div>`;
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+${head}
+</head>
+<body data-page="video">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section class="container section" style="padding-top:var(--space-5)">
+    <div class="video-layout" id="video-layout">
+      <div class="video-embed">
+        <iframe src="https://www.youtube.com/embed/${s.youtube_id}" title="${escapeHtml(s.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <a href="https://youtube.com/shorts/${s.youtube_id}" target="_blank" rel="noopener" class="video-yt-link">${icon('external', 'icon-sm')}재생이 안 되면 유튜브에서 보기</a>
+      <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${escapeHtml(dest.name)}</span>
+      <h1 class="video-title">${escapeHtml(s.title)}</h1>
+      <div class="video-channel">${escapeHtml(s.channel_name)} · 조회수 ${formatViews(s.views)}</div>
+      <div class="btn-row" style="margin-bottom:var(--space-5)">
+        <button class="btn btn-outline btn-sm" id="save-video-btn">${icon('bookmark', 'icon-sm')}저장</button>
+        <button class="btn btn-outline btn-sm" id="share-video-btn">${icon('share', 'icon-sm')}공유</button>
+      </div>
+
+      <div class="section-head" style="margin-bottom:12px">
+        <h2 style="font-size:16px">${icon('tag', 'icon-sm')} 영상 속 아이템 종류 ${products.length ? `(${products.length})` : ''}</h2>
+      </div>
+      ${products.length ? `<p class="sub" style="margin:-4px 0 var(--space-3)">정확히 같은 제품이 아니라, 비슷한 종류를 검색해서 보여드려요.</p>` : ''}
+      <div class="product-list" id="product-list">${productList}</div>
+
+      <div class="editorial-guide" style="margin-bottom:var(--space-4)">
+        <span class="editorial-guide-tag">쇼츠박스 큐레이션 안내</span>
+        <p>${CURATION_NOTE}</p>
+      </div>
+
+      ${guideBlock}
+
+      <a href="/travel/${destinationSlug(dest.id)}/" class="btn btn-outline btn-block">
+        ${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 더 보기
+      </a>
+    </div>
+
+    <div class="ad-slot" style="max-width:420px;margin:0 auto">
+      <span class="ad-slot-label">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-x83Zj1FkAxgtkkHL"
+        data-ad-width="300"
+        data-ad-height="250"></ins>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+${scriptsHtml('/js/video-page.js', ['/js/destination-guides.js'])}
+</body>
+</html>
+`;
+}
+
+function writeFile(relPath, content){
+  const full = path.join(ROOT, relPath);
+  fs.mkdirSync(path.dirname(full), { recursive: true });
+  fs.writeFileSync(full, content);
+}
+
+function buildSitemap(destinations, shorts){
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [
+    { loc: `${SITE_URL}/`, priority: '1.0', changefreq: 'daily' },
+    { loc: `${SITE_URL}/explore.html`, priority: '0.9', changefreq: 'daily' },
+    ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
+    ...shorts.map(s => ({ loc: `${SITE_URL}/watch/${s.youtube_id}/`, priority: '0.6', changefreq: 'weekly' })),
+  ];
+  const body = urls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+}
+
+async function main(){
+  console.log('Supabase에서 데이터 가져오는 중...');
+  const [destinations, shorts, products] = await Promise.all([
+    fetchTable('destinations', 'select=*&order=id'),
+    fetchTable('shorts', 'select=*'),
+    fetchTable('products', 'select=*'),
+  ]);
+  console.log(`destinations: ${destinations.length}, shorts: ${shorts.length}, products: ${products.length}`);
+
+  const productsByVideo = {};
+  for(const p of products){
+    (productsByVideo[p.youtube_id] ||= []).push(p);
+  }
+
+  const shortsCountByDest = {};
+  for(const s of shorts){
+    shortsCountByDest[s.destination_id] = (shortsCountByDest[s.destination_id] || 0) + 1;
+  }
+
+  let destPages = 0;
+  let videoPages = 0;
+
+  for(const d of destinations){
+    const destShorts = shorts
+      .filter(s => s.destination_id === d.id)
+      .sort((a, b) => {
+        const aHas = (productsByVideo[a.youtube_id] || []).length > 0;
+        const bHas = (productsByVideo[b.youtube_id] || []).length > 0;
+        if(aHas !== bHas) return bHas - aHas;
+        return b.views - a.views;
+      })
+      .slice(0, 10);
+
+    const related = destinations.filter(x => x.id !== d.id).slice(0, 4);
+
+    const html = buildDestinationPage(d, { topShorts: destShorts, related, shortsCountByDest });
+    writeFile(`travel/${destinationSlug(d.id)}/index.html`, html);
+    destPages++;
+  }
+
+  for(const s of shorts){
+    const dest = destinations.find(d => d.id === s.destination_id);
+    if(!dest) continue;
+    const html = buildVideoPage(s, dest, productsByVideo[s.youtube_id] || []);
+    writeFile(`watch/${s.youtube_id}/index.html`, html);
+    videoPages++;
+  }
+
+  writeFile('sitemap.xml', buildSitemap(destinations, shorts));
+
+  console.log(`완료: 여행지 페이지 ${destPages}개, 영상 페이지 ${videoPages}개, sitemap.xml 갱신`);
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
