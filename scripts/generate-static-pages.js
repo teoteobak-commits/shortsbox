@@ -48,6 +48,8 @@ function thumbUrl(s){
 function headHtml({ title, description, ogTitle, ogDescription, ogType, canonicalUrl, jsonLd }){
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5788194649735645"
+     crossorigin="anonymous"></script>
 <script>
 (function(){
   var saved = localStorage.getItem('shortsbox_theme');
