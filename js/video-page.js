@@ -1,6 +1,9 @@
 /* 쇼츠 상세 페이지 로직 — 유튜브 임베드 + 영상 속 제품 리스트 */
 initLayout('video');
 
+/* 쇼츠박스 자체 작성 콘텐츠 — 모든 영상 페이지 공통 노출 (외부 콘텐츠 비중 완화용) */
+const CURATION_NOTE = '쇼츠박스는 여행 유튜버들이 직접 추천한 여행 아이템만 모아서 보여드려요. 영상 속 정확한 제품을 특정하기 어려운 경우가 많아서, 특징이 비슷한 상품을 대신 연결해드리고 있어요. 실제 구매 전에는 영상 설명란이나 판매 페이지에서 제품 정보를 한 번 더 확인해보시는 걸 추천해요.';
+
 const videoParams = new URLSearchParams(window.location.search);
 
 (async () => {
@@ -42,6 +45,13 @@ function renderVideo(s){
     ${s.products.length ? `<p class="sub" style="margin:-4px 0 var(--space-3)">정확히 같은 제품이 아니라, 비슷한 종류를 검색해서 보여드려요.</p>` : ''}
     <div class="product-list" id="product-list"></div>
 
+    <div class="editorial-guide" style="margin-bottom:var(--space-4)">
+      <span class="editorial-guide-tag">쇼츠박스 큐레이션 안내</span>
+      <p>${CURATION_NOTE}</p>
+    </div>
+
+    ${renderDestinationGuideBlock(dest)}
+
     <a href="detail.html?id=${dest.id}" class="btn btn-outline btn-block">
       ${icon('compass', 'icon-sm')}${dest.name} 여행 꿀템 더 보기
     </a>
@@ -71,4 +81,16 @@ function renderVideo(s){
       <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">검색</a>
     </div>
   `).join('');
+}
+
+function renderDestinationGuideBlock(dest){
+  const guide = getDestinationGuide(dest.id);
+  if(!guide) return '';
+  return `
+    <div class="editorial-guide" style="margin-bottom:var(--space-4)">
+      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
+      <h3>${guide.title}</h3>
+      <p>${guide.body}</p>
+    </div>
+  `;
 }
