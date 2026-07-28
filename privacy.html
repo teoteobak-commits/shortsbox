@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var saved = localStorage.getItem('shortsbox_theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>개인정보처리방침 — 쇼츠박스</title>
+<meta name="description" content="쇼츠박스가 방문자의 정보를 어떻게 다루는지, 광고·제휴 링크는 어떻게 운영되는지 안내합니다.">
+<link rel="canonical" href="https://shortsbox.kr/privacy.html">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pagestyles.css">
+</head>
+<body data-page="privacy">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section class="container section" style="padding-top:var(--space-5);max-width:720px">
+    <h1>개인정보처리방침</h1>
+    <p class="sub" style="margin-top:6px">최종 업데이트: 2026-07-29</p>
+
+    <div style="margin-top:var(--space-6);line-height:1.7">
+      <p>쇼츠박스(ShortsBox, 이하 "쇼츠박스")는 여행지별 유튜브 여행 꿀템 쇼츠를 큐레이션해서 보여주는 서비스입니다. 쇼츠박스는 회원가입 없이 이용할 수 있으며, 아래와 같은 방식으로 방문자 정보를 다룹니다.</p>
+
+      <h2 style="margin-top:var(--space-6);font-size:18px">1. 개인정보 수집</h2>
+      <p>쇼츠박스는 회원가입/로그인 기능이 없으며, 이름·이메일·전화번호 등 개인을 식별할 수 있는 정보를 서버에 수집하지 않습니다. "저장" 기능(찜한 여행지·쇼츠)은 방문자의 브라우저 localStorage에만 저장되며, 쇼츠박스 서버로 전송되지 않습니다.</p>
+
+      <h2 style="margin-top:var(--space-6);font-size:18px">2. 광고 및 쿠키</h2>
+      <p>쇼츠박스는 Google AdSense, 카카오 애드핏(Kakao AdFit) 등 제3자 광고 서비스를 이용해 광고를 게재할 수 있습니다. 이 광고 서비스들은 방문자의 관심사에 맞는 광고를 보여주기 위해 쿠키를 사용할 수 있으며, 이는 각 서비스 제공자의 개인정보처리방침을 따릅니다.</p>
+      <p>Google은 파트너 사이트에서 광고를 게재하기 위해 쿠키를 사용하며, 이용자는 <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Google 광고 설정</a>에서 맞춤 광고를 비활성화할 수 있습니다.</p>
+
+      <h2 style="margin-top:var(--space-6);font-size:18px">3. 제휴 링크 안내</h2>
+      <p>쇼츠박스의 일부 상품·숙소 링크는 쿠팡파트너스, 아고다(Agoda) 등 제휴 프로그램을 통해 연결되며, 이 링크를 통한 구매 시 쇼츠박스가 일정 수수료를 지급받을 수 있습니다. 이는 방문자가 지불하는 가격에 영향을 주지 않습니다.</p>
+
+      <h2 style="margin-top:var(--space-6);font-size:18px">4. 외부 콘텐츠(유튜브)</h2>
+      <p>쇼츠박스에 임베드되는 영상은 유튜브(YouTube)에서 제공되며, 영상 재생 시 유튜브/구글의 개인정보처리방침이 함께 적용됩니다.</p>
+
+      <h2 style="margin-top:var(--space-6);font-size:18px">5. 문의</h2>
+      <p>개인정보처리방침 관련 문의는 <a href="mailto:teoteobak@gmail.com">teoteobak@gmail.com</a>으로 연락해 주세요.</p>
+
+      <h2 style="margin-top:var(--space-6);font-size:18px">6. 방침 변경</h2>
+      <p>이 개인정보처리방침은 서비스 내용 변경에 따라 사전 예고 없이 수정될 수 있으며, 변경 시 이 페이지에 반영됩니다.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+<script src="assets/icons.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/nav.js" defer></script>
+</body>
+</html>

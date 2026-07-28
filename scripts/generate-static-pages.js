@@ -337,6 +337,7 @@ function buildSitemap(destinations, shorts){
   const urls = [
     { loc: `${SITE_URL}/`, priority: '1.0', changefreq: 'daily' },
     { loc: `${SITE_URL}/explore.html`, priority: '0.9', changefreq: 'daily' },
+    { loc: `${SITE_URL}/privacy.html`, priority: '0.2', changefreq: 'yearly' },
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
     ...shorts.map(s => ({ loc: `${SITE_URL}/watch/${s.youtube_id}/`, priority: '0.6', changefreq: 'weekly' })),
   ];

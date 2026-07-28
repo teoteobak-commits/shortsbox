@@ -106,6 +106,7 @@ function renderFooter(){
         <div class="sub">© 2026 쇼츠박스(ShortsBox). All rights reserved.</div>
       </div>
       <p class="disclosure">이 페이지는 데모용으로 제작되었으며, 일부 상품 링크는 쿠팡 파트너스 등 제휴 프로그램을 통해 일정 수수료를 지급받을 수 있습니다.</p>
+      <a href="privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>
     </div>
   `;
 }
