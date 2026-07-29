@@ -19,7 +19,7 @@ function renderHeader(activePage){
     <div class="container header-inner">
       <a href="index.html" class="brand">
         <span class="brand-mark">📦</span>
-        <span class="brand-name">쇼츠박스<span class="grad-text">.</span></span>
+        <span class="brand-name">쇼츠박스</span>
       </a>
       <form class="header-search" id="header-search-form">
         ${icon('search')}
@@ -107,7 +107,7 @@ function renderFooter(){
       </div>
       <p class="disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다. 일부 숙소 링크는 아고다 등 다른 제휴 프로그램을 통해 연결됩니다.</p>
       <p class="sub" style="margin-top:4px"><a href="https://link.coupang.com/a/fLDqJwiLng" target="_blank" rel="noopener sponsored" style="text-decoration:underline">🧳 쿠팡에서 여행용품 보러가기</a></p>
-      <p class="disclosure" style="margin-top:10px">쇼츠박스에 노출되는 모든 영상의 저작권은 각 채널(원작자)에게 있으며, 유튜브 공식 임베드 방식으로만 재생됩니다. 삭제를 원하시는 창작자분은 <a href="mailto:teoteobak@gmail.com" style="text-decoration:underline">teoteobak@gmail.com</a>으로 요청해주시면 빠르게 반영하겠습니다.</p>
+      <p class="disclosure" style="margin-top:10px">쇼츠박스에 노출되는 모든 영상의 저작권은 각 채널(원작자)에게 있으며, 유튜브 공식 임베드 방식으로만 재생됩니다.</p>
       <p class="sub" style="margin-top:10px">이 서비스는 YouTube API Services를 사용합니다. (<a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener" style="text-decoration:underline">YouTube 서비스 약관</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="text-decoration:underline">Google 개인정보처리방침</a>)</p>
       <a href="privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>
     </div>

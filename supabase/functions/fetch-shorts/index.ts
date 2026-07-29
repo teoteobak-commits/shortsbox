@@ -22,10 +22,13 @@ type Destination = { id: number; name: string };
 
 const TOP_N = 10;
 
-/* 쇼핑 콘텐츠 판별 휴리스틱 */
-const PRODUCT_KEYWORDS = /아이템|제품|쇼핑|구매|추천템|필수템|꿀템|캐리어|가방|짐싸기|리스트|용품|굿즈/;
-const TIP_ONLY_KEYWORDS = /하는법|가는법|노하우|주의사항|생존법|대처법|꿀팁|방법$/;
-// "가방"처럼 제품 키워드가 섞여 있어도, 사건·사고성 경고 단어가 있으면 쇼핑 콘텐츠가 아니라고 본다
+/* 쇼핑/맛집 등 "실용 정보" 콘텐츠 판별 휴리스틱.
+   과거에는 "위험/사고 단어가 없으면 통과"하는 블랙리스트 방식이라, 아이템·맛집과
+   무관한 개인 브이로그(예: "신혼여행 현실 feat.반신욕")도 걸러지지 않고 통과됐다.
+   그래서 지금은 반대로 "실용 정보 키워드가 있어야만 통과"하는 화이트리스트 방식으로 바꿨다.
+   "템"을 어근으로 잡아서 꿀템/찐템/핫템/대박템/인생템 등 슬랭 변형을 한 번에 커버한다. */
+const PRODUCT_KEYWORDS = /템|아이템|제품|쇼핑|구매|추천|필수|캐리어|가방|짐싸기|리스트|용품|굿즈|준비물|체크리스트|맛집|카페|디저트|매장|핫플|스팟|가이드/;
+// "가방"처럼 제품 키워드가 섞여 있어도, 사건·사고성 경고 단어가 있으면 실용 정보로 보지 않는다
 const WARNING_KEYWORDS = /소매치기|사기|도난|분실|위험|바가지|조심|주의보|당하/;
 const AFFILIATE_PATTERN = /coupang\.com|link\.coupang|쿠팡\s*파트너스|amzn\.to|amazon\.[a-z.]+\/|aliexpress/i;
 
@@ -33,17 +36,16 @@ function classify(title: string, description: string){
   const hasAffiliate = AFFILIATE_PATTERN.test(description || "");
   const hasWarning = WARNING_KEYWORDS.test(title);
   const hasProductKeyword = !hasWarning && PRODUCT_KEYWORDS.test(title);
-  const hasTipOnly = (TIP_ONLY_KEYWORDS.test(title) || hasWarning) && !hasProductKeyword;
-  return { hasAffiliate, hasProductKeyword, hasTipOnly };
+  return { hasAffiliate, hasProductKeyword };
 }
 
-/* 쇼핑 신호 우선 정렬: 제휴링크 있음 > 제품 키워드 있음 > 조회수 */
+/* 쇼핑 신호 우선 정렬: 제휴링크 있음 > 제품 키워드 있음 > 조회수.
+   실용 정보 신호(hasProductKeyword)나 제휴링크가 전혀 없는 영상은 아예 후보에서 제외한다. */
 function rankCandidates(items: any[]){
   return items
-    .filter((it) => !it.hasTipOnly || it.hasAffiliate) // 순수 팁이면서 제휴링크도 없는 건 제외
+    .filter((it) => it.hasProductKeyword || it.hasAffiliate)
     .sort((a, b) => {
       if (a.hasAffiliate !== b.hasAffiliate) return a.hasAffiliate ? -1 : 1;
-      if (a.hasProductKeyword !== b.hasProductKeyword) return a.hasProductKeyword ? -1 : 1;
       return b.views - a.views;
     });
 }
