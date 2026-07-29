@@ -37,6 +37,7 @@ function renderVideo(s){
     description,
     ogTitle: `${s.title} — 쇼츠박스`,
     ogDescription: description,
+    ogImage: thumbUrl(s),
     url: `https://shortsbox.kr${videoUrl(s)}`,
     jsonLd: {
       '@context': 'https://schema.org',

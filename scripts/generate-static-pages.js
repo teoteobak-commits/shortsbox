@@ -45,7 +45,7 @@ function thumbUrl(s){
   return s.thumbnail_url || `https://i.ytimg.com/vi/${s.youtube_id}/hqdefault.jpg`;
 }
 
-function headHtml({ title, description, ogTitle, ogDescription, ogType, canonicalUrl, jsonLd }){
+function headHtml({ title, description, ogTitle, ogDescription, ogImage, ogImageWidth, ogImageHeight, ogType, canonicalUrl, jsonLd }){
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5788194649735645"
@@ -64,6 +64,9 @@ function headHtml({ title, description, ogTitle, ogDescription, ogType, canonica
 <meta property="og:description" content="${escapeHtml(ogDescription || description)}">
 <meta property="og:type" content="${ogType || 'website'}">
 <meta property="og:url" content="${canonicalUrl}">
+<meta property="og:image" content="${ogImage || 'https://shortsbox.kr/assets/og-image.png'}">
+<meta property="og:image:width" content="${ogImageWidth || 1200}">
+<meta property="og:image:height" content="${ogImageHeight || 630}">
 <script type="application/ld+json" id="page-jsonld">${JSON.stringify(jsonLd)}</script>
 <link rel="stylesheet" href="/css/tokens.css">
 <link rel="stylesheet" href="/css/base.css">
@@ -290,6 +293,9 @@ function buildVideoPage(s, dest, products){
     title: `${s.title} — 쇼츠박스`,
     description,
     ogType: 'video.other',
+    ogImage: thumbUrl(s),
+    ogImageWidth: 480,
+    ogImageHeight: 360,
     canonicalUrl,
     jsonLd: {
       '@context': 'https://schema.org',

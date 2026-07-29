@@ -1,5 +1,5 @@
 /* 공용 유틸 — SEO 메타 태그 갱신 (동적 페이지에서 title 외에 description/OG/JSON-LD도 실제 콘텐츠에 맞게 덮어쓰기 위함) */
-function setPageMeta({ description, ogTitle, ogDescription, url, jsonLd }){
+function setPageMeta({ description, ogTitle, ogDescription, ogImage, url, jsonLd }){
   if(description){
     let metaDesc = document.querySelector('meta[name="description"]');
     if(!metaDesc){
@@ -15,6 +15,7 @@ function setPageMeta({ description, ogTitle, ogDescription, url, jsonLd }){
     'og:description': ogDescription || description,
     'og:type': 'website',
     'og:url': url || window.location.href,
+    'og:image': ogImage || 'https://shortsbox.kr/assets/og-image.png',
   };
   Object.entries(ogTags).forEach(([prop, content]) => {
     if(!content) return;
