@@ -31,19 +31,29 @@ function renderDetail(d){
   const guideForMeta = getDestinationGuide(d.id);
   const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guideForMeta ? ' ' + guideForMeta.body.slice(0, 80) : ''}`;
   const canonicalUrl = `https://shortsbox.kr${destinationUrl(d)}`;
+  const graph = [{
+    '@type': 'TouristAttraction',
+    name: `${d.name} 여행 꿀템`,
+    description,
+    url: canonicalUrl,
+    touristType: '여행객',
+  }];
+  if(guideForMeta && guideForMeta.faq && guideForMeta.faq.length){
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: guideForMeta.faq.map(f => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    });
+  }
   setPageMeta({
     description,
     ogTitle: `${d.name} 여행 꿀템 — 쇼츠박스`,
     ogDescription: description,
     url: canonicalUrl,
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'TouristAttraction',
-      name: `${d.name} 여행 꿀템`,
-      description,
-      url: canonicalUrl,
-      touristType: '여행객',
-    },
+    jsonLd: { '@context': 'https://schema.org', '@graph': graph },
   });
   const saved = isDestinationSaved(d.id);
 
@@ -64,13 +74,7 @@ function renderDetail(d){
   `;
 
   const guide = getDestinationGuide(d.id);
-  document.getElementById('destination-guide').innerHTML = guide ? `
-    <div class="editorial-guide">
-      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
-      <h3>${guide.title}</h3>
-      <p>${guide.body}</p>
-    </div>
-  ` : '';
+  document.getElementById('destination-guide').innerHTML = guide ? renderGuideBlock(guide) : '';
 
   document.getElementById('agoda-banner').innerHTML = `
     <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner">
@@ -95,6 +99,43 @@ function renderDetail(d){
     showToast(nowSaved ? '여행지를 저장했어요' : '저장을 취소했어요');
   });
   document.getElementById('share-btn').addEventListener('click', () => showToast('링크가 복사됐어요 (데모)'));
+}
+
+function renderGuideBlock(guide){
+  return `
+    <div class="editorial-guide">
+      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
+      <h3>${guide.title}</h3>
+      <p>${guide.body}</p>
+
+      ${guide.bestTime || guide.budget ? `
+      <div class="guide-facts">
+        ${guide.bestTime ? `<div class="guide-fact"><span class="guide-fact-label">${icon('sun', 'icon-sm')}최적 시기</span><span>${guide.bestTime}</span></div>` : ''}
+        ${guide.budget ? `<div class="guide-fact"><span class="guide-fact-label">${icon('tag', 'icon-sm')}예산 감</span><span>${guide.budget}</span></div>` : ''}
+      </div>` : ''}
+
+      ${guide.packingList && guide.packingList.length ? `
+      <div class="guide-section">
+        <h4>${icon('suitcase', 'icon-sm')} 짐싸기 체크리스트</h4>
+        <div class="packing-list">
+          ${guide.packingList.map(item => `<span class="packing-chip">${item}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${guide.faq && guide.faq.length ? `
+      <div class="guide-section">
+        <h4>${icon('search', 'icon-sm')} 자주 묻는 질문</h4>
+        <div class="faq-list">
+          ${guide.faq.map(f => `
+            <div class="faq-item">
+              <div class="faq-q">Q. ${f.q}</div>
+              <div class="faq-a">${f.a}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>` : ''}
+    </div>
+  `;
 }
 
 function renderShorts(destinationId){
