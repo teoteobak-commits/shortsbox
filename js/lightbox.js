@@ -29,6 +29,7 @@ function openVideoLightbox(youtubeId){
   const s = getShort(youtubeId);
   if(!s) return;
   buildLightbox();
+  trackEvent('video_played', { youtube_id: s.youtubeId, destination_id: s.destinationId, source: 'lightbox' });
 
   document.getElementById('lightbox-embed').innerHTML = `
     <iframe src="https://www.youtube.com/embed/${s.youtubeId}?autoplay=1" title="${s.title}"

@@ -77,7 +77,7 @@ function renderDetail(d){
   document.getElementById('destination-guide').innerHTML = guide ? renderGuideBlock(guide) : '';
 
   document.getElementById('agoda-banner').innerHTML = `
-    <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner">
+    <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner" data-track-event="agoda_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
       <div class="agoda-banner-text">
         <span class="agoda-banner-tag">제휴 · AD</span>
         <div class="agoda-banner-title">${d.name} 숙소 최저가 보기</div>

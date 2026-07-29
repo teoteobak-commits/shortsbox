@@ -122,7 +122,8 @@ function shortsCardHtml(s, rank){
     </a>`;
 }
 
-function productRowHtml(p){
+function productRowHtml(p, youtubeId){
+  const trackProps = JSON.stringify({ location: 'product_list', product_name: p.name, youtube_id: youtubeId }).replace(/'/g, '&#39;');
   return `
     <div class="product-row">
       <div class="product-thumb">🛍️</div>
@@ -130,7 +131,7 @@ function productRowHtml(p){
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-price">${escapeHtml(p.store)}에서 비슷한 상품 찾아보기</div>
       </div>
-      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">검색</a>
+      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>검색</a>
     </div>`;
 }
 
@@ -241,7 +242,7 @@ ${head}
 
   <section class="container" style="padding-top:var(--space-5)">
     <div id="agoda-banner">
-      <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner">
+      <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner" data-track-event="agoda_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
         <div class="agoda-banner-text">
           <span class="agoda-banner-tag">제휴 · AD</span>
           <div class="agoda-banner-title">${escapeHtml(d.name)} 숙소 최저가 보기</div>
@@ -315,7 +316,7 @@ function buildVideoPage(s, dest, products){
     </div>` : '';
 
   const productList = products.length
-    ? products.map(productRowHtml).join('')
+    ? products.map(p => productRowHtml(p, s.youtube_id)).join('')
     : `<div class="empty-state" style="padding:var(--space-5)">${icon('tag', 'icon-lg')}<p>제품 정보는 아직 준비 중이에요.<br>영상에서 직접 확인해주세요.</p></div>`;
 
   return `<!DOCTYPE html>
@@ -383,6 +384,22 @@ function writeFile(relPath, content){
   const full = path.join(ROOT, relPath);
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, content);
+}
+
+/* travel/, watch/ 밑에 더 이상 존재하지 않는 여행지·영상의 정적 페이지가 남아있으면 지운다.
+   (예: DB에서 영상을 삭제해도 이전에 생성된 정적 파일은 자동으로 안 없어지는 문제 방지) */
+function cleanupStaleDirs(dirName, validNames){
+  const dirPath = path.join(ROOT, dirName);
+  if(!fs.existsSync(dirPath)) return 0;
+  const validSet = new Set(validNames);
+  let removed = 0;
+  for(const entry of fs.readdirSync(dirPath, { withFileTypes: true })){
+    if(entry.isDirectory() && !validSet.has(entry.name)){
+      fs.rmSync(path.join(dirPath, entry.name), { recursive: true, force: true });
+      removed++;
+    }
+  }
+  return removed;
 }
 
 function buildSitemap(destinations, shorts){
@@ -453,7 +470,10 @@ async function main(){
 
   writeFile('sitemap.xml', buildSitemap(destinations, shorts));
 
-  console.log(`완료: 여행지 페이지 ${destPages}개, 영상 페이지 ${videoPages}개, sitemap.xml 갱신`);
+  const removedTravel = cleanupStaleDirs('travel', destinations.map(d => destinationSlug(d.id)));
+  const removedWatch = cleanupStaleDirs('watch', shorts.map(s => s.youtube_id));
+
+  console.log(`완료: 여행지 페이지 ${destPages}개, 영상 페이지 ${videoPages}개, sitemap.xml 갱신 (제거된 페이지: 여행지 ${removedTravel}개, 영상 ${removedWatch}개)`);
 }
 
 main().catch(err => {

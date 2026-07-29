@@ -43,6 +43,7 @@ function renderHeader(activePage){
 
   const goSearch = (value) => {
     const q = value.trim();
+    if(q) trackEvent('search_used', { query: q });
     window.location.href = 'explore.html' + (q ? `?q=${encodeURIComponent(q)}` : '');
   };
   document.getElementById('header-search-form').addEventListener('submit', (e) => {
@@ -106,7 +107,7 @@ function renderFooter(){
         <div class="sub">© 2026 쇼츠박스(ShortsBox). All rights reserved.</div>
       </div>
       <p class="disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다. 일부 숙소 링크는 아고다 등 다른 제휴 프로그램을 통해 연결됩니다.</p>
-      <p class="sub" style="margin-top:4px"><a href="https://link.coupang.com/a/fLDqJwiLng" target="_blank" rel="noopener sponsored" style="text-decoration:underline">🧳 쿠팡에서 여행용품 보러가기</a></p>
+      <p class="sub" style="margin-top:4px"><a href="https://link.coupang.com/a/fLDqJwiLng" target="_blank" rel="noopener sponsored" style="text-decoration:underline" data-track-event="coupang_link_clicked" data-track-props='{"location":"footer"}'>🧳 쿠팡에서 여행용품 보러가기</a></p>
       <p class="disclosure" style="margin-top:10px">쇼츠박스에 노출되는 모든 영상의 저작권은 각 채널(원작자)에게 있으며, 유튜브 공식 임베드 방식으로만 재생됩니다.</p>
       <p class="sub" style="margin-top:10px">이 서비스는 YouTube API Services를 사용합니다. (<a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener" style="text-decoration:underline">YouTube 서비스 약관</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="text-decoration:underline">Google 개인정보처리방침</a>)</p>
       <a href="privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>
@@ -167,6 +168,14 @@ function renderShortsCard(s, rank){
 
 /* 카드 안의 버튼/클릭은 매번 새로 그려지므로, 이벤트 위임으로 한 번만 등록해둔다 */
 document.addEventListener('click', (e) => {
+  // data-track-event 속성이 있는 링크/버튼은 어디에 있든 공통으로 트래킹한다 (쿠팡/아고다 링크 등)
+  const trackEl = e.target.closest('[data-track-event]');
+  if(trackEl){
+    let props = {};
+    try { props = JSON.parse(trackEl.dataset.trackProps || '{}'); } catch(err){ /* 무시 */ }
+    trackEvent(trackEl.dataset.trackEvent, props);
+  }
+
   const saveBtn = e.target.closest('.save-btn[data-dest-id]');
   if(saveBtn){
     e.preventDefault();
@@ -174,6 +183,7 @@ document.addEventListener('click', (e) => {
     const saved = toggleSavedDestination(saveBtn.dataset.destId);
     saveBtn.classList.toggle('saved', saved);
     showToast(saved ? '여행지를 저장했어요' : '저장을 취소했어요');
+    trackEvent('destination_saved', { destination_id: saveBtn.dataset.destId, action: saved ? 'save' : 'unsave' });
     return;
   }
 

@@ -87,6 +87,7 @@ function renderVideo(s){
     e.currentTarget.classList.toggle('saved', nowSaved);
     e.currentTarget.innerHTML = `${icon('bookmark', 'icon-sm')}${nowSaved ? '저장됨' : '저장'}`;
     showToast(nowSaved ? '쇼츠를 저장했어요' : '저장을 취소했어요');
+    trackEvent('video_saved', { youtube_id: s.youtubeId, action: nowSaved ? 'save' : 'unsave' });
   });
   document.getElementById('share-video-btn').addEventListener('click', () => showToast('링크가 복사됐어요 (데모)'));
 
@@ -96,16 +97,19 @@ function renderVideo(s){
     return;
   }
 
-  productListEl.innerHTML = s.products.map(p => `
+  productListEl.innerHTML = s.products.map(p => {
+    const trackProps = JSON.stringify({ location: 'product_list', product_name: p.name, youtube_id: s.youtubeId }).replace(/'/g, '&#39;');
+    return `
     <div class="product-row">
       <div class="product-thumb">🛍️</div>
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-price">${p.store}에서 비슷한 상품 찾아보기</div>
       </div>
-      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">검색</a>
+      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>검색</a>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function renderDestinationGuideBlock(dest){

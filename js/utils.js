@@ -1,3 +1,10 @@
+/* 공용 유틸 — Vercel Analytics 커스텀 이벤트 트래킹.
+   va 큐 스텁 — 스크립트 로드 전에 호출돼도 큐에 쌓였다가 로드 후 처리됨 */
+window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };
+function trackEvent(name, data){
+  try { window.va('event', { name, data }); } catch(e){ /* 트래킹 실패는 무시 — 기능에 영향 없어야 함 */ }
+}
+
 /* 공용 유틸 — SEO 메타 태그 갱신 (동적 페이지에서 title 외에 description/OG/JSON-LD도 실제 콘텐츠에 맞게 덮어쓰기 위함) */
 function setPageMeta({ description, ogTitle, ogDescription, ogImage, url, jsonLd }){
   if(description){
