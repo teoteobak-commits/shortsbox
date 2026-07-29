@@ -267,8 +267,9 @@
   position:fixed;inset:0;z-index:100;
   background:rgba(0,0,0,.85);
   display:none;
-  align-items:center;justify-content:center;
-  padding:16px;
+  align-items:flex-start;justify-content:center;
+  padding:56px 16px 24px;
+  overflow-y:auto;
 }
 .lightbox-overlay.open{display:flex}
 .lightbox{width:100%;max-width:380px;position:relative}
