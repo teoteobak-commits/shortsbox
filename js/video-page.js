@@ -98,7 +98,9 @@ function renderVideo(s){
 
   const productListEl = document.getElementById('product-list');
   if(!s.products.length){
-    productListEl.innerHTML = `<div class="empty-state" style="padding:var(--space-5)">${icon('tag', 'icon-lg')}<p>제품 정보는 아직 준비 중이에요.<br>영상에서 직접 확인해주세요.</p></div>`;
+    productListEl.innerHTML = `<div class="empty-state" style="padding:var(--space-5)">${icon('tag', 'icon-lg')}<p>이 영상 속 정확한 아이템은 아직 정리 전이에요.<br>영상 설명란에서 확인해보시거나, 비슷한 여행용품을 둘러보세요.</p>
+      <a href="https://link.coupang.com/a/fLDqJwiLng" target="_blank" rel="noopener sponsored" class="btn btn-primary btn-sm" style="margin-top:var(--space-3)" data-track-event="coupang_link_clicked" data-track-props='{"location":"product_empty_state"}'>🧳 쿠팡에서 여행용품 둘러보기</a>
+    </div>`;
     return;
   }
 
