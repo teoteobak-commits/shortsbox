@@ -1,41 +1,44 @@
 /* ==========================================================================
-   디자인 시스템 토큰 — 컨셉: 탑승권 / 공항 안내판(전광판)
-   라이트: 크라프트지 탑승권 + 딥네이비 잉크 + 앰버, 다크: 야간 전광판
-   폰트: IBM Plex Sans KR(본문) / IBM Plex Mono(코드·숫자)
+   디자인 시스템 토큰 v2 — 컨셉: 여행 스티커 콜라주 / 미니맥시멀리즘
+   깔끔한 베이스 + 비비드 그라데이션(일렉트릭 바이올렛→코랄→골드) + 오버사이즈 타이포 + 탄력있는 버튼
+   폰트: Cafe24 Ssurround(헤드라인) / Pretendard(본문) / IBM Plex Mono(숫자 배지)
    ========================================================================== */
 :root{
   color-scheme:light;
 
-  /* 색 — 라이트: 탑승권 종이 */
-  --primary:#C3781F;
-  --primary-dark:#A6650F;
-  --accent2:#B23A34;
-  --grad:linear-gradient(135deg,#1B2A4A 0%,#1B2A4A 45%,#C3781F 100%);
-  --airmail-stripe:repeating-linear-gradient(-45deg,#B23A34 0 10px,#FAF6EA 10px 20px,#1B2A4A 20px 30px,#FAF6EA 30px 40px);
-  --text:#1B2A4A;
-  --sub:#726B58;
-  --bg:#EDE6D3;
-  --surface:#FAF6EA;
-  --border:#D6C9A8;
-  --danger:#B23A34;
-  --success:#3F7D5C;
-  --toast-bg:#1B2A4A;
-  --toast-text:#F2EEDF;
+  /* 색 — 라이트 */
+  --primary:#7B2FF7;
+  --primary-dark:#6420D6;
+  --accent2:#FF5F6D;
+  --grad:linear-gradient(135deg,#7B2FF7 0%,#FF5F6D 55%,#FFC371 100%);
+  --text:#161221;
+  --sub:#6E6480;
+  --bg:#FAFAFC;
+  --surface:#FFFFFF;
+  --border:#EDEAF4;
+  --danger:#FF4D6D;
+  --success:#22C55E;
+  --toast-bg:#161221;
+  --toast-text:#FFFFFF;
 
   /* 폰트 */
-  --font-body:'IBM Plex Sans KR',sans-serif;
+  --font-body:'Pretendard',sans-serif;
+  --font-display:'Cafe24 Ssurround','Pretendard',sans-serif;
   --font-mono:'IBM Plex Mono',monospace;
 
-  /* 모서리 — 티켓/카드 느낌으로 각지게 */
-  --radius-sm:4px;
-  --radius:6px;
-  --radius-lg:10px;
+  /* 모서리 — 오버사이즈 라운드 */
+  --radius-sm:10px;
+  --radius:14px;
+  --radius-lg:24px;
   --radius-full:999px;
 
   /* 그림자 */
-  --shadow-sm:0 1px 3px rgba(27,42,74,.10);
-  --shadow-md:0 6px 20px rgba(27,42,74,.12);
-  --shadow-lg:0 12px 32px rgba(27,42,74,.18);
+  --shadow-sm:0 2px 8px rgba(22,18,33,.06);
+  --shadow-md:0 8px 24px rgba(123,47,247,.14);
+  --shadow-lg:0 16px 40px rgba(123,47,247,.20);
+
+  /* 탄력있는 트랜지션 — "젤리" 바운스 */
+  --bounce:cubic-bezier(.34,1.56,.64,1);
 
   /* 간격 */
   --space-1:4px;
@@ -53,22 +56,21 @@
   --container-w:1120px;
 }
 
-/* 다크모드 — 야간 공항 전광판. 헤더 토글로 전환, localStorage에 저장된 값을 초기 로드 시 <html data-theme>에 반영 */
+/* 다크모드 — 딥블랙 위에 네온이 더 강하게 튀는 버전 */
 :root[data-theme="dark"]{
   color-scheme:dark;
 
-  --primary:#F0B24E;
-  --primary-dark:#D89A38;
-  --accent2:#E56B62;
-  --grad:linear-gradient(135deg,#0B1122 0%,#0B1122 45%,#F0B24E 100%);
-  --airmail-stripe:repeating-linear-gradient(-45deg,#E56B62 0 10px,#19223D 10px 20px,#F0B24E 20px 30px,#19223D 30px 40px);
-  --text:#F2EEDF;
-  --sub:#9AA0BE;
-  --bg:#10182C;
-  --surface:#19223D;
-  --border:#2A3357;
+  --primary:#B98CFF;
+  --primary-dark:#9D6BFF;
+  --accent2:#FF8A8A;
+  --grad:linear-gradient(135deg,#9B5CFF 0%,#FF6F7D 55%,#FFCE7A 100%);
+  --text:#F5F3FA;
+  --sub:#A79FBE;
+  --bg:#0E0C16;
+  --surface:#181521;
+  --border:#2A2438;
 
-  --shadow-sm:0 1px 3px rgba(0,0,0,.3);
-  --shadow-md:0 6px 20px rgba(0,0,0,.4);
-  --shadow-lg:0 12px 32px rgba(0,0,0,.5);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.3);
+  --shadow-md:0 8px 24px rgba(155,92,255,.25);
+  --shadow-lg:0 16px 40px rgba(155,92,255,.32);
 }

@@ -21,33 +21,33 @@
 .icon-lg{width:28px;height:28px}
 
 /* ==========================================================================
-   버튼: 라운드
+   버튼: 필 모양 + 눌렀을 때 말랑하게 튕기는 "젤리" 인터랙션
    ========================================================================== */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  border-radius:var(--radius);
-  padding:12px 20px;
+  border-radius:var(--radius-full);
+  padding:12px 22px;
   font-weight:700;
   font-size:14px;
   border:none;
   cursor:pointer;
-  transition:.15s ease;
+  transition:transform .25s var(--bounce),filter .15s ease,box-shadow .15s ease;
   white-space:nowrap;
 }
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{filter:brightness(.95)}
-.btn-primary:active{filter:brightness(.88)}
+.btn:active{transform:scale(.93)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:var(--shadow-sm)}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
 
-.btn-gradient{background:var(--grad);color:#fff}
-.btn-gradient:hover{filter:brightness(1.06)}
+.btn-gradient{background:var(--grad);color:#fff;box-shadow:var(--shadow-md)}
+.btn-gradient:hover{filter:brightness(1.06);transform:translateY(-1px)}
 
 .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}
-.btn-outline:hover{background:#F2F2F2}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
 
 .btn-ghost{background:transparent;color:var(--text)}
-.btn-ghost:hover{background:#F2F2F2}
+.btn-ghost:hover{background:var(--bg)}
 
-.btn-sm{padding:8px 14px;font-size:13px;border-radius:var(--radius-sm)}
+.btn-sm{padding:9px 16px;font-size:13px}
 .btn-outline.saved{background:var(--primary);color:#fff;border-color:var(--primary)}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap}
 .btn-block{width:100%}
@@ -63,27 +63,25 @@
   border-bottom:1px solid var(--border);
   height:var(--header-h);
 }
-.site-header::after{
-  content:'';
-  position:absolute;left:0;right:0;top:100%;
-  height:3px;background:var(--airmail-stripe);
-}
 .header-inner{
   height:100%;
   display:flex;align-items:center;gap:var(--space-5);
 }
 .brand{
   display:flex;align-items:center;gap:8px;
-  font-weight:700;font-size:20px;
+  font-family:var(--font-display);font-weight:400;font-size:21px;
   flex-shrink:0;
 }
 .brand-mark{
-  width:32px;height:32px;border-radius:var(--radius-sm);
+  width:34px;height:34px;border-radius:var(--radius-full);
   background:var(--grad);
   display:flex;align-items:center;justify-content:center;
   font-size:16px;
+  transform:rotate(-8deg);
+  transition:transform .3s var(--bounce);
 }
-.brand-name .grad-text{font-weight:700}
+.brand:hover .brand-mark{transform:rotate(8deg) scale(1.1)}
+.brand-name .grad-text{font-weight:400}
 
 .header-search{
   flex:1;max-width:420px;
@@ -203,22 +201,30 @@
   border:1px solid var(--border);
   border-radius:var(--radius-lg);
   overflow:hidden;
-  transition:.15s;
+  transition:transform .25s var(--bounce),box-shadow .25s var(--bounce);
   position:relative;
 }
-.card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px)}
 
 .card-cover{
   height:140px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  display:flex;align-items:center;justify-content:center;
   position:relative;
+  background:var(--grad);
 }
-.card-airport-code{
-  font-family:var(--font-mono);
-  font-size:30px;font-weight:700;letter-spacing:.1em;
-  color:#fff;
+/* 스티커처럼 살짝 기울어진 원형 배지 — 호버 시 반대로 기울며 통통 튐 */
+.card-sticker{
+  width:64px;height:64px;
+  border-radius:50%;
+  background:var(--surface);
+  border:3px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+  box-shadow:var(--shadow-md);
+  transform:rotate(-8deg);
+  transition:transform .3s var(--bounce);
 }
-.card-emoji-tag{font-size:18px}
+.card:hover .card-sticker{transform:rotate(6deg) scale(1.08)}
 .card-cover .save-btn{
   position:absolute;top:10px;right:10px;
   width:32px;height:32px;border-radius:50%;
@@ -229,23 +235,7 @@
 .card-cover .save-btn.saved{background:var(--primary)}
 .card-cover .save-btn.saved .icon{color:#fff}
 
-.card-body{
-  padding:var(--space-4);
-  position:relative;
-  border-top:1.5px dashed var(--border);
-}
-/* 티켓 스텁 펀치홀 — 커버와 본문 사이 절취선 양끝에 반원 노치 */
-.card-body::before,.card-body::after{
-  content:'';
-  position:absolute;
-  top:-6px;
-  width:12px;height:12px;
-  border-radius:50%;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-}
-.card-body::before{left:-6px}
-.card-body::after{right:-6px}
+.card-body{padding:var(--space-4)}
 .card-title{font-size:15px;font-weight:700;margin-bottom:6px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .card-meta{
@@ -339,11 +329,12 @@
    ========================================================================== */
 .hero-badge{
   display:inline-flex;align-items:center;gap:6px;
-  padding:6px 14px;border-radius:var(--radius-sm);
+  padding:7px 16px;border-radius:var(--radius-full);
   background:var(--grad);color:#fff;
   font-family:var(--font-mono);
   font-size:11px;font-weight:700;letter-spacing:.05em;
   margin-bottom:var(--space-4);
+  box-shadow:var(--shadow-sm);
 }
 .section-head{
   display:flex;align-items:baseline;justify-content:space-between;
@@ -361,7 +352,7 @@
 }
 .gradient-banner h2{margin-bottom:8px}
 .gradient-banner p{color:rgba(255,255,255,.9);margin-bottom:var(--space-4)}
-.gradient-banner .btn{background:#fff;color:#262626}
+.gradient-banner .btn{background:#fff;color:var(--primary-dark)}
 
 .site-footer{
   background:var(--surface);

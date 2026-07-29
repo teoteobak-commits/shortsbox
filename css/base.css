@@ -1,5 +1,7 @@
-/* 폰트: IBM Plex Sans KR(본문) + IBM Plex Mono(코드/숫자 — 공항 코드, 조회수, 가격 등) */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
+/* 폰트: Pretendard(본문) + Cafe24 Ssurround(헤드라인, 굵고 통통 튄 라운드체) + IBM Plex Mono(숫자 배지) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://cdn.jsdelivr.net/gh/fonts-archive/Cafe24Ssurround/Cafe24Ssurround.css');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@600;700&display=swap');
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -7,6 +9,7 @@ html{-webkit-text-size-adjust:100%}
 
 body{
   font-family:var(--font-body);
+  font-weight:500;
   color:var(--text);
   background:var(--bg);
   line-height:1.5;
@@ -28,10 +31,10 @@ ul,ol{list-style:none}
 img,svg{display:block;max-width:100%}
 input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 
-h1,h2,h3{font-weight:700;line-height:1.3}
-h1{font-size:32px}
-h2{font-size:24px}
-h3{font-size:18px}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;line-height:1.25}
+h1{font-size:34px}
+h2{font-size:26px}
+h3{font-size:19px}
 p{color:var(--text)}
 
 .container{
