@@ -89,7 +89,12 @@ function renderVideo(s){
     showToast(nowSaved ? '쇼츠를 저장했어요' : '저장을 취소했어요');
     trackEvent('video_saved', { youtube_id: s.youtubeId, action: nowSaved ? 'save' : 'unsave' });
   });
-  document.getElementById('share-video-btn').addEventListener('click', () => showToast('링크가 복사됐어요 (데모)'));
+  document.getElementById('share-video-btn').addEventListener('click', () => shareUrl({
+    title: `${s.title} — 쇼츠박스`,
+    text: `${dest.name} 여행 꿀템 쇼츠 "${s.title}"`,
+    url: `https://shortsbox.kr${videoUrl(s)}`,
+    trackName: 'video_detail',
+  }));
 
   const productListEl = document.getElementById('product-list');
   if(!s.products.length){
@@ -106,7 +111,7 @@ function renderVideo(s){
         <div class="product-name">${p.name}</div>
         <div class="product-price">${p.store}에서 비슷한 상품 찾아보기</div>
       </div>
-      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>검색</a>
+      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>쿠팡에서 찾기</a>
     </div>
   `;
   }).join('');

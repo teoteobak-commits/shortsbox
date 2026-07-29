@@ -4,8 +4,8 @@
     {
       "name": "static-site",
       "runtimeExecutable": "C:\\Users\\LG\\scoop\\apps\\python\\current\\python.exe",
-      "runtimeArgs": ["-m", "http.server", "8115"],
-      "port": 8115
+      "runtimeArgs": ["-m", "http.server", "8116"],
+      "port": 8116
     }
   ]
 }

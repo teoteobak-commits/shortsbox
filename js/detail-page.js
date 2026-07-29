@@ -98,7 +98,12 @@ function renderDetail(d){
     e.currentTarget.innerHTML = `${icon('bookmark', 'icon-sm')}${nowSaved ? '저장됨' : '저장'}`;
     showToast(nowSaved ? '여행지를 저장했어요' : '저장을 취소했어요');
   });
-  document.getElementById('share-btn').addEventListener('click', () => showToast('링크가 복사됐어요 (데모)'));
+  document.getElementById('share-btn').addEventListener('click', () => shareUrl({
+    title: `${d.name} 여행 꿀템 — 쇼츠박스`,
+    text: `${d.name} 여행 꿀템 쇼츠 모음 보러가기`,
+    url: `https://shortsbox.kr${destinationUrl(d)}`,
+    trackName: 'destination_detail',
+  }));
 }
 
 function renderGuideBlock(guide){

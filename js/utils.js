@@ -55,6 +55,28 @@ function setPageMeta({ description, ogTitle, ogDescription, ogImage, url, jsonLd
   }
 }
 
+/* 공용 유틸 — 실제 공유 기능. 모바일은 네이티브 공유 시트(카톡/인스타 DM 등 원탭 공유),
+   지원 안 하면 클립보드 복사로 대체 */
+async function shareUrl({ title, text, url, trackName }){
+  const shareUrl = url || window.location.href;
+  if(navigator.share){
+    try{
+      await navigator.share({ title, text, url: shareUrl });
+      trackEvent('share_used', { method: 'native', name: trackName });
+      return;
+    }catch(err){
+      if(err.name === 'AbortError') return; // 사용자가 공유 취소함 — 토스트 띄우지 않음
+    }
+  }
+  try{
+    await navigator.clipboard.writeText(shareUrl);
+    showToast('링크가 복사됐어요');
+    trackEvent('share_used', { method: 'clipboard', name: trackName });
+  }catch(err){
+    showToast(shareUrl);
+  }
+}
+
 /* 공용 유틸 — 토스트 알림 */
 let toastTimer = null;
 function showToast(message){
