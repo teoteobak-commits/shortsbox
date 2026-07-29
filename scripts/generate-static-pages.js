@@ -86,7 +86,8 @@ function scriptsHtml(pageScript, extra = []){
   return `${tags}
 <script src="/js/lightbox.js" defer></script>
 <script src="${pageScript}" defer></script>
-<script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>`;
+<script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+<script defer src="/_vercel/insights/script.js"></script>`;
 }
 
 function destinationCardHtml(d, shortsCountByDest){
