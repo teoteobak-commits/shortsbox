@@ -22,7 +22,7 @@ async function loadData(){
 
   const productsByVideo = {};
   (products || []).forEach(p => {
-    (productsByVideo[p.youtube_id] ||= []).push({ name: p.name, price: p.price, store: p.store });
+    (productsByVideo[p.youtube_id] ||= []).push({ name: p.name, price: p.price, store: p.store, coupangUrl: p.coupang_url });
   });
 
   DESTINATIONS = (destinations || []).map(d => ({

@@ -124,6 +124,7 @@ function shortsCardHtml(s, rank){
 
 function productRowHtml(p, youtubeId){
   const trackProps = JSON.stringify({ location: 'product_list', product_name: p.name, youtube_id: youtubeId }).replace(/'/g, '&#39;');
+  const link = p.coupang_url || `https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}`;
   return `
     <div class="product-row">
       <div class="product-thumb">🛍️</div>
@@ -131,7 +132,7 @@ function productRowHtml(p, youtubeId){
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-price">${escapeHtml(p.store)}에서 비슷한 상품 찾아보기</div>
       </div>
-      <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>쿠팡에서 찾기</a>
+      <a href="${link}" target="_blank" rel="noopener sponsored" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>쿠팡에서 찾기</a>
     </div>`;
 }
 
