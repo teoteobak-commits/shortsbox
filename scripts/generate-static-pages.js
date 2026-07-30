@@ -308,12 +308,7 @@ function buildVideoPage(s, dest, products){
     },
   });
 
-  const guideBlock = guide ? `
-    <div class="editorial-guide" style="margin-bottom:var(--space-4)">
-      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
-      <h3>${escapeHtml(guide.title)}</h3>
-      <p>${escapeHtml(guide.body)}</p>
-    </div>` : '';
+  const guideBlock = guide ? guideBlockHtml(guide) : '';
 
   const productList = products.length
     ? products.map(p => productRowHtml(p, s.youtube_id)).join('')
@@ -333,13 +328,15 @@ ${head}
 <main>
   <section class="container section" style="padding-top:var(--space-5)">
     <div class="video-layout" id="video-layout">
+      <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${escapeHtml(dest.name)}</span>
+      <h1 class="video-title">${escapeHtml(s.title)}</h1>
+      <div class="video-channel">${escapeHtml(s.channel_name)} · 조회수 ${formatViews(s.views)}</div>
+
       <div class="video-embed">
         <iframe src="https://www.youtube.com/embed/${s.youtube_id}" title="${escapeHtml(s.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <a href="https://youtube.com/shorts/${s.youtube_id}" target="_blank" rel="noopener" class="video-yt-link">${icon('external', 'icon-sm')}재생이 안 되면 유튜브에서 보기</a>
-      <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${escapeHtml(dest.name)}</span>
-      <h1 class="video-title">${escapeHtml(s.title)}</h1>
-      <div class="video-channel">${escapeHtml(s.channel_name)} · 조회수 ${formatViews(s.views)}</div>
+
       <div class="btn-row" style="margin-bottom:var(--space-5)">
         <button class="btn btn-outline btn-sm" id="save-video-btn">${icon('bookmark', 'icon-sm')}저장</button>
         <button class="btn btn-outline btn-sm" id="share-video-btn">${icon('share', 'icon-sm')}공유</button>
@@ -358,7 +355,7 @@ ${head}
 
       ${guideBlock}
 
-      <a href="/travel/${destinationSlug(dest.id)}/" class="btn btn-outline btn-block">
+      <a href="/travel/${destinationSlug(dest.id)}/" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
         ${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 더 보기
       </a>
     </div>
@@ -410,6 +407,7 @@ function buildSitemap(destinations, shorts){
     { loc: `${SITE_URL}/`, priority: '1.0', changefreq: 'daily' },
     { loc: `${SITE_URL}/explore.html`, priority: '0.9', changefreq: 'daily' },
     { loc: `${SITE_URL}/privacy.html`, priority: '0.2', changefreq: 'yearly' },
+    { loc: `${SITE_URL}/about.html`, priority: '0.4', changefreq: 'monthly' },
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
     ...shorts.map(s => ({ loc: `${SITE_URL}/watch/${s.youtube_id}/`, priority: '0.6', changefreq: 'weekly' })),
   ];

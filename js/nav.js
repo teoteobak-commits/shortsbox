@@ -110,6 +110,8 @@ function renderFooter(){
       <p class="sub" style="margin-top:4px"><a href="https://link.coupang.com/a/fLDqJwiLng" target="_blank" rel="noopener sponsored" style="text-decoration:underline" data-track-event="coupang_link_clicked" data-track-props='{"location":"footer"}'>🧳 쿠팡에서 여행용품 보러가기</a></p>
       <p class="disclosure" style="margin-top:10px">쇼츠박스에 노출되는 모든 영상의 저작권은 각 채널(원작자)에게 있으며, 유튜브 공식 임베드 방식으로만 재생됩니다.</p>
       <p class="sub" style="margin-top:10px">이 서비스는 YouTube API Services를 사용합니다. (<a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener" style="text-decoration:underline">YouTube 서비스 약관</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="text-decoration:underline">Google 개인정보처리방침</a>)</p>
+      <a href="about.html" class="sub" style="text-decoration:underline">쇼츠박스 소개</a>
+      <span class="sub"> · </span>
       <a href="privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>
     </div>
   `;

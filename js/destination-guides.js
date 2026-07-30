@@ -128,6 +128,47 @@ function getDestinationGuide(id){
   return DESTINATION_GUIDES[id] || null;
 }
 
+/* 여행지 에디터 가이드(본문+최적시기+예산+짐싸기+FAQ) 전체를 렌더링.
+   여행지 상세 페이지뿐 아니라 영상 상세 페이지에서도 그대로 재사용한다 —
+   영상 페이지가 100개로 압도적으로 많아서, 자체 콘텐츠 비중을 site-wide로
+   끌어올리려면 여기서 재사용하는 게 새로 글을 쓰는 것보다 훨씬 효과적이다. */
+function renderGuideBlockHtml(guide){
+  return `
+    <div class="editorial-guide">
+      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
+      <h3>${guide.title}</h3>
+      <p>${guide.body}</p>
+
+      ${guide.bestTime || guide.budget ? `
+      <div class="guide-facts">
+        ${guide.bestTime ? `<div class="guide-fact"><span class="guide-fact-label">${icon('sun', 'icon-sm')}최적 시기</span><span>${guide.bestTime}</span></div>` : ''}
+        ${guide.budget ? `<div class="guide-fact"><span class="guide-fact-label">${icon('tag', 'icon-sm')}예산 감</span><span>${guide.budget}</span></div>` : ''}
+      </div>` : ''}
+
+      ${guide.packingList && guide.packingList.length ? `
+      <div class="guide-section">
+        <h4>${icon('suitcase', 'icon-sm')} 짐싸기 체크리스트</h4>
+        <div class="packing-list">
+          ${guide.packingList.map(item => `<span class="packing-chip">${item}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${guide.faq && guide.faq.length ? `
+      <div class="guide-section">
+        <h4>${icon('search', 'icon-sm')} 자주 묻는 질문</h4>
+        <div class="faq-list">
+          ${guide.faq.map(f => `
+            <div class="faq-item">
+              <div class="faq-q">Q. ${f.q}</div>
+              <div class="faq-a">${f.a}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { DESTINATION_GUIDES, getDestinationGuide };
 }

@@ -74,7 +74,7 @@ function renderDetail(d){
   `;
 
   const guide = getDestinationGuide(d.id);
-  document.getElementById('destination-guide').innerHTML = guide ? renderGuideBlock(guide) : '';
+  document.getElementById('destination-guide').innerHTML = guide ? renderGuideBlockHtml(guide) : '';
 
   document.getElementById('agoda-banner').innerHTML = `
     <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner" data-track-event="agoda_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
@@ -104,43 +104,6 @@ function renderDetail(d){
     url: `https://shortsbox.kr${destinationUrl(d)}`,
     trackName: 'destination_detail',
   }));
-}
-
-function renderGuideBlock(guide){
-  return `
-    <div class="editorial-guide">
-      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
-      <h3>${guide.title}</h3>
-      <p>${guide.body}</p>
-
-      ${guide.bestTime || guide.budget ? `
-      <div class="guide-facts">
-        ${guide.bestTime ? `<div class="guide-fact"><span class="guide-fact-label">${icon('sun', 'icon-sm')}최적 시기</span><span>${guide.bestTime}</span></div>` : ''}
-        ${guide.budget ? `<div class="guide-fact"><span class="guide-fact-label">${icon('tag', 'icon-sm')}예산 감</span><span>${guide.budget}</span></div>` : ''}
-      </div>` : ''}
-
-      ${guide.packingList && guide.packingList.length ? `
-      <div class="guide-section">
-        <h4>${icon('suitcase', 'icon-sm')} 짐싸기 체크리스트</h4>
-        <div class="packing-list">
-          ${guide.packingList.map(item => `<span class="packing-chip">${item}</span>`).join('')}
-        </div>
-      </div>` : ''}
-
-      ${guide.faq && guide.faq.length ? `
-      <div class="guide-section">
-        <h4>${icon('search', 'icon-sm')} 자주 묻는 질문</h4>
-        <div class="faq-list">
-          ${guide.faq.map(f => `
-            <div class="faq-item">
-              <div class="faq-q">Q. ${f.q}</div>
-              <div class="faq-a">${f.a}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>` : ''}
-    </div>
-  `;
 }
 
 function renderShorts(destinationId){

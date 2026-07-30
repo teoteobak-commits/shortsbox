@@ -51,14 +51,18 @@ function renderVideo(s){
   });
   const saved = isVideoSaved(s.youtubeId);
 
+  const guide = getDestinationGuide(dest.id);
+
   document.getElementById('video-layout').innerHTML = `
+    <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${dest.name}</span>
+    <h1 class="video-title">${s.title}</h1>
+    <div class="video-channel">${s.channelHandle} · 조회수 ${formatViews(s.views)}</div>
+
     <div class="video-embed">
       <iframe src="https://www.youtube.com/embed/${s.youtubeId}" title="${s.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
     <a href="https://youtube.com/shorts/${s.youtubeId}" target="_blank" rel="noopener" class="video-yt-link">${icon('external', 'icon-sm')}재생이 안 되면 유튜브에서 보기</a>
-    <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${dest.name}</span>
-    <h1 class="video-title">${s.title}</h1>
-    <div class="video-channel">${s.channelHandle} · 조회수 ${formatViews(s.views)}</div>
+
     <div class="btn-row" style="margin-bottom:var(--space-5)">
       <button class="btn btn-outline btn-sm ${saved ? 'saved' : ''}" id="save-video-btn">${icon('bookmark', 'icon-sm')}${saved ? '저장됨' : '저장'}</button>
       <button class="btn btn-outline btn-sm" id="share-video-btn">${icon('share', 'icon-sm')}공유</button>
@@ -75,9 +79,9 @@ function renderVideo(s){
       <p>${CURATION_NOTE}</p>
     </div>
 
-    ${renderDestinationGuideBlock(dest)}
+    ${guide ? renderGuideBlockHtml(guide) : ''}
 
-    <a href="${destinationUrl(dest)}" class="btn btn-outline btn-block">
+    <a href="${destinationUrl(dest)}" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
       ${icon('compass', 'icon-sm')}${dest.name} 여행 꿀템 더 보기
     </a>
   `;
@@ -117,16 +121,4 @@ function renderVideo(s){
     </div>
   `;
   }).join('');
-}
-
-function renderDestinationGuideBlock(dest){
-  const guide = getDestinationGuide(dest.id);
-  if(!guide) return '';
-  return `
-    <div class="editorial-guide" style="margin-bottom:var(--space-4)">
-      <span class="editorial-guide-tag">쇼츠박스 에디터 노트</span>
-      <h3>${guide.title}</h3>
-      <p>${guide.body}</p>
-    </div>
-  `;
 }
