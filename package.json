@@ -5,7 +5,8 @@
   "description": "쇼츠박스 — 정적 페이지 생성 스크립트",
   "scripts": {
     "generate": "node scripts/generate-static-pages.js",
-    "generate:og-image": "node scripts/generate-og-image.js"
+    "generate:og-image": "node scripts/generate-og-image.js",
+    "generate:card-news": "node scripts/generate-card-news.js"
   },
   "devDependencies": {
     "@napi-rs/canvas": "^1.0.3"
