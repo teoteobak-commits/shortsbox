@@ -105,7 +105,7 @@ function renderDestinationCard(d){
   const saved = isDestinationSaved(d.id);
   return `
     <a href="${destinationUrl(d)}" class="card">
-      <div class="card-cover">
+      <div class="card-cover" style="--cover-photo:url('/assets/destinations/${destinationSlug(d.id)}.jpg')">
         <span class="card-sticker">${d.emoji}</span>
         <button class="save-btn ${saved ? 'saved' : ''}" data-dest-id="${d.id}" aria-label="여행지 저장">${icon('bookmark')}</button>
       </div>

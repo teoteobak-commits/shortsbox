@@ -96,7 +96,7 @@ function scriptsHtml(pageScript, extra = []){
 function destinationCardHtml(d, shortsCountByDest){
   return `
     <a href="/travel/${destinationSlug(d.id)}/" class="card">
-      <div class="card-cover">
+      <div class="card-cover" style="--cover-photo:url('/assets/destinations/${destinationSlug(d.id)}.jpg')">
         <span class="card-sticker">${d.emoji}</span>
       </div>
       <div class="card-body">
