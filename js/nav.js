@@ -21,10 +21,6 @@ function renderHeader(activePage){
         <span class="brand-mark">📦</span>
         <span class="brand-name">쇼츠박스</span>
       </a>
-      <form class="header-search" id="header-search-form">
-        ${icon('search')}
-        <input type="search" id="header-search-input" placeholder="여행지를 검색해보세요" aria-label="검색">
-      </form>
       <nav class="header-nav">${navHtml}</nav>
       <div class="header-actions">
         <button class="btn btn-ghost btn-icon" id="theme-toggle" aria-label="다크모드 전환"></button>
@@ -33,27 +29,7 @@ function renderHeader(activePage){
         </a>
       </div>
     </div>
-    <div class="header-mobile-search">
-      <form class="header-search" id="header-search-form-mobile">
-        ${icon('search')}
-        <input type="search" id="header-search-input-mobile" placeholder="여행지를 검색해보세요" aria-label="검색">
-      </form>
-    </div>
   `;
-
-  const goSearch = (value) => {
-    const q = value.trim();
-    if(q) trackEvent('search_used', { query: q });
-    window.location.href = 'explore.html' + (q ? `?q=${encodeURIComponent(q)}` : '');
-  };
-  document.getElementById('header-search-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    goSearch(document.getElementById('header-search-input').value);
-  });
-  document.getElementById('header-search-form-mobile').addEventListener('submit', (e) => {
-    e.preventDefault();
-    goSearch(document.getElementById('header-search-input-mobile').value);
-  });
 
   updateThemeToggleIcon();
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);

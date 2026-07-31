@@ -83,26 +83,6 @@
 .brand:hover .brand-mark{transform:rotate(8deg) scale(1.1)}
 .brand-name .grad-text{font-weight:400}
 
-.header-search{
-  flex:1;max-width:420px;
-  display:none;
-  position:relative;
-}
-@media (min-width:900px){.header-search{display:block}}
-.header-search input{
-  width:100%;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:var(--radius-full);
-  padding:10px 16px 10px 40px;
-  font-size:14px;
-}
-.header-search input:focus{outline:2px solid var(--primary);outline-offset:1px}
-.header-search .icon{
-  position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  width:18px;height:18px;color:var(--sub);
-}
-
 .header-nav{
   display:none;
   align-items:center;gap:var(--space-5);
@@ -121,15 +101,6 @@
   margin-left:auto;
 }
 @media (min-width:900px){.header-actions{margin-left:0}}
-
-.header-mobile-search{
-  display:flex;
-  border-top:1px solid var(--border);
-  padding:8px 20px;
-  background:var(--surface);
-}
-@media (min-width:900px){.header-mobile-search{display:none}}
-.header-mobile-search .header-search{display:block;max-width:none;width:100%}
 
 /* ==========================================================================
    하단 탭바 (모바일)
