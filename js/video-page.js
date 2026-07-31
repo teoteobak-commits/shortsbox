@@ -57,6 +57,7 @@ function renderVideo(s){
     <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${dest.name}</span>
     <h1 class="video-title">${s.title}</h1>
     <div class="video-channel">${s.channelHandle} · 조회수 ${formatViews(s.views)}</div>
+    ${VIDEO_NOTES[s.youtubeId] ? `<p class="video-note">${VIDEO_NOTES[s.youtubeId]}</p>` : ''}
 
     <div class="video-embed">
       <iframe src="https://www.youtube.com/embed/${s.youtubeId}" title="${s.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

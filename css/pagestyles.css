@@ -197,6 +197,14 @@
 .video-meta-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .video-title{font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.4}
 .video-channel{font-size:13px;color:var(--sub);margin-bottom:6px}
+.video-note{
+  font-size:14px;line-height:1.6;color:var(--text);
+  padding:10px 14px;
+  margin:var(--space-3) 0 var(--space-4);
+  background:var(--bg);
+  border-left:3px solid var(--primary);
+  border-radius:0 var(--radius) var(--radius) 0;
+}
 .video-hashtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-5)}
 .video-hashtags span{font-size:12px;color:var(--primary);font-weight:600}
 

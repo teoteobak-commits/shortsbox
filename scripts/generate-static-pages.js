@@ -9,6 +9,7 @@ const path = require('path');
 
 const { icon } = require('../assets/icons.js');
 const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
+const { VIDEO_NOTES } = require('../js/video-notes.js');
 const { getAgodaUrl } = require('../js/affiliate-config.js');
 const { destinationSlug } = require('../js/slugs.js');
 
@@ -332,6 +333,7 @@ ${head}
       <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${escapeHtml(dest.name)}</span>
       <h1 class="video-title">${escapeHtml(s.title)}</h1>
       <div class="video-channel">${escapeHtml(s.channel_name)} · 조회수 ${formatViews(s.views)}</div>
+      ${VIDEO_NOTES[s.youtube_id] ? `<p class="video-note">${escapeHtml(VIDEO_NOTES[s.youtube_id])}</p>` : ''}
 
       <div class="video-embed">
         <iframe src="https://www.youtube.com/embed/${s.youtube_id}" title="${escapeHtml(s.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -374,7 +376,7 @@ ${head}
 <footer id="site-footer" class="site-footer"></footer>
 <nav id="site-bottomnav" class="bottom-nav"></nav>
 
-${scriptsHtml('/js/video-page.js', ['/js/destination-guides.js'])}
+${scriptsHtml('/js/video-page.js', ['/js/destination-guides.js', '/js/video-notes.js'])}
 </body>
 </html>
 `;
