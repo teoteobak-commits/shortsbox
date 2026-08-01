@@ -116,6 +116,24 @@ function drawSub(ctx, cx, startY, text, fontSize = 34, lineHeight = 1.4){
   lines.forEach((line, i) => ctx.fillText(line, cx, startY + i * fontSize * lineHeight));
 }
 
+/* 카드 하단에 항상 고정으로 박아두는 사이트 주소 배지 — 헤드라인/보조문구와 무관하게 항상 노출 */
+function drawUrlBadge(ctx, cx, bottomY){
+  const text = 'shortsbox.kr';
+  ctx.font = '38px "Cafe24 Ssurround"';
+  const textW = ctx.measureText(text).width;
+  const padX = 40, h = 38 + 40;
+  const w = textW + padX * 2;
+  const y = bottomY - h;
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(cx - w / 2, y, w, h, h / 2) : ctx.rect(cx - w / 2, y, w, h);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  ctx.fillStyle = '#7B2FF7';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, cx, y + h / 2 + 3);
+}
+
 async function main(){
   const [slug, headline, subline] = process.argv.slice(2);
   if(!slug || !headline){
@@ -147,7 +165,8 @@ async function main(){
   }
   const startY = 830 - (lines.length - 1) * fontSize * 1.25 / 2;
   const headlineEnd = drawHeadline(ctx, CX, startY, lines, fontSize);
-  drawSub(ctx, CX, headlineEnd + 80, subline || 'shortsbox.kr', 32);
+  if(subline) drawSub(ctx, CX, headlineEnd + 80, subline, 32);
+  drawUrlBadge(ctx, CX, H - 90);
 
   const today = new Date().toISOString().slice(0, 10);
   const outName = `daily-${slug}-${today}.png`;
