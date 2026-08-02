@@ -41,7 +41,7 @@
    상세 페이지
    ========================================================================== */
 .detail-hero{
-  background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),var(--grad);
+  background-image:linear-gradient(var(--scrim),var(--scrim)),var(--grad);
   padding:var(--space-6) 0 var(--space-5);
   color:#fff;
 }
@@ -165,7 +165,7 @@
 .shorts-thumb .rank-badge{
   position:absolute;top:8px;left:8px;
   min-width:24px;height:24px;padding:0 6px;border-radius:var(--radius-full);
-  background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),var(--grad);color:#fff;
+  background-image:linear-gradient(var(--scrim),var(--scrim)),var(--grad);color:#fff;
   font-family:var(--font-mono);
   font-size:12px;font-weight:700;
   display:flex;align-items:center;justify-content:center;
@@ -219,7 +219,7 @@
 .product-price strong{color:var(--primary);font-weight:700}
 .rank-num{
   border-radius:var(--radius-full);
-  background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),var(--grad);
+  background-image:linear-gradient(var(--scrim),var(--scrim)),var(--grad);
   color:#fff;font-weight:800;font-size:15px;
 }
 
@@ -227,7 +227,7 @@
    마이페이지
    ========================================================================== */
 .profile-hero{
-  background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),var(--grad);
+  background-image:linear-gradient(var(--scrim),var(--scrim)),var(--grad);
   padding:var(--space-6) 0;
   color:#fff;
 }

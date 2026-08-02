@@ -18,6 +18,10 @@
   --border:#EDEAF4;
   --danger:#FF4D6D;
   --success:#22C55E;
+  --warning:#F5A524;
+  --info:#3B82F6;
+  --focus-ring:var(--primary);
+  --scrim:rgba(0,0,0,.3); /* 그라데이션 위 흰 텍스트용 대비 보정 스크림 */
   --toast-bg:#161221;
   --toast-text:#FFFFFF;
 
@@ -25,6 +29,18 @@
   --font-body:'Pretendard',sans-serif;
   --font-display:'Cafe24 Ssurround','Pretendard',sans-serif;
   --font-mono:'IBM Plex Mono',monospace;
+
+  /* 타입 스케일 — 기존 사용값을 기준으로 정리한 참조 램프.
+     기존 컴포넌트는 아직 개별 px값을 쓰는 곳이 많음(레거시) — 새로 만들 때 이 토큰을 우선 사용할 것 */
+  --font-size-2xs:10px;   /* 뱃지/태그 라벨 */
+  --font-size-xs:11px;    /* 메타 텍스트, 해시태그 */
+  --font-size-sm:12.5px;  /* 보조 정보 */
+  --font-size-base:14px;  /* 기본 서브 텍스트(.sub) */
+  --font-size-md:16px;    /* 본문 강조 */
+  --font-size-lg:19px;    /* h3 */
+  --font-size-xl:26px;    /* h2 */
+  --font-size-2xl:34px;   /* h1(모바일) */
+  --font-size-3xl:48px;   /* h1(데스크탑, 히어로) */
 
   /* 모서리 — 오버사이즈 라운드 */
   --radius-sm:10px;
@@ -39,6 +55,10 @@
 
   /* 탄력있는 트랜지션 — "젤리" 바운스 */
   --bounce:cubic-bezier(.34,1.56,.64,1);
+  --duration-fast:.15s;
+  --duration-normal:.25s;
+  --duration-slow:.3s;
+  --easing-default:ease;
 
   /* 간격 */
   --space-1:4px;
@@ -54,6 +74,7 @@
   --header-h:64px;
   --bottomnav-h:60px;
   --container-w:1120px;
+  --max-width-content:720px; /* about/privacy 같은 읽기 전용 텍스트 페이지용 */
 }
 
 /* 다크모드 — 딥블랙 위에 네온이 더 강하게 튀는 버전 */
