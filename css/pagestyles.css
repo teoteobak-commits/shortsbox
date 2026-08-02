@@ -223,7 +223,7 @@
    마이페이지
    ========================================================================== */
 .profile-hero{
-  background:var(--grad);
+  background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),var(--grad);
   padding:var(--space-6) 0;
   color:#fff;
 }

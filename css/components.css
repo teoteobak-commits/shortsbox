@@ -319,7 +319,7 @@
 .section-head .more-link{font-size:13px;font-weight:700;color:var(--primary);flex-shrink:0}
 
 .gradient-banner{
-  background:var(--grad);
+  background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),var(--grad);
   border-radius:var(--radius-lg);
   padding:var(--space-6);
   color:#fff;
