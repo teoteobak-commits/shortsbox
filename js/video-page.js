@@ -21,7 +21,7 @@ function resolveVideoId(){
   if(!short){
     document.getElementById('video-layout').innerHTML = `
       <h1>영상을 찾을 수 없어요</h1>
-      <p style="margin-top:8px"><a href="explore.html" style="text-decoration:underline">탐색으로 돌아가기</a></p>
+      <p style="margin-top:8px"><a href="/explore.html" style="text-decoration:underline">탐색으로 돌아가기</a></p>
     `;
   } else {
     renderVideo(short);

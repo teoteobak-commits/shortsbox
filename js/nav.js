@@ -2,9 +2,9 @@
    반응형 혼합형: 데스크탑(900px~)은 상단 헤더 내비, 모바일은 하단 탭바로 전환 */
 
 const NAV_LINKS = [
-  { href: 'index.html', page: 'home', label: '홈', icon: 'home' },
-  { href: 'explore.html', page: 'explore', label: '탐색', icon: 'compass' },
-  { href: 'mypage.html', page: 'mypage', label: '마이페이지', icon: 'user' },
+  { href: '/index.html', page: 'home', label: '홈', icon: 'home' },
+  { href: '/explore.html', page: 'explore', label: '탐색', icon: 'compass' },
+  { href: '/mypage.html', page: 'mypage', label: '마이페이지', icon: 'user' },
 ];
 
 function renderHeader(activePage){
@@ -17,14 +17,14 @@ function renderHeader(activePage){
 
   el.innerHTML = `
     <div class="container header-inner">
-      <a href="index.html" class="brand">
+      <a href="/index.html" class="brand">
         <span class="brand-mark">📦</span>
         <span class="brand-name">쇼츠박스</span>
       </a>
       <nav class="header-nav">${navHtml}</nav>
       <div class="header-actions">
         <button class="btn btn-ghost btn-icon" id="theme-toggle" aria-label="다크모드 전환"></button>
-        <a class="btn btn-ghost btn-icon" href="mypage.html" aria-label="저장한 목록">
+        <a class="btn btn-ghost btn-icon" href="/mypage.html" aria-label="저장한 목록">
           ${icon('bookmark')}
         </a>
       </div>
@@ -86,9 +86,9 @@ function renderFooter(){
       <p class="sub" style="margin-top:4px"><a href="https://link.coupang.com/a/fLDqJwiLng" target="_blank" rel="noopener sponsored" style="text-decoration:underline" data-track-event="coupang_link_clicked" data-track-props='{"location":"footer"}'>🧳 쿠팡에서 여행용품 보러가기</a></p>
       <p class="disclosure" style="margin-top:10px">쇼츠박스에 노출되는 모든 영상의 저작권은 각 채널(원작자)에게 있으며, 유튜브 공식 임베드 방식으로만 재생됩니다.</p>
       <p class="sub" style="margin-top:10px">이 서비스는 YouTube API Services를 사용합니다. (<a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener" style="text-decoration:underline">YouTube 서비스 약관</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="text-decoration:underline">Google 개인정보처리방침</a>)</p>
-      <a href="about.html" class="sub" style="text-decoration:underline">쇼츠박스 소개</a>
+      <a href="/about.html" class="sub" style="text-decoration:underline">쇼츠박스 소개</a>
       <span class="sub"> · </span>
-      <a href="privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>
+      <a href="/privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>
     </div>
   `;
 }

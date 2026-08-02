@@ -19,7 +19,7 @@ function resolveDestinationId(){
     document.getElementById('detail-hero').innerHTML = `
       <div class="container">
         <h1>여행지를 찾을 수 없어요</h1>
-        <p style="margin-top:8px"><a href="explore.html" style="text-decoration:underline">탐색으로 돌아가기</a></p>
+        <p style="margin-top:8px"><a href="/explore.html" style="text-decoration:underline">탐색으로 돌아가기</a></p>
       </div>`;
   } else {
     renderDetail(destination);
