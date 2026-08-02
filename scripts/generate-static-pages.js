@@ -49,6 +49,14 @@ function thumbUrl(s){
 function headHtml({ title, description, ogTitle, ogDescription, ogImage, ogImageWidth, ogImageHeight, ogType, canonicalUrl, jsonLd }){
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VKCFJ8GSRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VKCFJ8GSRX');
+</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5788194649735645"
      crossorigin="anonymous"></script>
 <script>
