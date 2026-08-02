@@ -144,6 +144,12 @@ function guideBlockHtml(guide){
         ${guide.budget ? `<div class="guide-fact"><span class="guide-fact-label">${icon('tag', 'icon-sm')}예산 감</span><span>${escapeHtml(guide.budget)}</span></div>` : ''}
       </div>` : '';
 
+  const sections = (guide.sections && guide.sections.length) ? guide.sections.map(sec => `
+      <div class="guide-section">
+        <h4>${escapeHtml(sec.heading)}</h4>
+        <p>${escapeHtml(sec.body)}</p>
+      </div>`).join('') : '';
+
   const packing = (guide.packingList && guide.packingList.length) ? `
       <div class="guide-section">
         <h4>${icon('suitcase', 'icon-sm')} 짐싸기 체크리스트</h4>
@@ -170,6 +176,7 @@ function guideBlockHtml(guide){
       <h3>${escapeHtml(guide.title)}</h3>
       <p>${escapeHtml(guide.body)}</p>
       ${facts}
+      ${sections}
       ${packing}
       ${faq}
     </div>`;
