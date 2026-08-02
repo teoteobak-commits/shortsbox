@@ -25,6 +25,12 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://shortsbox.kr/ranking/</loc>
+    <lastmod>2026-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://shortsbox.kr/travel/jeju/</loc>
     <lastmod>2026-08-02</lastmod>
     <changefreq>weekly</changefreq>

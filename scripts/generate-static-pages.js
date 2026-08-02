@@ -389,6 +389,102 @@ ${scriptsHtml('/js/video-page.js', ['/js/destination-guides.js', '/js/video-note
 `;
 }
 
+function rankingRowHtml(entry, rank){
+  const { product: p, short: s, dest } = entry;
+  const trackProps = JSON.stringify({ location: 'ranking_page', product_name: p.name, youtube_id: s.youtube_id }).replace(/'/g, '&#39;');
+  const link = p.coupang_url || `https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}`;
+  return `
+    <div class="product-row">
+      <div class="product-thumb rank-num">${rank}</div>
+      <div class="product-info">
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        <div class="product-price"><a href="/watch/${s.youtube_id}/" style="text-decoration:underline">${dest.emoji} ${escapeHtml(dest.name)}</a> 쇼츠 · 조회수 ${formatViews(s.views)}</div>
+      </div>
+      <a href="${link}" target="_blank" rel="noopener sponsored" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>쿠팡에서 찾기</a>
+    </div>`;
+}
+
+function buildRankingPage(destinations, shorts, products){
+  const shortsById = {};
+  for(const s of shorts) shortsById[s.youtube_id] = s;
+  const destById = {};
+  for(const d of destinations) destById[d.id] = d;
+
+  const entries = products
+    .map(p => {
+      const short = shortsById[p.youtube_id];
+      const dest = short && destById[short.destination_id];
+      return short && dest ? { product: p, short, dest } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.short.views - a.short.views)
+    .slice(0, 30);
+
+  const description = '여행 유튜버들이 쇼츠에서 소개한 여행 아이템을 영상 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.';
+  const canonicalUrl = `${SITE_URL}/ranking/`;
+
+  const head = headHtml({
+    title: '여행 유튜버 추천템 랭킹 TOP 30 — 쇼츠박스',
+    description,
+    ogType: 'website',
+    canonicalUrl,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: '여행 유튜버 추천템 랭킹',
+      itemListElement: entries.map((e, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: e.product.name,
+        url: `${SITE_URL}/watch/${e.short.youtube_id}/`,
+      })),
+    },
+  });
+
+  const rows = entries.map((e, i) => rankingRowHtml(e, i + 1)).join('');
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+${head}
+</head>
+<body data-page="ranking">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section class="container" style="padding-top:var(--space-5)">
+    <h1 style="font-size:22px;margin-bottom:8px">여행 유튜버들이 진짜 많이 추천한 아이템</h1>
+    <p class="sub" style="margin-bottom:var(--space-4)">쇼츠에 나온 아이템을 그 영상의 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.</p>
+
+    <div class="product-list">${rows}</div>
+
+    <div class="ad-slot" style="margin-top:var(--space-4)">
+      <span class="ad-slot-label">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-x83Zj1FkAxgtkkHL"
+        data-ad-width="300"
+        data-ad-height="250"></ins>
+    </div>
+
+    <a href="/explore.html" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
+      ${icon('compass', 'icon-sm')}목적지별로 더 둘러보기
+    </a>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+<script src="/assets/icons.js" defer></script>
+<script src="/js/utils.js" defer></script>
+<script src="/js/nav.js" defer></script>
+<script>document.addEventListener('DOMContentLoaded', () => initLayout('ranking'));</script>
+</body>
+</html>
+`;
+}
+
 function writeFile(relPath, content){
   const full = path.join(ROOT, relPath);
   fs.mkdirSync(path.dirname(full), { recursive: true });
@@ -418,6 +514,7 @@ function buildSitemap(destinations, shorts){
     { loc: `${SITE_URL}/explore.html`, priority: '0.9', changefreq: 'daily' },
     { loc: `${SITE_URL}/privacy.html`, priority: '0.2', changefreq: 'yearly' },
     { loc: `${SITE_URL}/about.html`, priority: '0.4', changefreq: 'monthly' },
+    { loc: `${SITE_URL}/ranking/`, priority: '0.7', changefreq: 'weekly' },
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
     ...shorts.map(s => ({ loc: `${SITE_URL}/watch/${s.youtube_id}/`, priority: '0.6', changefreq: 'weekly' })),
   ];
@@ -477,6 +574,8 @@ async function main(){
     writeFile(`watch/${s.youtube_id}/index.html`, html);
     videoPages++;
   }
+
+  writeFile('ranking/index.html', buildRankingPage(destinations, shorts, products));
 
   writeFile('sitemap.xml', buildSitemap(destinations, shorts));
 
