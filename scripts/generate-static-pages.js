@@ -377,14 +377,6 @@ ${head}
         ${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 더 보기
       </a>
     </div>
-
-    <div class="ad-slot" style="max-width:420px;margin:0 auto">
-      <span class="ad-slot-label">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-x83Zj1FkAxgtkkHL"
-        data-ad-width="300"
-        data-ad-height="250"></ins>
-    </div>
   </section>
 </main>
 
