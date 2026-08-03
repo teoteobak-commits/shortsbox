@@ -32,7 +32,7 @@ function openVideoLightbox(youtubeId){
   trackEvent('video_played', { youtube_id: s.youtubeId, destination_id: s.destinationId, source: 'lightbox' });
 
   document.getElementById('lightbox-embed').innerHTML = `
-    <iframe src="https://www.youtube.com/embed/${s.youtubeId}?autoplay=1" title="${s.title}"
+    <iframe src="https://www.youtube.com/embed/${s.youtubeId}?autoplay=1" title="${escapeHtml(s.title)}"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   `;
   document.getElementById('lightbox-title').textContent = s.title;

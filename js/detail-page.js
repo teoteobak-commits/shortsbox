@@ -61,9 +61,9 @@ function renderDetail(d){
     <div class="container">
       <div class="detail-cover">${d.emoji}</div>
       <div class="detail-info">
-        <h1>${d.name} 여행 꿀템</h1>
+        <h1>${escapeHtml(d.name)} 여행 꿀템</h1>
         <div class="detail-meta">
-          <span>${d.country}</span>
+          <span>${escapeHtml(d.country)}</span>
         </div>
         <div class="detail-actions">
           <button class="btn btn-outline ${saved ? 'saved' : ''}" id="save-btn">${icon('bookmark', 'icon-sm')}${saved ? '저장됨' : '저장'}</button>
@@ -80,7 +80,7 @@ function renderDetail(d){
     <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner" data-track-event="agoda_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
       <div class="agoda-banner-text">
         <span class="agoda-banner-tag">제휴 · AD</span>
-        <div class="agoda-banner-title">${d.name} 숙소 최저가 보기</div>
+        <div class="agoda-banner-title">${escapeHtml(d.name)} 숙소 최저가 보기</div>
         <div class="agoda-banner-sub">아고다에서 지금 예약하면 더 저렴해요</div>
       </div>
       <span class="agoda-banner-icon">🏨</span>

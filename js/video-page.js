@@ -54,13 +54,13 @@ function renderVideo(s){
   const guide = getDestinationGuide(dest.id);
 
   document.getElementById('video-layout').innerHTML = `
-    <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${dest.name}</span>
-    <h1 class="video-title">${s.title}</h1>
-    <div class="video-channel">${s.channelHandle} · 조회수 ${formatViews(s.views)}</div>
-    ${VIDEO_NOTES[s.youtubeId] ? `<p class="video-note">${VIDEO_NOTES[s.youtubeId]}</p>` : ''}
+    <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${escapeHtml(dest.name)}</span>
+    <h1 class="video-title">${escapeHtml(s.title)}</h1>
+    <div class="video-channel">${escapeHtml(s.channelHandle)} · 조회수 ${formatViews(s.views)}</div>
+    ${VIDEO_NOTES[s.youtubeId] ? `<p class="video-note">${escapeHtml(VIDEO_NOTES[s.youtubeId])}</p>` : ''}
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/${s.youtubeId}" title="${s.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/${s.youtubeId}" title="${escapeHtml(s.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
     <a href="https://youtube.com/shorts/${s.youtubeId}" target="_blank" rel="noopener" class="video-yt-link">${icon('external', 'icon-sm')}재생이 안 되면 유튜브에서 보기</a>
 
@@ -83,7 +83,7 @@ function renderVideo(s){
     ${guide ? renderGuideBlockHtml(guide) : ''}
 
     <a href="${destinationUrl(dest)}" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
-      ${icon('compass', 'icon-sm')}${dest.name} 여행 꿀템 더 보기
+      ${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 더 보기
     </a>
   `;
 
@@ -116,8 +116,8 @@ function renderVideo(s){
     <div class="product-row">
       <div class="product-thumb">🛍️</div>
       <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-price">${p.store}에서 비슷한 상품 찾아보기</div>
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        <div class="product-price">${escapeHtml(p.store)}에서 비슷한 상품 찾아보기</div>
       </div>
       <a href="${link}" target="_blank" rel="noopener sponsored" class="btn btn-primary btn-sm" data-track-event="coupang_link_clicked" data-track-props='${trackProps}'>쿠팡에서 찾기</a>
     </div>

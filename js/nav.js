@@ -112,9 +112,9 @@ function renderDestinationCard(d){
         <button class="save-btn ${saved ? 'saved' : ''}" data-dest-id="${d.id}" aria-label="여행지 저장">${icon('bookmark')}</button>
       </div>
       <div class="card-body">
-        <div class="card-title">${d.name}</div>
+        <div class="card-title">${escapeHtml(d.name)}</div>
         <div class="card-meta">
-          <span>${d.country}</span>
+          <span>${escapeHtml(d.country)}</span>
         </div>
         <div class="card-footer">
           <span class="stat">${icon('tag', 'icon-sm')}꿀템 쇼츠 ${shortsCount}개</span>
@@ -130,17 +130,17 @@ function renderShortsCard(s, rank){
   const d = getDestination(s.destinationId);
   const badge = rank
     ? `<span class="rank-badge">${rank}</span>`
-    : `<span class="common-badge">${d.emoji} ${d.name}</span>`;
+    : `<span class="common-badge">${d.emoji} ${escapeHtml(d.name)}</span>`;
   return `
     <a href="${videoUrl(s)}" class="shorts-card" data-youtube-id="${s.youtubeId}">
       <div class="shorts-thumb">
-        <img src="${thumbUrl(s)}" alt="${s.title}" loading="lazy">
+        <img src="${thumbUrl(s)}" alt="${escapeHtml(s.title)}" loading="lazy">
         ${badge}
         <span class="play-badge">${icon('play', 'icon-sm')}</span>
       </div>
       <div class="shorts-card-body">
-        <div class="shorts-card-title">${s.title}</div>
-        <div class="shorts-card-meta">${s.channelHandle} · 조회수 ${formatViews(s.views)}</div>
+        <div class="shorts-card-title">${escapeHtml(s.title)}</div>
+        <div class="shorts-card-meta">${escapeHtml(s.channelHandle)} · 조회수 ${formatViews(s.views)}</div>
       </div>
     </a>
   `;

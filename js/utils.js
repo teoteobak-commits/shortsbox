@@ -1,3 +1,9 @@
+/* 공용 유틸 — HTML 이스케이프. 영상 제목/채널명 등은 매일 자동으로 유튜브에서 수집되는
+   외부 데이터라, innerHTML에 그대로 넣기 전에 반드시 이스케이프해야 함(저장형 XSS 방지) */
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 /* 공용 유틸 — Vercel Analytics 커스텀 이벤트 트래킹.
    va 큐 스텁 — 스크립트 로드 전에 호출돼도 큐에 쌓였다가 로드 후 처리됨 */
 window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };
