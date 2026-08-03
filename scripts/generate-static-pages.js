@@ -276,6 +276,10 @@ ${head}
     </div>
     <div id="shorts-grid" class="shorts-grid">${shortsGrid}</div>
 
+    <a href="/ranking/${destinationSlug(d.id)}/" class="btn btn-outline btn-block" style="margin-bottom:var(--space-5)">
+      ${icon('tag', 'icon-sm')}${escapeHtml(d.name)} 여행템 랭킹 보기
+    </a>
+
     <div class="ad-slot">
       <span class="ad-slot-label">AD</span>
       <ins class="kakao_ad_area" style="display:none;"
@@ -467,9 +471,83 @@ ${head}
         data-ad-height="250"></ins>
     </div>
 
+    <div class="section-head" style="margin-top:var(--space-6)">
+      <h2 style="font-size:16px">목적지별 랭킹도 있어요</h2>
+    </div>
+    <div class="card-grid" style="margin-bottom:var(--space-4)">
+      ${destinations.map(d => `
+        <a href="/ranking/${destinationSlug(d.id)}/" class="card">
+          <div class="card-body" style="padding:var(--space-3) var(--space-4)">
+            <div class="card-title" style="font-size:14px">${d.emoji} ${escapeHtml(d.name)}</div>
+          </div>
+        </a>`).join('')}
+    </div>
+
     <a href="/explore.html" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
       ${icon('compass', 'icon-sm')}목적지별로 더 둘러보기
     </a>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+<nav id="site-bottomnav" class="bottom-nav"></nav>
+
+<script src="/assets/icons.js" defer></script>
+<script src="/js/utils.js" defer></script>
+<script src="/js/nav.js" defer></script>
+<script>document.addEventListener('DOMContentLoaded', () => initLayout('ranking'));</script>
+</body>
+</html>
+`;
+}
+
+function buildDestinationRankingPage(dest, entries){
+  const description = `${dest.name} 여행 유튜버들이 쇼츠에서 소개한 아이템을 영상 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.`;
+  const slug = destinationSlug(dest.id);
+  const canonicalUrl = `${SITE_URL}/ranking/${slug}/`;
+
+  const head = headHtml({
+    title: `${dest.name} 여행템 랭킹 — 쇼츠박스`,
+    description,
+    ogType: 'website',
+    canonicalUrl,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `${dest.name} 여행 유튜버 추천템 랭킹`,
+      itemListElement: entries.map((e, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: e.product.name,
+        url: `${SITE_URL}/watch/${e.short.youtube_id}/`,
+      })),
+    },
+  });
+
+  const rows = entries.length
+    ? entries.map((e, i) => rankingRowHtml(e, i + 1)).join('')
+    : `<div class="empty-shorts">아직 정리된 아이템이 없어요.</div>`;
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+${head}
+</head>
+<body data-page="ranking">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section class="container" style="padding-top:var(--space-5)">
+    <h1 style="font-size:22px;margin-bottom:8px">${dest.emoji} ${escapeHtml(dest.name)} 여행템 랭킹</h1>
+    <p class="sub" style="margin-bottom:var(--space-4)">${escapeHtml(dest.name)} 쇼츠에 나온 아이템을 그 영상의 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.</p>
+
+    <div class="product-list">${rows}</div>
+
+    <div class="btn-row" style="margin-top:var(--space-4)">
+      <a href="/travel/${slug}/" class="btn btn-outline" style="flex:1">${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 쇼츠 보기</a>
+      <a href="/ranking/" class="btn btn-outline" style="flex:1">전체 랭킹 보기</a>
+    </div>
   </section>
 </main>
 
@@ -515,6 +593,7 @@ function buildSitemap(destinations, shorts){
     { loc: `${SITE_URL}/privacy.html`, priority: '0.2', changefreq: 'yearly' },
     { loc: `${SITE_URL}/about.html`, priority: '0.4', changefreq: 'monthly' },
     { loc: `${SITE_URL}/ranking/`, priority: '0.7', changefreq: 'weekly' },
+    ...destinations.map(d => ({ loc: `${SITE_URL}/ranking/${destinationSlug(d.id)}/`, priority: '0.65', changefreq: 'weekly' })),
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
     ...shorts.map(s => ({ loc: `${SITE_URL}/watch/${s.youtube_id}/`, priority: '0.6', changefreq: 'weekly' })),
   ];
@@ -577,10 +656,24 @@ async function main(){
 
   writeFile('ranking/index.html', buildRankingPage(destinations, shorts, products));
 
+  const shortsById = {};
+  for(const s of shorts) shortsById[s.youtube_id] = s;
+  for(const d of destinations){
+    const destEntries = products
+      .map(p => {
+        const short = shortsById[p.youtube_id];
+        return short && short.destination_id === d.id ? { product: p, short, dest: d } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.short.views - a.short.views);
+    writeFile(`ranking/${destinationSlug(d.id)}/index.html`, buildDestinationRankingPage(d, destEntries));
+  }
+
   writeFile('sitemap.xml', buildSitemap(destinations, shorts));
 
   const removedTravel = cleanupStaleDirs('travel', destinations.map(d => destinationSlug(d.id)));
   const removedWatch = cleanupStaleDirs('watch', shorts.map(s => s.youtube_id));
+  cleanupStaleDirs('ranking', destinations.map(d => destinationSlug(d.id)));
 
   console.log(`완료: 여행지 페이지 ${destPages}개, 영상 페이지 ${videoPages}개, sitemap.xml 갱신 (제거된 페이지: 여행지 ${removedTravel}개, 영상 ${removedWatch}개)`);
 }
