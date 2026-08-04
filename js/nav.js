@@ -4,6 +4,7 @@
 const NAV_LINKS = [
   { href: '/index.html', page: 'home', label: '홈', icon: 'home' },
   { href: '/explore.html', page: 'explore', label: '탐색', icon: 'compass' },
+  { href: '/ranking/', page: 'ranking', label: '랭킹', icon: 'star' },
   { href: '/mypage.html', page: 'mypage', label: '마이페이지', icon: 'user' },
 ];
 
@@ -128,6 +129,7 @@ function renderDestinationCard(d){
    rank가 있으면 순위 배지(상세 페이지), 없으면 여행지 배지(홈/마이페이지)를 보여준다. */
 function renderShortsCard(s, rank){
   const d = getDestination(s.destinationId);
+  const saved = isVideoSaved(s.youtubeId);
   const badge = rank
     ? `<span class="rank-badge">${rank}</span>`
     : `<span class="common-badge">${d.emoji} ${escapeHtml(d.name)}</span>`;
@@ -136,6 +138,7 @@ function renderShortsCard(s, rank){
       <div class="shorts-thumb">
         <img src="${thumbUrl(s)}" alt="${escapeHtml(s.title)}" loading="lazy">
         ${badge}
+        <button class="save-btn ${saved ? 'saved' : ''}" data-video-id="${s.youtubeId}" aria-label="쇼츠 저장">${icon('bookmark')}</button>
         <span class="play-badge">${icon('play', 'icon-sm')}</span>
       </div>
       <div class="shorts-card-body">
@@ -164,6 +167,17 @@ document.addEventListener('click', (e) => {
     saveBtn.classList.toggle('saved', saved);
     showToast(saved ? '여행지를 저장했어요' : '저장을 취소했어요');
     trackEvent('destination_saved', { destination_id: saveBtn.dataset.destId, action: saved ? 'save' : 'unsave' });
+    return;
+  }
+
+  const saveVideoBtn = e.target.closest('.save-btn[data-video-id]');
+  if(saveVideoBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    const saved = toggleSavedVideo(saveVideoBtn.dataset.videoId);
+    saveVideoBtn.classList.toggle('saved', saved);
+    showToast(saved ? '쇼츠를 저장했어요' : '저장을 취소했어요');
+    trackEvent('video_saved', { youtube_id: saveVideoBtn.dataset.videoId, action: saved ? 'save' : 'unsave' });
     return;
   }
 

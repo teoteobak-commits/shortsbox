@@ -98,7 +98,6 @@ function scriptsHtml(pageScript, extra = []){
   return `${tags}
 <script src="/js/lightbox.js" defer></script>
 <script src="${pageScript}" defer></script>
-<script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
 <script defer src="/_vercel/insights/script.js"></script>`;
 }
 
@@ -280,14 +279,6 @@ ${head}
       ${icon('tag', 'icon-sm')}${escapeHtml(d.name)} 여행템 랭킹 보기
     </a>
 
-    <div class="ad-slot">
-      <span class="ad-slot-label">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-x83Zj1FkAxgtkkHL"
-        data-ad-width="300"
-        data-ad-height="250"></ins>
-    </div>
-
     <div class="related-section">
       <div class="section-head">
         <h2>다른 여행지도 둘러보세요</h2>
@@ -462,14 +453,6 @@ ${head}
     <p class="sub" style="margin-bottom:var(--space-4)">쇼츠에 나온 아이템을 그 영상의 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.</p>
 
     <div class="product-list">${rows}</div>
-
-    <div class="ad-slot" style="margin-top:var(--space-4)">
-      <span class="ad-slot-label">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-x83Zj1FkAxgtkkHL"
-        data-ad-width="300"
-        data-ad-height="250"></ins>
-    </div>
 
     <div class="section-head" style="margin-top:var(--space-6)">
       <h2 style="font-size:16px">목적지별 랭킹도 있어요</h2>

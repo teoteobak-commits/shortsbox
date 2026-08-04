@@ -199,15 +199,15 @@
   transition:transform .3s var(--bounce);
 }
 .card:hover .card-sticker{transform:rotate(6deg) scale(1.08)}
-.card-cover .save-btn{
+.card-cover .save-btn,.shorts-thumb .save-btn{
   position:absolute;top:10px;right:10px;
   width:32px;height:32px;border-radius:50%;
   background:rgba(255,255,255,.85);
   display:flex;align-items:center;justify-content:center;
 }
-.card-cover .save-btn .icon{width:16px;height:16px;color:var(--text)}
-.card-cover .save-btn.saved{background:var(--primary)}
-.card-cover .save-btn.saved .icon{color:#fff}
+.card-cover .save-btn .icon,.shorts-thumb .save-btn .icon{width:16px;height:16px;color:var(--text)}
+.card-cover .save-btn.saved,.shorts-thumb .save-btn.saved{background:var(--primary)}
+.card-cover .save-btn.saved .icon,.shorts-thumb .save-btn.saved .icon{color:#fff}
 
 .card-body{padding:var(--space-4)}
 .card-title{font-size:15px;font-weight:700;margin-bottom:6px;
