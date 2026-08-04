@@ -265,10 +265,6 @@ ${head}
   </section>
 
   <section class="container" style="padding-top:var(--space-5)">
-    <div id="destination-guide">${guideBlock}</div>
-  </section>
-
-  <section class="container" style="padding-top:var(--space-5)">
     <div id="agoda-banner">
       <a href="${getAgodaUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner" data-track-event="agoda_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
         <div class="agoda-banner-text">
@@ -289,6 +285,10 @@ ${head}
         <span class="agoda-banner-icon">🎫</span>
       </a>` : ''}
     </div>
+  </section>
+
+  <section class="container" style="padding-top:var(--space-5)">
+    <div id="destination-guide">${guideBlock}</div>
   </section>
 
   <section class="container section" style="padding-top:var(--space-5)">
