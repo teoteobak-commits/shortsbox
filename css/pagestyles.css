@@ -144,6 +144,7 @@
 .agoda-banner-title{font-size:15px;font-weight:700;margin-bottom:2px}
 .agoda-banner-sub{font-size:12.5px;color:var(--sub)}
 .agoda-banner-icon{font-size:32px;flex-shrink:0}
+.klook-banner{margin-top:var(--space-3)}
 
 .shorts-grid{
   display:grid;

@@ -43,6 +43,24 @@ function getAgodaUrl(destination){
   return `https://www.agoda.com/ko-kr/search?${params.toString()}`;
 }
 
+/* 클룩(Klook) 투어&액티비티 제휴 링크(세시간전) — 목적지별 "여행지 둘러보기" 개요 페이지로 연결.
+   제주(콘텐츠 성격 안 맞음)와 하와이(클룩에 해당 지역 개요 페이지 없음)는 의도적으로 없음 —
+   getKlookUrl은 이 경우 null을 반환하고, 호출부에서 배너 자체를 숨긴다. */
+const KLOOK_AFFILIATE_LINKS = {
+  2: 'https://3ha.in/r/592177', // 오사카
+  3: 'https://3ha.in/r/592175', // 도쿄
+  4: 'https://3ha.in/r/592179', // 방콕
+  5: 'https://3ha.in/r/592182', // 다낭
+  6: 'https://3ha.in/r/592184', // 치앙마이
+  7: 'https://3ha.in/r/592190', // 파리
+  8: 'https://3ha.in/r/592194', // 스위스
+  9: 'https://3ha.in/r/592197', // 발리
+};
+
+function getKlookUrl(destination){
+  return KLOOK_AFFILIATE_LINKS[destination.id] || null;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { AGODA_CID, AGODA_CITY_NAME, AGODA_AFFILIATE_LINKS, getAgodaUrl };
+  module.exports = { AGODA_CID, AGODA_CITY_NAME, AGODA_AFFILIATE_LINKS, getAgodaUrl, KLOOK_AFFILIATE_LINKS, getKlookUrl };
 }

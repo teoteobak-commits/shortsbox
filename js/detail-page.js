@@ -87,6 +87,18 @@ function renderDetail(d){
     </a>
   `;
 
+  const klookUrl = getKlookUrl(d);
+  document.getElementById('klook-banner').innerHTML = klookUrl ? `
+    <a href="${klookUrl}" target="_blank" rel="noopener sponsored" class="agoda-banner klook-banner" data-track-event="klook_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
+      <div class="agoda-banner-text">
+        <span class="agoda-banner-tag">제휴 · AD</span>
+        <div class="agoda-banner-title">${escapeHtml(d.name)} 투어&액티비티 보기</div>
+        <div class="agoda-banner-sub">클룩에서 현지 액티비티를 미리 예약해보세요</div>
+      </div>
+      <span class="agoda-banner-icon">🎫</span>
+    </a>
+  ` : '';
+
   renderShorts(d.id);
 
   const related = DESTINATIONS.filter(x => x.id !== d.id).slice(0, 4);

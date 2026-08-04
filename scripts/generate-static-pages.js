@@ -10,7 +10,7 @@ const path = require('path');
 const { icon } = require('../assets/icons.js');
 const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
 const { VIDEO_NOTES } = require('../js/video-notes.js');
-const { getAgodaUrl } = require('../js/affiliate-config.js');
+const { getAgodaUrl, getKlookUrl } = require('../js/affiliate-config.js');
 const { destinationSlug } = require('../js/slugs.js');
 
 const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
@@ -267,6 +267,16 @@ ${head}
         </div>
         <span class="agoda-banner-icon">🏨</span>
       </a>
+    </div>
+    <div id="klook-banner">${getKlookUrl(d) ? `
+      <a href="${getKlookUrl(d)}" target="_blank" rel="noopener sponsored" class="agoda-banner klook-banner" data-track-event="klook_banner_clicked" data-track-props='${JSON.stringify({ destination_id: d.id, destination_name: d.name }).replace(/'/g, '&#39;')}'>
+        <div class="agoda-banner-text">
+          <span class="agoda-banner-tag">제휴 · AD</span>
+          <div class="agoda-banner-title">${escapeHtml(d.name)} 투어&액티비티 보기</div>
+          <div class="agoda-banner-sub">클룩에서 현지 액티비티를 미리 예약해보세요</div>
+        </div>
+        <span class="agoda-banner-icon">🎫</span>
+      </a>` : ''}
     </div>
   </section>
 
