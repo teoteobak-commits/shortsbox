@@ -155,6 +155,7 @@ function guideBlockHtml(guide){
       <div class="guide-section">
         <h4>${escapeHtml(sec.heading)}</h4>
         <p>${escapeHtml(sec.body)}</p>
+        ${sec.cta ? `<a href="${escapeHtml(sec.cta.url)}" target="_blank" rel="noopener sponsored" class="guide-section-cta" data-track-event="guide_section_cta_clicked" data-track-props='${JSON.stringify({ label: sec.cta.label }).replace(/'/g, '&#39;')}'>${escapeHtml(sec.cta.label)} →</a>` : ''}
       </div>`).join('') : '';
 
   const packing = (guide.packingList && guide.packingList.length) ? `

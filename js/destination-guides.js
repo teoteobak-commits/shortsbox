@@ -1,6 +1,10 @@
 /* 여행지별 에디터 가이드 — 쇼츠박스 자체 작성 콘텐츠 (외부 수집 아님)
    카카오 애드핏 심사 보류 사유(자체 콘텐츠 부족) 대응용으로 작성.
    각 여행지: 본문 가이드 + 최적 시기 + 예산 감 + 짐싸기 체크리스트 + FAQ */
+
+/* 유심사(USIMSA) 제휴링크(세시간전) — 목적지 구분 없는 단일 링크라 여기 한 곳에서만 관리 */
+const USIMSA_URL = 'https://3ha.in/r/591489';
+
 const DESTINATION_GUIDES = {
   1: {
     title: '제주도, 이렇게 준비하면 편해요',
@@ -54,6 +58,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '간사이공항 도착 로비에서도 유심을 살 수 있지만, 출국 전 eSIM으로 미리 등록해두면 도착하자마자 바로 데이터를 쓸 수 있어서 더 편해요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -88,6 +93,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하는 걸 추천해요',
         body: '나리타·하네다 공항 로비에서도 유심이나 포켓와이파이를 살 수 있지만, 성수기엔 재고가 떨어질 때가 있어요. 출국 전에 eSIM으로 미리 등록해두면 도착하자마자 바로 데이터를 쓸 수 있어서 훨씬 마음이 편해요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 미리 알아두면 당황 안 해요',
@@ -122,6 +128,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '공항 도착 로비에서 관광객용 유심을 바로 살 수 있어요. 여러 날 머문다면 7~15일권으로 넉넉하게 사두는 게 매번 충전하는 것보다 편해요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -156,6 +163,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '공항 도착 로비에서 관광객용 유심을 저렴하게 살 수 있어요. 사진·영상을 많이 남기는 일정이라면 데이터 용량이 넉넉한 상품을 고르는 걸 추천해요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -190,6 +198,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '공항 도착 로비에서 바로 살 수 있어요. 산간 지역 트레킹이나 코끼리 보호구역 방문 일정이 있다면 전파가 약할 수 있다는 점만 참고하면 돼요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -224,6 +233,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '유럽 여러 나라를 같이 도는 일정이면 유럽 전역 로밍이 되는 eSIM을 출국 전에 등록해두는 게 편해요. 파리만 간다면 도착 후 통신사 매장에서 사도 무방해요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -258,6 +268,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '스위스는 통신 요금도 물가만큼 비싼 편이라, 유럽 로밍이 되는 eSIM을 출국 전에 등록해두는 게 현지에서 사는 것보다 저렴할 수 있어요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -292,6 +303,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '공항 도착 로비에서 바로 살 수 있어요. 우붓·울루와투처럼 외곽 지역까지 다닐 예정이라면 통신사별 전파 상태를 미리 후기로 확인해두면 좋아요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -326,6 +338,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '유심·데이터는 미리 준비하세요',
         body: '미국은 통신 요금이 비싼 편이라, 출국 전 eSIM으로 미리 등록해두면 현지에서 사는 것보다 저렴할 수 있어요.',
+        cta: { label: '유심/eSIM 최저가 보기', url: USIMSA_URL },
       },
       {
         heading: '이건 알아두면 당황 안 해요',
@@ -369,6 +382,7 @@ function renderGuideBlockHtml(guide){
       <div class="guide-section">
         <h4>${sec.heading}</h4>
         <p>${sec.body}</p>
+        ${sec.cta ? `<a href="${sec.cta.url}" target="_blank" rel="noopener sponsored" class="guide-section-cta" data-track-event="guide_section_cta_clicked" data-track-props='${JSON.stringify({ label: sec.cta.label }).replace(/'/g, '&#39;')}'>${sec.cta.label} →</a>` : ''}
       </div>`).join('') : ''}
 
       ${guide.packingList && guide.packingList.length ? `
