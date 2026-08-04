@@ -253,6 +253,17 @@ ${head}
 </section>
 
 <main>
+  <section class="container section" style="padding-top:var(--space-5)">
+    <div class="section-head">
+      <h2>여행 꿀템 쇼츠</h2>
+    </div>
+    <div id="shorts-grid" class="shorts-grid">${shortsGrid}</div>
+
+    <a href="/ranking/${destinationSlug(d.id)}/" class="btn btn-outline btn-block" style="margin-bottom:var(--space-5)">
+      ${icon('tag', 'icon-sm')}${escapeHtml(d.name)} 여행템 랭킹 보기
+    </a>
+  </section>
+
   <section class="container" style="padding-top:var(--space-5)">
     <div id="destination-guide">${guideBlock}</div>
   </section>
@@ -281,15 +292,6 @@ ${head}
   </section>
 
   <section class="container section" style="padding-top:var(--space-5)">
-    <div class="section-head">
-      <h2>여행 꿀템 쇼츠</h2>
-    </div>
-    <div id="shorts-grid" class="shorts-grid">${shortsGrid}</div>
-
-    <a href="/ranking/${destinationSlug(d.id)}/" class="btn btn-outline btn-block" style="margin-bottom:var(--space-5)">
-      ${icon('tag', 'icon-sm')}${escapeHtml(d.name)} 여행템 랭킹 보기
-    </a>
-
     <div class="related-section">
       <div class="section-head">
         <h2>다른 여행지도 둘러보세요</h2>
