@@ -5,6 +5,13 @@
 /* 유심사(USIMSA) 제휴링크(세시간전) — 목적지 구분 없는 단일 링크라 여기 한 곳에서만 관리 */
 const USIMSA_URL = 'https://3ha.in/r/591489';
 
+/* 트립닷컴 기차표 제휴링크(세시간전) — "이동은 이렇게 하면 편해요" 섹션 중 기차/철도
+   콘텐츠가 있는 목적지에만 적용(그랩/렌터카 위주 목적지는 대상 아님). 일본은 국가 단위
+   페이지라 도쿄·오사카가 같은 링크를 공유한다. */
+const TRIP_JAPAN_TRAIN_URL = 'https://3ha.in/r/592225';
+const TRIP_FRANCE_TRAIN_URL = 'https://3ha.in/r/592226';
+const TRIP_EUROPE_TRAIN_URL = 'https://3ha.in/r/592229';
+
 const DESTINATION_GUIDES = {
   1: {
     title: '제주도, 이렇게 준비하면 편해요',
@@ -54,6 +61,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '이동은 이렇게 하면 편해요',
         body: '이코카(ICOCA) 카드 하나면 전철·버스 대부분을 찍고 탈 수 있어요. 미술관이나 전망대를 하루에 여러 곳 돈다면 오사카 주유패스(교통+입장료 묶음)가 이득인지 계산해보는 것도 좋아요.',
+        cta: { label: '일본 기차표/JR패스 예약하기', url: TRIP_JAPAN_TRAIN_URL },
       },
       {
         heading: '유심·데이터는 미리 준비하세요',
@@ -89,6 +97,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '이동은 이렇게 하면 편해요',
         body: 'JR선과 지하철(도쿄메트로·토에이)이 따로 운영돼서, 환승할 때 요금이 이중으로 찍히는 경우가 있어요. 스이카나 파스모 하나면 노선 상관없이 다 찍고 탈 수 있어서 굳이 표를 따로 끊을 필요는 없어요. 하루에 전철을 4번 이상 탈 일정이라면 도쿄메트로 1일권 가격도 미리 비교해보는 걸 추천해요.',
+        cta: { label: '일본 기차표/JR패스 예약하기', url: TRIP_JAPAN_TRAIN_URL },
       },
       {
         heading: '유심·데이터는 미리 준비하는 걸 추천해요',
@@ -229,6 +238,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '이동은 이렇게 하면 편해요',
         body: '메트로가 도시 전체를 촘촘하게 연결해서 대부분 지역을 커버해요. 근교(베르사유 등)로 나갈 땐 RER을 타야 하니 메트로랑 노선이 다르다는 것만 헷갈리지 않으면 돼요.',
+        cta: { label: '프랑스 기차표 예약하기', url: TRIP_FRANCE_TRAIN_URL },
       },
       {
         heading: '유심·데이터는 미리 준비하세요',
@@ -264,6 +274,7 @@ const DESTINATION_GUIDES = {
       {
         heading: '이동은 이렇게 하면 편해요',
         body: '대중교통 이용이 잦다면 스위스트래블패스로 교통비를 절약할 수 있어요. 파노라마 열차(글래시어 익스프레스 등)는 좌석 예약이 필요하니 인기 노선이라면 미리 예매해두는 게 안전해요.',
+        cta: { label: '유럽 기차표 예약하기', url: TRIP_EUROPE_TRAIN_URL },
       },
       {
         heading: '유심·데이터는 미리 준비하세요',
