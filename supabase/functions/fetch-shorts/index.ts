@@ -88,7 +88,6 @@ async function searchTopShorts(query: string, limit: number) {
       channelName: it.snippet.channelTitle,
       thumbnailUrl: it.snippet.thumbnails?.high?.url ?? it.snippet.thumbnails?.default?.url,
       views: Number(it.statistics?.viewCount ?? 0),
-      publishedAt: it.snippet.publishedAt as string | undefined,
       ...classify(title, description),
     };
   });
