@@ -91,6 +91,36 @@
     <priority>0.65</priority>
   </url>
   <url>
+    <loc>https://shortsbox.kr/ranking/fukuoka/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/ranking/nhatrang/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/ranking/taipei/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/ranking/cebu/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/ranking/hongkong/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
     <loc>https://shortsbox.kr/travel/jeju/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -151,6 +181,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://shortsbox.kr/travel/fukuoka/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/travel/nhatrang/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/travel/taipei/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/travel/cebu/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/travel/hongkong/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://shortsbox.kr/watch/imhqOCmmdxo/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -176,6 +236,12 @@
   </url>
   <url>
     <loc>https://shortsbox.kr/watch/kYnt-7p2bZ4/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/Z02d_2UJtlk/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -217,72 +283,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/duejQqWCFds/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/Wg0GKLZsLQQ/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/fVyh8q5hFt8/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/x6x2leOAPzo/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/enIVg9mK064/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/XhIxJk0Vl24/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/1fPZT7-mWy4/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/GAYVIkEoLz4/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/AzlB9itzhj4/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/1j3SZiQiGkw/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/NcmjiyZjyp0/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://shortsbox.kr/watch/82P_dvUIA2Q/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -301,7 +301,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/x16WynzBVjI/</loc>
+    <loc>https://shortsbox.kr/watch/HsihZk6kAOs/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -409,7 +409,241 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/Z02d_2UJtlk/</loc>
+    <loc>https://shortsbox.kr/watch/BcZuezNuNxM/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/2ZliHDsU7hQ/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/v4Tgm1YDzc8/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/32uIX5LKvCM/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/sdM2JpqXY3o/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/6snqQLQGhK0/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/-YX4DHD0d6Q/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/9iGWZO_1Kd4/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/iIWsMXTxzGU/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/BxwVbVomfz4/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/AOGbMaUooH0/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/aW-eCh_NxNw/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/K7TTe5g8I_w/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/jM5fLnAhVt0/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/KG-yUlZ2jbY/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/7ZAyp3wgeKU/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/DmtLbQOEX1U/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/uJO7gJA8GTo/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/RAoYuOlaht0/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/4IVufnETMOg/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/w2wdawK8Rgw/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/1C1MG6pOq2Q/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/3KVirRSdHEQ/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/KlBVu9y6maE/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/0K9qTp2xv-I/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/wlY4eefoCZg/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/Q7VlZYibJ5c/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/irw0Rl1zWwg/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/-Nj32W1jsMQ/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/AHelrJIRF_4/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/dRm6g4oengE/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/Vnzej5qqRW8/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/Wi0cD1bBgOM/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/xUYjanvsNwM/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/ARjEQ0jZfRA/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/6DH9Zl4UqQA/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/kGrPhvjDVoU/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/eF6-RgGd7Gs/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/qeW2WQ8rDVM/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/qDr-sevJ8ds/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -427,6 +661,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://shortsbox.kr/watch/Wg0GKLZsLQQ/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/sCo6gqOOVnk/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://shortsbox.kr/watch/ry3kJCeyCzU/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -439,37 +685,13 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/uk1yHqQmYXg/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/gdy9DgHBYtY/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/U0NGCRbzEyo/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/sCo6gqOOVnk/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/iWgQCHmvoDo/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://shortsbox.kr/watch/WFiDnPHyRL8/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/uk1yHqQmYXg/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -481,7 +703,97 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://shortsbox.kr/watch/gdy9DgHBYtY/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://shortsbox.kr/watch/dehphwm-amk/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/U0NGCRbzEyo/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/AzlB9itzhj4/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/1j3SZiQiGkw/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/ovrD-83VK2Q/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/KPtyPBThnG8/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/tuC1BGo0cZc/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/Ss3JVLR5ZTY/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/OuOBugwnKII/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/duejQqWCFds/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/iWgQCHmvoDo/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/fVyh8q5hFt8/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/x6x2leOAPzo/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/enIVg9mK064/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/XhIxJk0Vl24/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -493,7 +805,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://shortsbox.kr/watch/1fPZT7-mWy4/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://shortsbox.kr/watch/n-dUgOGAnDA/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/GAYVIkEoLz4/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -512,6 +836,42 @@
   </url>
   <url>
     <loc>https://shortsbox.kr/watch/e6qqC2NXq8w/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/Biu1-Wxp718/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/nmw154h4lks/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/lokhMOLpNcY/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/NcmjiyZjyp0/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/wK1hOo_ltpc/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/zhGgjZNQcyY/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -547,19 +907,25 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/ovrD-83VK2Q/</loc>
+    <loc>https://shortsbox.kr/watch/jviFD7dzVTs/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/KPtyPBThnG8/</loc>
+    <loc>https://shortsbox.kr/watch/9DVWM6qoNrw/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/tuC1BGo0cZc/</loc>
+    <loc>https://shortsbox.kr/watch/DU6pY91Si-8/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/S1DAbyYwq2I/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -571,13 +937,19 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/Ss3JVLR5ZTY/</loc>
+    <loc>https://shortsbox.kr/watch/SOI3msWyJV4/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/OuOBugwnKII/</loc>
+    <loc>https://shortsbox.kr/watch/0HLvb5rYLBE/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shortsbox.kr/watch/MZNTGGkE9e8/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -613,48 +985,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shortsbox.kr/watch/Biu1-Wxp718/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/nmw154h4lks/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/DU6pY91Si-8/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/SOI3msWyJV4/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/lokhMOLpNcY/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/wK1hOo_ltpc/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/zhGgjZNQcyY/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://shortsbox.kr/watch/aIkjfeU4ytI/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -674,48 +1004,6 @@
   </url>
   <url>
     <loc>https://shortsbox.kr/watch/A3yYru2Ez5k/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/jviFD7dzVTs/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/9DVWM6qoNrw/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/S1DAbyYwq2I/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/0HLvb5rYLBE/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/MZNTGGkE9e8/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/qeW2WQ8rDVM/</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shortsbox.kr/watch/qDr-sevJ8ds/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

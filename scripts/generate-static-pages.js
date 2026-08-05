@@ -11,7 +11,7 @@ const { icon } = require('../assets/icons.js');
 const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
 const { VIDEO_NOTES } = require('../js/video-notes.js');
 const { getAgodaUrl, getKlookUrl } = require('../js/affiliate-config.js');
-const { destinationSlug } = require('../js/slugs.js');
+const { destinationSlug, coverStyle } = require('../js/slugs.js');
 
 const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
 /* anon(공개) 키 — RLS로 읽기 전용만 허용됨. js/supabase-client.js에도 동일하게 이미 공개돼있음 */
@@ -104,7 +104,7 @@ function scriptsHtml(pageScript, extra = []){
 function destinationCardHtml(d, shortsCountByDest){
   return `
     <a href="/travel/${destinationSlug(d.id)}/" class="card">
-      <div class="card-cover" style="--cover-photo:url('/assets/destinations/${destinationSlug(d.id)}.jpg')">
+      <div class="card-cover" style="${coverStyle(d.id)}">
         <span class="card-sticker">${d.emoji}</span>
       </div>
       <div class="card-body">
