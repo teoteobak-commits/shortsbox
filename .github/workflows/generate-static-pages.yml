@@ -2,8 +2,10 @@ name: Generate static pages
 
 on:
   schedule:
-    # Supabase가 매일 UTC 04:00에 쇼츠 데이터를 자동 갱신함 — 그 이후 시점에 정적 페이지 재생성
-    - cron: '30 4 * * *'
+    # Supabase가 매일 UTC 04:00에 쇼츠 데이터를 자동 갱신함 — 그 이후 시점에 정적 페이지 재생성.
+    # 정각·30분 같은 딱 떨어지는 시각은 전 세계 예약이 몰려서 몇 시간씩 밀린다(실제로 04:30
+    # 예약이 10~14시에 실행됐음). GitHub도 정각을 피하라고 권고하므로 어중간한 분으로 잡는다.
+    - cron: '37 4 * * *'
   workflow_dispatch: {}
 
 permissions:
