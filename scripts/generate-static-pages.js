@@ -397,6 +397,52 @@ ${scriptsHtml('/js/video-page.js', ['/js/destination-guides.js', '/js/video-note
 `;
 }
 
+function publishedWithinDays(publishedAt, days){
+  if(!publishedAt) return false;
+  const ms = days * 24 * 60 * 60 * 1000;
+  return (Date.now() - new Date(publishedAt).getTime()) <= ms;
+}
+
+/* 전체(조회수 기준 all-time) + 일간/주간/월간(유튜브 업로드일 기준) 탭을 함께 렌더링.
+   구조화 데이터(JSON-LD)는 안정적인 "전체" 목록만 반영 — 탭은 방문자용 UI 보강일 뿐. */
+function rankingTabsHtml(entries, cap){
+  const tabs = [
+    { key: 'all', label: '전체', list: entries.slice(0, cap) },
+    { key: 'day', label: '일간', list: entries.filter(e => publishedWithinDays(e.short.published_at, 1)).slice(0, cap) },
+    { key: 'week', label: '주간', list: entries.filter(e => publishedWithinDays(e.short.published_at, 7)).slice(0, cap) },
+    { key: 'month', label: '월간', list: entries.filter(e => publishedWithinDays(e.short.published_at, 30)).slice(0, cap) },
+  ];
+
+  const tabButtons = tabs.map((t, i) =>
+    `<button type="button" class="ranking-tab${i === 0 ? ' active' : ''}" data-ranking-tab="${t.key}">${t.label}</button>`
+  ).join('');
+
+  const panels = tabs.map((t, i) => {
+    const rows = t.list.length
+      ? t.list.map((e, idx) => rankingRowHtml(e, idx + 1)).join('')
+      : `<div class="empty-shorts">${t.key === 'all' ? '아직 정리된 아이템이 없어요.' : '이 기간에 올라온 영상 중엔 아직 정리된 아이템이 없어요.'}</div>`;
+    return `<div class="product-list" data-ranking-panel="${t.key}"${i === 0 ? '' : ' style="display:none"'}>${rows}</div>`;
+  }).join('');
+
+  return `
+    <div class="ranking-tabs">${tabButtons}</div>
+    ${panels}
+    <script>
+    (function(){
+      var tabs = document.querySelectorAll('[data-ranking-tab]');
+      tabs.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          tabs.forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+          document.querySelectorAll('[data-ranking-panel]').forEach(function(p){
+            p.style.display = p.getAttribute('data-ranking-panel') === btn.getAttribute('data-ranking-tab') ? '' : 'none';
+          });
+        });
+      });
+    })();
+    </script>`;
+}
+
 function rankingRowHtml(entry, rank){
   const { product: p, short: s, dest } = entry;
   const trackProps = JSON.stringify({ location: 'ranking_page', product_name: p.name, youtube_id: s.youtube_id }).replace(/'/g, '&#39;');
@@ -449,7 +495,7 @@ function buildRankingPage(destinations, shorts, products){
     },
   });
 
-  const rows = entries.map((e, i) => rankingRowHtml(e, i + 1)).join('');
+  const tabsHtml = rankingTabsHtml(entries, 30);
 
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -465,7 +511,7 @@ ${head}
     <h1 style="font-size:22px;margin-bottom:8px">여행 유튜버들이 진짜 많이 추천한 아이템</h1>
     <p class="sub" style="margin-bottom:var(--space-4)">쇼츠에 나온 아이템을 그 영상의 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.</p>
 
-    <div class="product-list">${rows}</div>
+    ${tabsHtml}
 
     <div class="section-head" style="margin-top:var(--space-6)">
       <h2 style="font-size:16px">목적지별 랭킹도 있어요</h2>
@@ -520,9 +566,7 @@ function buildDestinationRankingPage(dest, entries){
     },
   });
 
-  const rows = entries.length
-    ? entries.map((e, i) => rankingRowHtml(e, i + 1)).join('')
-    : `<div class="empty-shorts">아직 정리된 아이템이 없어요.</div>`;
+  const tabsHtml = rankingTabsHtml(entries, 30);
 
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -538,7 +582,7 @@ ${head}
     <h1 style="font-size:22px;margin-bottom:8px">${dest.emoji} ${escapeHtml(dest.name)} 여행템 랭킹</h1>
     <p class="sub" style="margin-bottom:var(--space-4)">${escapeHtml(dest.name)} 쇼츠에 나온 아이템을 그 영상의 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.</p>
 
-    <div class="product-list">${rows}</div>
+    ${tabsHtml}
 
     <div class="btn-row" style="margin-top:var(--space-4)">
       <a href="/travel/${slug}/" class="btn btn-outline" style="flex:1">${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 쇼츠 보기</a>
