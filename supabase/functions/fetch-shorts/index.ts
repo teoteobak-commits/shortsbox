@@ -95,6 +95,49 @@ async function searchTopShorts(query: string, limit: number) {
   return rankCandidates(items).slice(0, limit);
 }
 
+/* 큐레이션(제품 등록된) 영상은 아래 수집 루프에서 삭제 대상에서 빠지는데, 그 탓에 조회수도
+   큐레이션한 시점 값에 그대로 멈춰버린다. 랭킹 페이지가 조회수로 정렬하기 때문에 실제로는
+   틀린 순위가 나온다. 그래서 이 영상들만 따로 최신 통계를 받아와 갱신한다.
+   videos.list는 한 번에 50개까지 조회할 수 있어서 호출 비용은 거의 들지 않는다. */
+async function refreshCuratedStats(ids: string[]) {
+  let updated = 0;
+  const missing: string[] = [];
+
+  for (let i = 0; i < ids.length; i += 50) {
+    const batch = ids.slice(i, i + 50);
+    const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+    url.search = new URLSearchParams({
+      key: YOUTUBE_API_KEY,
+      part: "statistics,snippet",
+      id: batch.join(","),
+    }).toString();
+
+    const res = await fetch(url);
+    const json = await res.json();
+    const found = new Set<string>();
+
+    for (const item of json.items ?? []) {
+      found.add(item.id);
+      const { error } = await supabase
+        .from("shorts")
+        .update({
+          views: Number(item.statistics?.viewCount ?? 0),
+          title: item.snippet.title,
+          channel_name: item.snippet.channelTitle,
+          thumbnail_url: item.snippet.thumbnails?.high?.url ?? item.snippet.thumbnails?.default?.url,
+          fetched_at: new Date().toISOString(),
+        })
+        .eq("youtube_id", item.id);
+      if (!error) updated++;
+    }
+
+    // 유튜브에서 삭제·비공개된 영상. 제품 정보가 걸려 있으므로 지우지 않고 보고만 한다.
+    for (const id of batch) if (!found.has(id)) missing.push(id);
+  }
+
+  return { updated, missing };
+}
+
 Deno.serve(async () => {
   const { data: destinations, error: destErr } = await supabase
     .from("destinations")
@@ -156,7 +199,9 @@ Deno.serve(async () => {
     }
   }
 
-  return new Response(JSON.stringify({ ok: true, results }), {
+  const curatedStats = await refreshCuratedStats([...curatedIds]);
+
+  return new Response(JSON.stringify({ ok: true, results, curatedStats }), {
     headers: { "Content-Type": "application/json" },
   });
 });
