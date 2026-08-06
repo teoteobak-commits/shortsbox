@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "posted",
   "date": "2026-08-06",
   "destination_slug": "bali",
   "destination_name": "🌴 발리",
@@ -9,6 +9,8 @@
   "image_url": "https://shortsbox.kr/assets/card-news/daily-bali-2026-08-06.png",
   "threads_text": "발리 여행 가면 다들 이거 하나씩 사온다는 거 알고 있었나요? 🌴 조회수 18만 찍은 쇼츠에 나온 우드 트레이, 어떤 건지 링크에서 확인해보세요. https://shortsbox.kr/?utm_source=threads&utm_medium=social",
   "telegram_anchor_message_id": 18,
-  "last_update_id": null,
-  "attempt_count": 0
+  "last_update_id": 522266696,
+  "attempt_count": 0,
+  "threads_post_id": "18137529151587428",
+  "threads_permalink": "https://www.threads.com/@shortsbox.kr/post/DbsVKUBFqMp"
 }
