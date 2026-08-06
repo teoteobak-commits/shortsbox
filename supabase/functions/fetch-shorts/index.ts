@@ -50,6 +50,16 @@ function rankCandidates(items: any[]){
     });
 }
 
+/* 유튜브 API 에러(할당량 초과·키 만료 등)를 "검색 결과 0건"과 구분해서 드러낸다.
+   예전에는 둘 다 빈 배열로 뭉개져서 로그에 똑같이 city:0으로 찍혔고, 그 탓에 특정 여행지가
+   비어 있을 때 원인이 검색어인지 할당량인지 판별할 수 없었다(타이베이·괌에서 실제로 겪음).
+   여기서 던진 에러는 여행지별 catch가 받아 results에 남기므로, 기존 데이터는 지워지지 않는다. */
+function throwIfApiError(json: any, what: string){
+  if (!json?.error) return;
+  const reason = json.error.errors?.[0]?.reason ?? json.error.code ?? "unknown";
+  throw new Error(`youtube ${what} 실패 [${reason}]: ${json.error.message ?? ""}`);
+}
+
 async function searchTopShorts(query: string, limit: number) {
   const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
   searchUrl.search = new URLSearchParams({
@@ -65,6 +75,7 @@ async function searchTopShorts(query: string, limit: number) {
 
   const searchRes = await fetch(searchUrl);
   const searchJson = await searchRes.json();
+  throwIfApiError(searchJson, `search("${query}")`);
   if (!searchJson.items?.length) return [];
 
   const ids = searchJson.items.map((it: any) => it.id.videoId).join(",");
@@ -78,6 +89,7 @@ async function searchTopShorts(query: string, limit: number) {
 
   const statsRes = await fetch(statsUrl);
   const statsJson = await statsRes.json();
+  throwIfApiError(statsJson, "videos.list");
 
   const items = (statsJson.items ?? []).map((it: any) => {
     const title = it.snippet.title;
@@ -114,6 +126,7 @@ async function refreshCuratedStats(ids: string[]) {
 
     const res = await fetch(url);
     const json = await res.json();
+    throwIfApiError(json, "videos.list(curated)");
     const found = new Set<string>();
 
     for (const item of json.items ?? []) {
@@ -228,7 +241,14 @@ Deno.serve(async () => {
     }
   }
 
-  const curatedStats = await refreshCuratedStats([...curatedIds]);
+  /* 조회수 갱신이 실패해도 위에서 수집한 결과까지 통째로 500이 되면 안 된다 —
+     응답에 남겨야 무엇이 실패했는지 알 수 있다. */
+  let curatedStats: unknown;
+  try {
+    curatedStats = await refreshCuratedStats([...curatedIds]);
+  } catch (e) {
+    curatedStats = { error: e instanceof Error ? e.message : String(e) };
+  }
 
   return new Response(JSON.stringify({ ok: true, results, curatedStats }), {
     headers: { "Content-Type": "application/json" },
