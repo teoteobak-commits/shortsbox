@@ -11,9 +11,24 @@ const { DESTINATION_SLUGS } = require('../js/slugs.js');
 GlobalFonts.registerFromPath(path.join(__dirname, 'vendor-fonts', 'cafe24.ttf'), 'Cafe24 Ssurround');
 GlobalFonts.registerFromPath(path.join(__dirname, 'vendor-fonts', 'pretendard-bold.otf'), 'Pretendard Bold');
 GlobalFonts.registerFromPath(path.join(__dirname, 'vendor-fonts', 'pretendard-semibold.otf'), 'Pretendard SemiBold');
+GlobalFonts.registerFromPath('/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf', 'Noto Color Emoji');
 
 const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmdG9saW52aHd4ZGNjbHJ0YXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NTY3NzQsImV4cCI6MjEwMDAzMjc3NH0.HMZ4-yf6SPty4wdQKJon8nRi9GfWpgFIeMx2PXF5RhU';
+
+/* Supabase 조회 실패 시 로컬 폴백. 국기 등 복합 이모지는 렌더러에서 깨지므로 피한다. */
+const FALLBACK_DESTINATIONS = {
+  jeju: { name: '제주', emoji: '🍊' },
+  osaka: { name: '오사카', emoji: '🏯' },
+  tokyo: { name: '도쿄', emoji: '🗼' },
+  bangkok: { name: '방콕', emoji: '🛺' },
+  danang: { name: '다낭', emoji: '☕' },
+  chiangmai: { name: '치앙마이', emoji: '🐘' },
+  paris: { name: '파리', emoji: '🥐' },
+  switzerland: { name: '스위스', emoji: '🧀' },
+  bali: { name: '발리', emoji: '🌴' },
+  hawaii: { name: '하와이', emoji: '🌺' },
+};
 
 const W = 1080, H = 1350;
 const CX = W / 2;
@@ -49,27 +64,42 @@ function drawSticker(ctx, cx, cy, r, rot, emoji){
   ctx.shadowOffsetY = 8;
   ctx.fill();
   ctx.shadowColor = 'transparent';
-  ctx.font = `${r * 1.15}px "Segoe UI Emoji"`;
+  ctx.font = `${r * 1.15}px "Noto Color Emoji"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(emoji, 0, r * 0.08);
   ctx.restore();
 }
 
-function drawPill(ctx, cx, topY, text, fontSize = 30){
-  ctx.font = `${fontSize}px "Pretendard Bold"`;
-  const textW = ctx.measureText(text).width;
+/* 이모지와 한글을 한 fillText 에 섞으면 이모지 폰트가 적용 안 되니 따로 그린다. */
+function drawPill(ctx, cx, topY, emoji, label, fontSize = 30){
+  const textFont = `${fontSize}px "Pretendard Bold"`;
+  const emojiFont = `${fontSize}px "Noto Color Emoji"`;
+  const gap = fontSize * 0.35;
+
+  ctx.font = emojiFont;
+  const emojiW = ctx.measureText(emoji).width;
+  ctx.font = textFont;
+  const labelW = ctx.measureText(label).width;
+
+  const contentW = emojiW + gap + labelW;
   const padX = 34, h = fontSize + 34;
-  const w = textW + padX * 2;
+  const w = contentW + padX * 2;
   const x = cx - w / 2;
   ctx.beginPath();
   ctx.roundRect ? ctx.roundRect(x, topY, w, h, h / 2) : ctx.rect(x, topY, w, h);
   ctx.fillStyle = 'rgba(255,255,255,.22)';
   ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'center';
+
+  const contentStartX = cx - contentW / 2;
+  const midY = topY + h / 2 + 2;
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, cx, topY + h / 2 + 2);
+  ctx.font = emojiFont;
+  ctx.fillText(emoji, contentStartX, midY);
+  ctx.fillStyle = '#fff';
+  ctx.font = textFont;
+  ctx.fillText(label, contentStartX + emojiW + gap, midY);
   return topY + h;
 }
 
@@ -146,15 +176,22 @@ async function main(){
     console.error(`알 수 없는 슬러그: ${slug}`);
     process.exit(1);
   }
-  const destinations = await fetchTable('destinations', `select=*&id=eq.${destId}`);
-  const dest = destinations[0];
-  if(!dest) throw new Error('여행지를 찾을 수 없음');
+  let dest;
+  try {
+    const destinations = await fetchTable('destinations', `select=*&id=eq.${destId}`);
+    dest = destinations[0];
+    if(!dest) throw new Error('여행지를 찾을 수 없음');
+  } catch(err) {
+    console.error('Supabase 조회 실패, 로컬 폴백 사용:', err.message);
+    dest = FALLBACK_DESTINATIONS[slug];
+    if(!dest) throw new Error(`폴백에도 없는 슬러그: ${slug}`);
+  }
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext('2d');
   drawBg(ctx);
 
-  drawPill(ctx, CX, 140, `${dest.emoji} ${dest.name}`);
+  drawPill(ctx, CX, 140, dest.emoji, dest.name);
   drawSticker(ctx, CX, 560, 150, -8, dest.emoji);
 
   let fontSize = 78;
