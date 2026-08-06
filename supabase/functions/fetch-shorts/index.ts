@@ -250,26 +250,38 @@ Deno.serve(async (req) => {
       const remainingSlots = Math.max(0, TOP_N - protectedIds.length);
       const wanted = remainingSlots + protectedIds.length + claimedIds.size;
 
-      /* 도시 이름으로는 쇼핑 콘텐츠가 거의 안 잡히는 곳이 있다(타이베이·괌에서 0건).
-         그런 경우 국가 이름으로 한 번 더 찾는다. 같은 나라면 쇼핑 아이템은 대체로 통용된다.
-         판단 기준은 "검색 결과 수"가 아니라 "필터를 통과해 실제로 쓸 수 있는 수"여야 한다 —
-         후보가 있어도 이미 큐레이션됐거나 다른 여행지가 가져간 것뿐이면 결국 채울 게 없기 때문. */
-      const usable = (list: any[]) =>
-        list
-          .filter((s: any) => !curatedIds.has(s.youtubeId) && !claimedIds.has(s.youtubeId))
-          .slice(0, remainingSlots);
+      /* 검색어를 순서대로 시도하면서 자리가 찰 때까지 결과를 "쌓는다".
+         예전에는 국가명 검색이 첫 검색 결과가 0건일 때만 돌았다. 그래서 3~7개만
+         걸린 여행지(세부·타이베이·삿포로)는 폴백이 아예 실행되지 않고 부족한 채로
+         끝났다 — 0건일 때만 문제였던 게 아니라 "덜 찼을 때"가 진짜 구멍이었다.
 
-      const byCity = await searchTopShorts(`${dest.name} 여행 아이템 추천`, wanted);
-      let fresh = usable(byCity);
-      let usedFallback = false;
-      let byCountryCount = -1;
-      if (!fresh.length && dest.country && dest.country !== dest.name) {
-        const byCountry = await searchTopShorts(`${dest.country} 여행 아이템 추천`, wanted);
-        byCountryCount = byCountry.length;
-        fresh = usable(byCountry);
-        usedFallback = true;
+         도시 이름 검색을 국가 이름보다 먼저 둔다. 국가 검색어는 같은 나라의 다른
+         여행지(일본=도쿄·오사카·후쿠오카·삿포로·오키나와)끼리 결과가 겹쳐서,
+         먼저 도는 쪽이 다 가져가면 뒤쪽은 claimedIds에 걸려 건질 게 없다.
+
+         대부분의 여행지는 첫 검색에서 자리가 차므로 추가 호출이 없다. 부족한 곳만
+         최대 3회까지 쓴다 — search는 100 units에 별도 일일 한도까지 있어서
+         무제한으로 늘리면 다음날 수집이 굶는다. */
+      const queries = [
+        `${dest.name} 여행 아이템 추천`,
+        `${dest.name} 쇼핑리스트`,
+        ...(dest.country && dest.country !== dest.name ? [`${dest.country} 여행 아이템 추천`] : []),
+      ].slice(0, 3);
+
+      const picked = new Map<string, any>();
+      const tried: string[] = [];
+      for (const q of queries) {
+        if (picked.size >= remainingSlots) break;
+        const list = await searchTopShorts(q, wanted);
+        tried.push(`"${q}":${list.length}`);
+        for (const it of list) {
+          if (picked.size >= remainingSlots) break;
+          if (curatedIds.has(it.youtubeId) || claimedIds.has(it.youtubeId) || picked.has(it.youtubeId)) continue;
+          picked.set(it.youtubeId, it);
+        }
       }
-      const diag = `city:${byCity.length} country:${byCountryCount} fallback:${usedFallback}`;
+      const fresh = [...picked.values()];
+      const diag = `slots:${remainingSlots} got:${fresh.length} | ${tried.join(" ")}`;
 
       if (!fresh.length) {
         // 새로 가져온 게 없으면 기존 데이터를 그대로 둔다 (삭제하지 않음)
