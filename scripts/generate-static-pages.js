@@ -10,7 +10,7 @@ const path = require('path');
 const { icon } = require('../assets/icons.js');
 const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
 const { VIDEO_NOTES } = require('../js/video-notes.js');
-const { getAgodaUrl, getKlookUrl } = require('../js/affiliate-config.js');
+const { getAgodaUrl, getKlookUrl, getCoupangUrl } = require('../js/affiliate-config.js');
 const { destinationSlug, coverStyle } = require('../js/slugs.js');
 
 const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
@@ -92,6 +92,9 @@ function scriptsHtml(pageScript, extra = []){
     ...extra,
     '/js/utils.js',
     '/js/slugs.js',
+    /* 여행지 페이지(아고다/클룩)뿐 아니라 영상 페이지(쿠팡)도 쓰므로 공통으로 둔다.
+       페이지별 extra로 넘기던 때에 영상 페이지에서 빠뜨려 getCoupangUrl이 undefined가 됐다. */
+    '/js/affiliate-config.js',
     '/js/nav.js',
   ];
   const tags = common.map(src => `<script src="${src}" defer></script>`).join('\n');
@@ -132,7 +135,7 @@ function shortsCardHtml(s, rank){
 
 function productRowHtml(p, youtubeId){
   const trackProps = JSON.stringify({ location: 'product_list', product_name: p.name, youtube_id: youtubeId }).replace(/'/g, '&#39;');
-  const link = p.coupang_url || `https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}`;
+  const link = getCoupangUrl(p);
   return `
     <div class="product-row">
       <div class="product-thumb">🛍️</div>
@@ -304,7 +307,7 @@ ${head}
 <footer id="site-footer" class="site-footer"></footer>
 <nav id="site-bottomnav" class="bottom-nav"></nav>
 
-${scriptsHtml('/js/detail-page.js', ['/js/destination-guides.js', '/js/affiliate-config.js'])}
+${scriptsHtml('/js/detail-page.js', ['/js/destination-guides.js'])}
 </body>
 </html>
 `;
@@ -400,7 +403,7 @@ ${scriptsHtml('/js/video-page.js', ['/js/destination-guides.js', '/js/video-note
 function rankingRowHtml(entry, rank){
   const { product: p, short: s, dest } = entry;
   const trackProps = JSON.stringify({ location: 'ranking_page', product_name: p.name, youtube_id: s.youtube_id }).replace(/'/g, '&#39;');
-  const link = p.coupang_url || `https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}`;
+  const link = getCoupangUrl(p);
   return `
     <div class="product-row">
       <div class="product-thumb rank-num">${rank}</div>

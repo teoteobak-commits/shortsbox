@@ -94,6 +94,32 @@ function getKlookUrl(destination){
   return KLOOK_AFFILIATE_LINKS[destination.id] || null;
 }
 
+/* 쿠팡 검색어 정제.
+   products.name은 사람이 읽으라고 붙인 라벨이라 괄호 부연설명("(외화 동전 분류용)")이나
+   병기 표기("벨트/스트랩")가 섞여 있는데, 그대로 검색창에 넣으면 결과가 거의 안 나온다.
+   화면에 보이는 이름은 그대로 두고 링크를 만들 때만 다듬는다.
+
+   어절 수로 자르지는 않는다. "접이식 대용량 여행 더플백", "휴대용 화장품 소분 용기 세트"처럼
+   길어도 그대로 검색이 잘 되는 이름이 대부분이라, 잘라내면 멀쩡한 이름이 오히려 망가진다. */
+function coupangSearchQuery(name){
+  const cleaned = String(name ?? '')
+    .replace(/[（(\[][^）)\]]*[）)\]]/g, ' ')  // 괄호 안 부연설명
+    .split(/[\/·]/)[0]                        // "벨트/스트랩" → 앞의 것만
+    .replace(/[&+]/g, ' ')                    // 검색창에서 의미 없는 기호
+    .replace(/\s+/g, ' ')
+    .trim();
+  return cleaned || String(name ?? '').trim();  // 통째로 괄호였던 경우 원본으로 되돌림
+}
+
+/* 추적 링크(coupang_url)가 있으면 그걸 쓰고, 없으면 정제한 이름으로 검색 링크를 만든다.
+   주의: 검색 링크는 파트너스 추적 링크가 아니라 수수료가 붙지 않는다 —
+   coupang_url을 채우는 게 본 해결책이고 이건 그때까지의 임시 경로다(coupang-link-todo.md). */
+function getCoupangUrl(product){
+  const direct = product.coupang_url || product.coupangUrl;
+  if (direct && String(direct).trim()) return String(direct).trim();
+  return `https://www.coupang.com/np/search?q=${encodeURIComponent(coupangSearchQuery(product.name))}`;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { AGODA_CID, AGODA_CITY_NAME, AGODA_AFFILIATE_LINKS, getAgodaUrl, KLOOK_AFFILIATE_LINKS, getKlookUrl };
+  module.exports = { AGODA_CID, AGODA_CITY_NAME, AGODA_AFFILIATE_LINKS, getAgodaUrl, KLOOK_AFFILIATE_LINKS, getKlookUrl, coupangSearchQuery, getCoupangUrl };
 }

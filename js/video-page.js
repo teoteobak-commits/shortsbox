@@ -111,7 +111,7 @@ function renderVideo(s){
 
   productListEl.innerHTML = s.products.map(p => {
     const trackProps = JSON.stringify({ location: 'product_list', product_name: p.name, youtube_id: s.youtubeId }).replace(/'/g, '&#39;');
-    const link = p.coupangUrl || `https://www.coupang.com/np/search?q=${encodeURIComponent(p.name)}`;
+    const link = getCoupangUrl(p);
     return `
     <div class="product-row">
       <div class="product-thumb">🛍️</div>
