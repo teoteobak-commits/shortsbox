@@ -15,6 +15,11 @@ const DESTINATION_SLUGS = {
   13: 'taipei',
   14: 'cebu',
   15: 'hongkong',
+  16: 'sapporo',
+  17: 'okinawa',
+  18: 'singapore',
+  19: 'guam',
+  20: 'shanghai',
 };
 
 /* 카드 배경 사진(assets/destinations/{slug}.jpg)이 실제로 있는 여행지.

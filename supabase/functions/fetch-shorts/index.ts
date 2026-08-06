@@ -18,7 +18,7 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-type Destination = { id: number; name: string };
+type Destination = { id: number; name: string; country: string | null };
 
 const TOP_N = 10;
 
@@ -141,7 +141,7 @@ async function refreshCuratedStats(ids: string[]) {
 Deno.serve(async () => {
   const { data: destinations, error: destErr } = await supabase
     .from("destinations")
-    .select("id, name");
+    .select("id, name, country");
 
   if (destErr) {
     return new Response(JSON.stringify({ error: destErr.message }), { status: 500 });
@@ -164,35 +164,64 @@ Deno.serve(async () => {
         .map((r: any) => r.youtube_id)
         .filter((id: string) => curatedIds.has(id));
 
-      // 큐레이션(제품 있음) 영상을 제외한 나머지만 삭제
-      let delQuery = supabase.from("shorts").delete().eq("destination_id", dest.id);
-      if (protectedIds.length) {
-        delQuery = delQuery.not("youtube_id", "in", `(${protectedIds.join(",")})`);
-      }
-      const { error: delErr } = await delQuery;
-      if (delErr) throw new Error(`delete failed: ${delErr.message}`);
-
+      /* 반드시 "검색 먼저, 삭제 나중" 순서를 지킨다.
+         예전에는 기존 쇼츠를 먼저 지우고 검색했는데, 그날 검색 결과가 0건이면
+         지워진 채로 끝나서 그 여행지 페이지가 통째로 비어버렸다(타이베이·세부에서 실제 발생).
+         유튜브 검색 결과는 날마다 흔들리므로, 새로 채울 게 확보됐을 때만 기존 것을 정리한다. */
       const remainingSlots = Math.max(0, TOP_N - protectedIds.length);
-      const candidates = await searchTopShorts(`${dest.name} 여행 아이템 추천`, remainingSlots + protectedIds.length + claimedIds.size);
-      const fresh = candidates
-        .filter((s: any) => !curatedIds.has(s.youtubeId) && !claimedIds.has(s.youtubeId))
-        .slice(0, remainingSlots);
+      const wanted = remainingSlots + protectedIds.length + claimedIds.size;
+
+      /* 도시 이름으로는 쇼핑 콘텐츠가 거의 안 잡히는 곳이 있다(타이베이·괌에서 0건).
+         그런 경우 국가 이름으로 한 번 더 찾는다. 같은 나라면 쇼핑 아이템은 대체로 통용된다.
+         판단 기준은 "검색 결과 수"가 아니라 "필터를 통과해 실제로 쓸 수 있는 수"여야 한다 —
+         후보가 있어도 이미 큐레이션됐거나 다른 여행지가 가져간 것뿐이면 결국 채울 게 없기 때문. */
+      const usable = (list: any[]) =>
+        list
+          .filter((s: any) => !curatedIds.has(s.youtubeId) && !claimedIds.has(s.youtubeId))
+          .slice(0, remainingSlots);
+
+      const byCity = await searchTopShorts(`${dest.name} 여행 아이템 추천`, wanted);
+      let fresh = usable(byCity);
+      let usedFallback = false;
+      let byCountryCount = -1;
+      if (!fresh.length && dest.country && dest.country !== dest.name) {
+        const byCountry = await searchTopShorts(`${dest.country} 여행 아이템 추천`, wanted);
+        byCountryCount = byCountry.length;
+        fresh = usable(byCountry);
+        usedFallback = true;
+      }
+      const diag = `city:${byCity.length} country:${byCountryCount} fallback:${usedFallback}`;
+
+      if (!fresh.length) {
+        // 새로 가져온 게 없으면 기존 데이터를 그대로 둔다 (삭제하지 않음)
+        results[dest.name] = `kept ${(existing ?? []).length} (no new candidates | ${diag})`;
+        continue;
+      }
+
       fresh.forEach((s: any) => claimedIds.add(s.youtubeId));
 
-      if (fresh.length) {
-        const { error: upsertErr } = await supabase.from("shorts").upsert(
-          fresh.map((s: any) => ({
-            youtube_id: s.youtubeId,
-            destination_id: dest.id,
-            title: s.title,
-            channel_name: s.channelName,
-            views: s.views,
-            thumbnail_url: s.thumbnailUrl,
-            fetched_at: new Date().toISOString(),
-          })),
-        );
-        if (upsertErr) throw new Error(`upsert failed: ${upsertErr.message}`);
-      }
+      // 새 목록에 없고 큐레이션도 안 된 기존 항목만 정리
+      const keepIds = [...protectedIds, ...fresh.map((s: any) => s.youtubeId)];
+      const { error: delErr } = await supabase
+        .from("shorts")
+        .delete()
+        .eq("destination_id", dest.id)
+        .not("youtube_id", "in", `(${keepIds.join(",")})`);
+      if (delErr) throw new Error(`delete failed: ${delErr.message}`);
+
+      const { error: upsertErr } = await supabase.from("shorts").upsert(
+        fresh.map((s: any) => ({
+          youtube_id: s.youtubeId,
+          destination_id: dest.id,
+          title: s.title,
+          channel_name: s.channelName,
+          views: s.views,
+          thumbnail_url: s.thumbnailUrl,
+          fetched_at: new Date().toISOString(),
+        })),
+      );
+      if (upsertErr) throw new Error(`upsert failed: ${upsertErr.message}`);
+
       results[dest.name] = fresh.length + protectedIds.length;
     } catch (e) {
       results[dest.name] = `error: ${e instanceof Error ? e.message : String(e)}`;
