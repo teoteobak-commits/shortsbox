@@ -36,6 +36,11 @@ async function loadData(){
     channelHandle: s.channel_name,
     views: s.views,
     thumbnailUrl: s.thumbnail_url,
+    /* VideoObject JSON-LD의 uploadDate에 쓴다. 이 매핑이 빠지면 video-page.js의
+       s.uploadedAt이 undefined가 되고, setPageMeta가 정적 HTML에 박아둔 정상
+       JSON-LD를 uploadDate 없는 것으로 덮어쓴다. 구글은 JS를 실행한 뒤를 보므로
+       원본 HTML이 멀쩡해도 "uploadDate 누락"으로 판정한다(2026-08-06에 실제로 겪음). */
+    uploadedAt: s.published_at,
     hashtags: [],
     products: productsByVideo[s.youtube_id] || [],
   }));
