@@ -64,8 +64,11 @@ function getAgodaUrl(destination){
 }
 
 /* 클룩(Klook) 투어&액티비티 제휴 링크(세시간전) — 목적지별 "여행지 둘러보기" 개요 페이지로 연결.
-   제주(콘텐츠 성격 안 맞음)와 하와이(클룩에 해당 지역 개요 페이지 없음)는 의도적으로 없음 —
-   getKlookUrl은 이 경우 null을 반환하고, 호출부에서 배너 자체를 숨긴다. */
+   빠져 있는 곳은 제주와 하와이 둘뿐이다. getKlookUrl이 null을 돌려주고 호출부에서 배너를 숨긴다.
+   제주는 가이드가 렌터카 위주라 액티비티 CTA가 겉돌아서 뺐다.
+   하와이는 예전에 "클룩에 개요 페이지가 없다"고 적어뒀지만 사실이 아니다 —
+   c169-hawaii가 실제로 있다(미국 국가 페이지 co1028에 호놀룰루 c703335와 함께 들어 있음).
+   링크만 발급받으면 바로 넣을 수 있다. */
 const KLOOK_AFFILIATE_LINKS = {
   2: 'https://3ha.in/r/592177', // 오사카
   3: 'https://3ha.in/r/592175', // 도쿄
@@ -75,6 +78,16 @@ const KLOOK_AFFILIATE_LINKS = {
   7: 'https://3ha.in/r/592190', // 파리
   8: 'https://3ha.in/r/592194', // 스위스
   9: 'https://3ha.in/r/592197', // 발리
+  11: 'https://3ha.in/r/596634', // 후쿠오카
+  12: 'https://3ha.in/r/596647', // 나트랑
+  13: 'https://3ha.in/r/596653', // 타이베이
+  14: 'https://3ha.in/r/596657', // 세부
+  15: 'https://3ha.in/r/596678', // 홍콩
+  16: 'https://3ha.in/r/596683', // 삿포로
+  17: 'https://3ha.in/r/596688', // 오키나와
+  18: 'https://3ha.in/r/596699', // 싱가포르
+  19: 'https://3ha.in/r/596716', // 괌
+  20: 'https://3ha.in/r/596707', // 상하이
 };
 
 function getKlookUrl(destination){
