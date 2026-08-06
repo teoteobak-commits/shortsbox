@@ -100,6 +100,7 @@ async function searchTopShorts(query: string, limit: number) {
       channelName: it.snippet.channelTitle,
       thumbnailUrl: it.snippet.thumbnails?.high?.url ?? it.snippet.thumbnails?.default?.url,
       views: Number(it.statistics?.viewCount ?? 0),
+      publishedAt: it.snippet.publishedAt ?? null,
       ...classify(title, description),
     };
   });
@@ -138,6 +139,7 @@ async function refreshCuratedStats(ids: string[]) {
           title: item.snippet.title,
           channel_name: item.snippet.channelTitle,
           thumbnail_url: item.snippet.thumbnails?.high?.url ?? item.snippet.thumbnails?.default?.url,
+          published_at: item.snippet.publishedAt ?? null,
           fetched_at: new Date().toISOString(),
         })
         .eq("youtube_id", item.id);
@@ -151,7 +153,58 @@ async function refreshCuratedStats(ids: string[]) {
   return { updated, missing };
 }
 
-Deno.serve(async () => {
+/* published_at이 비어 있는 영상을 채운다.
+   이 컬럼은 2026-08-06에 추가됐는데, 그전에 수집된 영상들은 값이 없다. 그대로 두면
+   VideoObject 구조화 데이터에 uploadDate가 빠져 구글이 동영상으로 인식하지 않는다.
+   videos.list는 50개씩 묶어 1 units만 쓰고 검색 할당량(Search Queries per day)과도
+   별개라, 매 실행마다 돌려도 부담이 없다. 채울 게 없으면 호출 자체를 하지 않는다. */
+async function backfillPublishedAt() {
+  const { data: rows } = await supabase
+    .from("shorts")
+    .select("youtube_id")
+    .is("published_at", null);
+
+  const ids = (rows ?? []).map((r: any) => r.youtube_id);
+  if (!ids.length) return { filled: 0, remaining: 0 };
+
+  let filled = 0;
+  for (let i = 0; i < ids.length; i += 50) {
+    const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+    url.search = new URLSearchParams({
+      key: YOUTUBE_API_KEY,
+      part: "snippet",
+      id: ids.slice(i, i + 50).join(","),
+    }).toString();
+
+    const json = await (await fetch(url)).json();
+    throwIfApiError(json, "videos.list(backfill)");
+
+    for (const item of json.items ?? []) {
+      if (!item.snippet?.publishedAt) continue;
+      const { error } = await supabase
+        .from("shorts")
+        .update({ published_at: item.snippet.publishedAt })
+        .eq("youtube_id", item.id);
+      if (!error) filled++;
+    }
+  }
+  // 유튜브에서 사라진 영상은 계속 남는다 — 남은 수를 보고해서 눈치챌 수 있게 한다.
+  return { filled, remaining: ids.length - filled };
+}
+
+/* ?only=backfill 로 부르면 수집 루프를 건너뛰고 published_at 백필만 돌린다.
+   수집 1회는 여행지 수만큼 search 호출(100 units, 별도의 Search Queries per day 한도)을
+   쓰는데, 백필은 videos.list(1 unit)만 필요하다. 백필 하나 때문에 검색 할당량을 태우면
+   다음날 자동 수집이 굶는다. */
+Deno.serve(async (req) => {
+  if (new URL(req.url).searchParams.get("only") === "backfill") {
+    try {
+      return Response.json({ ok: true, publishedAtBackfill: await backfillPublishedAt() });
+    } catch (e) {
+      return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    }
+  }
+
   const { data: destinations, error: destErr } = await supabase
     .from("destinations")
     .select("id, name, country");
@@ -230,6 +283,7 @@ Deno.serve(async () => {
           channel_name: s.channelName,
           views: s.views,
           thumbnail_url: s.thumbnailUrl,
+          published_at: s.publishedAt,
           fetched_at: new Date().toISOString(),
         })),
       );
@@ -250,7 +304,14 @@ Deno.serve(async () => {
     curatedStats = { error: e instanceof Error ? e.message : String(e) };
   }
 
-  return new Response(JSON.stringify({ ok: true, results, curatedStats }), {
+  let publishedAtBackfill: unknown;
+  try {
+    publishedAtBackfill = await backfillPublishedAt();
+  } catch (e) {
+    publishedAtBackfill = { error: e instanceof Error ? e.message : String(e) };
+  }
+
+  return new Response(JSON.stringify({ ok: true, results, curatedStats, publishedAtBackfill }), {
     headers: { "Content-Type": "application/json" },
   });
 });

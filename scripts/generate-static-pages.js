@@ -333,6 +333,10 @@ function buildVideoPage(s, dest, products){
       description,
       thumbnailUrl: thumbUrl(s),
       embedUrl: `https://www.youtube.com/embed/${s.youtube_id}`,
+      /* uploadDate는 VideoObject 필수 항목이다 — 빠지면 구글이 동영상으로 인식하지 않는다
+         (서치콘솔이 2026-08-06에 '심각한 문제'로 보고). 값이 없으면 아예 넣지 않는다.
+         fetched_at(우리가 수집한 시각)으로 대신 채우면 사실과 다른 날짜를 싣는 셈이다. */
+      ...(s.published_at ? { uploadDate: new Date(s.published_at).toISOString() } : {}),
     },
   });
 
