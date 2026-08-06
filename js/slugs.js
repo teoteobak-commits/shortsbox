@@ -26,9 +26,14 @@ const DESTINATION_SLUGS = {
    목록에 없으면 사진 대신 브랜드 그라데이션이 깔린다 — 사진을 새로 넣었다면 여기에도 slug를 추가할 것.
    (CSS의 var(--cover-photo, var(--grad)) 폴백은 인라인 스타일이 항상 설정되면 동작하지 않으므로,
     아예 --cover-photo를 넘기지 않는 방식으로 처리한다.) */
+/* 사진은 반드시 가로 방향이어야 한다. .card-cover는 높이 140px에 background-size:cover이고
+   background-position이 없어(기본 0% 0%) 세로 사진을 넣으면 위쪽 하늘만 보이고 랜드마크가 잘린다.
+   후쿠오카·나트랑·세부는 Pexels에 그 도시라고 확인할 수 있는 사진이 없어서 일부러 뺐다 —
+   아무 열대 해변이나 넣는 것보다 그라데이션 폴백이 낫다. */
 const DESTINATIONS_WITH_PHOTO = [
   'jeju', 'osaka', 'tokyo', 'bangkok', 'danang',
   'chiangmai', 'paris', 'switzerland', 'bali', 'hawaii',
+  'taipei', 'hongkong', 'sapporo', 'okinawa', 'singapore', 'guam', 'shanghai',
 ];
 
 function destinationSlug(id){
