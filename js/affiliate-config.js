@@ -14,6 +14,16 @@ const AGODA_CITY_NAME = {
   8: 'Switzerland',
   9: 'Bali',
   10: 'Hawaii',
+  11: 'Fukuoka',
+  12: 'Nha Trang',
+  13: 'Taipei',
+  14: 'Cebu',
+  15: 'Hong Kong',
+  16: 'Sapporo',
+  17: 'Okinawa',
+  18: 'Singapore',
+  19: 'Guam',
+  20: 'Shanghai',
 };
 
 /* 세시간전(3hoursahead) 제휴 플랫폼으로 발급받은 실제 추적 링크 —
@@ -30,6 +40,16 @@ const AGODA_AFFILIATE_LINKS = {
   8: 'https://3ha.in/r/580840',
   9: 'https://3ha.in/r/580845',
   10: 'https://3ha.in/r/580846',
+  11: 'https://3ha.in/r/596474', // 후쿠오카
+  12: 'https://3ha.in/r/596476', // 나트랑
+  13: 'https://3ha.in/r/596479', // 타이베이
+  14: 'https://3ha.in/r/596496', // 세부
+  15: 'https://3ha.in/r/596499', // 홍콩
+  16: 'https://3ha.in/r/596502', // 삿포로
+  17: 'https://3ha.in/r/596512', // 오키나와
+  18: 'https://3ha.in/r/596522', // 싱가포르
+  19: 'https://3ha.in/r/596541', // 괌
+  20: 'https://3ha.in/r/596536', // 상하이
 };
 
 function getAgodaUrl(destination){
