@@ -32,18 +32,31 @@ const PRODUCT_KEYWORDS = /템|아이템|제품|쇼핑|구매|추천|필수|캐�
 const WARNING_KEYWORDS = /소매치기|사기|도난|분실|위험|바가지|조심|주의보|당하/;
 const AFFILIATE_PATTERN = /coupang\.com|link\.coupang|쿠팡\s*파트너스|amzn\.to|amazon\.[a-z.]+\/|aliexpress/i;
 
+/* 여행사·제휴 광고 영상 차단.
+   화이트리스트를 "추천"·"쇼핑" 같은 단어로 통과한 뒤 실제로는 광고인 영상이 들어왔다
+   (2026-08-06: 다낭으로 분류된 방콕 패키지 광고, "할인 마감 임박/실시간 핫딜" 제휴 스팸).
+
+   이건 WARNING_KEYWORDS와 별개 축이어야 한다. 통과 조건이 hasProductKeyword || hasAffiliate라
+   WARNING_KEYWORDS에만 넣으면 설명란에 제휴 링크가 있는 광고 영상이 hasAffiliate로 그냥 통과한다.
+   광고성 영상은 어느 쪽으로도 못 들어오게 rankCandidates에서 먼저 잘라낸다.
+
+   "공구"는 일부러 넣지 않았다. 정상 영상의 해시태그(#공구예고)에 걸린다 —
+   조회수 426만짜리 승무원 여행꿀템 영상이 실제로 그랬다. */
+const AD_SPAM_KEYWORDS = /핫딜|마감\s*임박|기회를\s*놓치|자유여행\s*패키지/;
+
 function classify(title: string, description: string){
   const hasAffiliate = AFFILIATE_PATTERN.test(description || "");
   const hasWarning = WARNING_KEYWORDS.test(title);
   const hasProductKeyword = !hasWarning && PRODUCT_KEYWORDS.test(title);
-  return { hasAffiliate, hasProductKeyword };
+  const isAdSpam = AD_SPAM_KEYWORDS.test(title);
+  return { hasAffiliate, hasProductKeyword, isAdSpam };
 }
 
 /* 쇼핑 신호 우선 정렬: 제휴링크 있음 > 제품 키워드 있음 > 조회수.
    실용 정보 신호(hasProductKeyword)나 제휴링크가 전혀 없는 영상은 아예 후보에서 제외한다. */
 function rankCandidates(items: any[]){
   return items
-    .filter((it) => it.hasProductKeyword || it.hasAffiliate)
+    .filter((it) => !it.isAdSpam && (it.hasProductKeyword || it.hasAffiliate))
     .sort((a, b) => {
       if (a.hasAffiliate !== b.hasAffiliate) return a.hasAffiliate ? -1 : 1;
       return b.views - a.views;
