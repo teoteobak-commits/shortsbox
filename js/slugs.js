@@ -28,12 +28,18 @@ const DESTINATION_SLUGS = {
     아예 --cover-photo를 넘기지 않는 방식으로 처리한다.) */
 /* 사진은 반드시 가로 방향이어야 한다. .card-cover는 높이 140px에 background-size:cover이고
    background-position이 없어(기본 0% 0%) 세로 사진을 넣으면 위쪽 하늘만 보이고 랜드마크가 잘린다.
-   후쿠오카·나트랑·세부는 Pexels에 그 도시라고 확인할 수 있는 사진이 없어서 일부러 뺐다 —
-   아무 열대 해변이나 넣는 것보다 그라데이션 폴백이 낫다. */
+
+   후쿠오카·나트랑·세부 세 장은 "그 도시가 찍힌 사진"이 아니라 **그 여행지를 떠올리게 하는
+   대표 이미지**다. Pexels에 도시명으로 태그된 사진이 없어서 이렇게 갔다.
+     후쿠오카 = 벳푸 지열 온천 (규슈 온천. 엄밀히는 오이타현)
+     나트랑   = 베트남 리조트 빌라 항공샷 (빈펄 느낌. 특정 리조트는 아님)
+     세부     = 필리핀 섬 항공샷 (세부라는 근거는 없음)
+   카드 배경용이라 이 정도로 판단했지만, 나중에 실제 현지 사진이 생기면 교체하는 게 낫다. */
 const DESTINATIONS_WITH_PHOTO = [
   'jeju', 'osaka', 'tokyo', 'bangkok', 'danang',
   'chiangmai', 'paris', 'switzerland', 'bali', 'hawaii',
   'taipei', 'hongkong', 'sapporo', 'okinawa', 'singapore', 'guam', 'shanghai',
+  'fukuoka', 'nhatrang', 'cebu',
 ];
 
 function destinationSlug(id){

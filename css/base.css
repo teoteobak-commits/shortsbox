@@ -16,6 +16,13 @@ body{
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
   padding-bottom:var(--bottomnav-h);
+  /* 한글은 기본값(word-break:normal)에서 음절 단위로 아무 데나 잘린다.
+     그래서 좁은 화면에서 "여행 꿀 / 템"처럼 단어 중간이 갈라졌다.
+     keep-all은 어절(띄어쓰기) 단위로만 줄을 바꾼다.
+     긴 URL처럼 띄어쓰기가 없는 문자열은 keep-all만으로는 화면을 넘치므로
+     overflow-wrap으로 그때만 강제로 자르게 둔다. */
+  word-break:keep-all;
+  overflow-wrap:break-word;
 }
 
 @media (min-width:900px){
