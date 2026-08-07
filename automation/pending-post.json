@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "posted",
   "date": "2026-08-07",
   "destination_slug": "hawaii",
   "destination_name": "🌺 하와이",
@@ -10,5 +10,7 @@
   "threads_text": "비행기 탈 때 뭐 챙겨야 하나 고민해본 적 있나요? ✈️ 조회수 53만 찍은 쇼츠에 나온 기내용 수분 가습 마스크, 다들 챙긴다길래 찾아봤어요. 어떤 건지 링크에서 확인해보세요 https://shortsbox.kr/?utm_source=threads&utm_medium=social",
   "telegram_anchor_message_id": 23,
   "last_update_id": 522266704,
-  "attempt_count": 1
+  "attempt_count": 1,
+  "threads_post_id": "18014871797728134",
+  "threads_permalink": "https://www.threads.com/@shortsbox.kr/post/DbuXWsHILxn"
 }
