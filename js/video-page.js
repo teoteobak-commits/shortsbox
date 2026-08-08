@@ -38,7 +38,7 @@ function renderVideo(s){
     ogTitle: `${s.title} — 쇼츠박스`,
     ogDescription: description,
     ogImage: thumbUrl(s),
-    url: `https://shortsbox.kr${videoUrl(s)}`,
+    url: `https://www.shortsbox.kr${videoUrl(s)}`,
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'VideoObject',
@@ -97,7 +97,7 @@ function renderVideo(s){
   document.getElementById('share-video-btn').addEventListener('click', () => shareUrl({
     title: `${s.title} — 쇼츠박스`,
     text: `${dest.name} 여행 꿀템 쇼츠 "${s.title}"`,
-    url: `https://shortsbox.kr${videoUrl(s)}`,
+    url: `https://www.shortsbox.kr${videoUrl(s)}`,
     trackName: 'video_detail',
   }));
 

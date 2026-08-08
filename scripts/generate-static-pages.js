@@ -18,7 +18,7 @@ const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmdG9saW52aHd4ZGNjbHJ0YXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NTY3NzQsImV4cCI6MjEwMDAzMjc3NH0.HMZ4-yf6SPty4wdQKJon8nRi9GfWpgFIeMx2PXF5RhU';
 
 const ROOT = path.join(__dirname, '..');
-const SITE_URL = 'https://shortsbox.kr';
+const SITE_URL = 'https://www.shortsbox.kr';
 
 const CURATION_NOTE = '쇼츠박스는 여행 유튜버들이 직접 추천한 여행 아이템만 모아서 보여드려요. 영상 속 정확한 제품을 특정하기 어려운 경우가 많아서, 특징이 비슷한 상품을 대신 연결해드리고 있어요. 실제 구매 전에는 영상 설명란이나 판매 페이지에서 제품 정보를 한 번 더 확인해보시는 걸 추천해요.';
 
@@ -73,7 +73,7 @@ function headHtml({ title, description, ogTitle, ogDescription, ogImage, ogImage
 <meta property="og:description" content="${escapeHtml(ogDescription || description)}">
 <meta property="og:type" content="${ogType || 'website'}">
 <meta property="og:url" content="${canonicalUrl}">
-<meta property="og:image" content="${ogImage || 'https://shortsbox.kr/assets/og-image.png'}">
+<meta property="og:image" content="${ogImage || 'https://www.shortsbox.kr/assets/og-image.png'}">
 <meta property="og:image:width" content="${ogImageWidth || 1200}">
 <meta property="og:image:height" content="${ogImageHeight || 630}">
 <script type="application/ld+json" id="page-jsonld">${JSON.stringify(jsonLd)}</script>

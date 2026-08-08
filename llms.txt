@@ -6,9 +6,9 @@
 
 ## 주요 페이지
 
-- [홈](https://shortsbox.kr/): 요즘 뜨는 꿀템 쇼츠 + 인기 여행지 목록
-- [여행지 탐색](https://shortsbox.kr/explore.html): 전체 여행지 목록
-- [여행지 상세](https://shortsbox.kr/travel/jeju/): 여행지별 쇼츠 TOP10 + 에디터 가이드 + 제품 구매처 (제주도/오사카/도쿄/방콕/다낭/치앙마이/파리/스위스/발리/하와이)
+- [홈](https://www.shortsbox.kr/): 요즘 뜨는 꿀템 쇼츠 + 인기 여행지 목록
+- [여행지 탐색](https://www.shortsbox.kr/explore.html): 전체 여행지 목록
+- [여행지 상세](https://www.shortsbox.kr/travel/jeju/): 여행지별 쇼츠 TOP10 + 에디터 가이드 + 제품 구매처 (제주도/오사카/도쿄/방콕/다낭/치앙마이/파리/스위스/발리/하와이)
 
 ## 참고
 

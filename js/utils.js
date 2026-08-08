@@ -28,7 +28,7 @@ function setPageMeta({ description, ogTitle, ogDescription, ogImage, url, jsonLd
     'og:description': ogDescription || description,
     'og:type': 'website',
     'og:url': url || window.location.href,
-    'og:image': ogImage || 'https://shortsbox.kr/assets/og-image.png',
+    'og:image': ogImage || 'https://www.shortsbox.kr/assets/og-image.png',
   };
   Object.entries(ogTags).forEach(([prop, content]) => {
     if(!content) return;

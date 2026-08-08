@@ -30,7 +30,7 @@ function renderDetail(d){
   document.title = `${d.name} 여행 꿀템 — 쇼츠박스`;
   const guideForMeta = getDestinationGuide(d.id);
   const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guideForMeta ? ' ' + guideForMeta.body.slice(0, 80) : ''}`;
-  const canonicalUrl = `https://shortsbox.kr${destinationUrl(d)}`;
+  const canonicalUrl = `https://www.shortsbox.kr${destinationUrl(d)}`;
   const graph = [{
     '@type': 'TouristAttraction',
     name: `${d.name} 여행 꿀템`,
@@ -113,7 +113,7 @@ function renderDetail(d){
   document.getElementById('share-btn').addEventListener('click', () => shareUrl({
     title: `${d.name} 여행 꿀템 — 쇼츠박스`,
     text: `${d.name} 여행 꿀템 쇼츠 모음 보러가기`,
-    url: `https://shortsbox.kr${destinationUrl(d)}`,
+    url: `https://www.shortsbox.kr${destinationUrl(d)}`,
     trackName: 'destination_detail',
   }));
 }
