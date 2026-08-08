@@ -1,16 +1,14 @@
 {
-  "status": "posted",
-  "date": "2026-08-07",
-  "destination_slug": "hawaii",
-  "destination_name": "🌺 하와이",
-  "headline": "기내 필수템, 53만이 봤다",
-  "subline": "조회수 53만 쇼츠템",
-  "image_path": "assets/card-news/daily-hawaii-2026-08-07.png",
-  "image_url": "https://shortsbox.kr/assets/card-news/daily-hawaii-2026-08-07.png",
-  "threads_text": "비행기 탈 때 뭐 챙겨야 하나 고민해본 적 있나요? ✈️ 조회수 53만 찍은 쇼츠에 나온 기내용 수분 가습 마스크, 다들 챙긴다길래 찾아봤어요. 어떤 건지 링크에서 확인해보세요 https://shortsbox.kr/?utm_source=threads&utm_medium=social",
-  "telegram_anchor_message_id": 23,
-  "last_update_id": 522266704,
-  "attempt_count": 1,
-  "threads_post_id": "18014871797728134",
-  "threads_permalink": "https://www.threads.com/@shortsbox.kr/post/DbuXWsHILxn"
+  "status": "pending",
+  "date": "2026-08-08",
+  "destination_slug": "jeju",
+  "destination_name": "🍊 제주",
+  "headline": "그 캐리어, 426만이 봤다",
+  "subline": "조회수 426만 쇼츠템",
+  "image_path": "assets/card-news/daily-jeju-2026-08-08.png",
+  "image_url": "https://shortsbox.kr/assets/card-news/daily-jeju-2026-08-08.png",
+  "threads_text": "짐 쌀 때 캐리어 무게 넘어서 공항에서 당황해본 적 있나요? ✈️ 조회수 426만 찍은 쇼츠에 나온 무게측정 기능 있는 확장형 기내용 캐리어, 승무원이 찐추천하더라고요. 어떤 건지 링크에서 확인해보세요 https://shortsbox.kr/?utm_source=threads&utm_medium=social",
+  "telegram_anchor_message_id": null,
+  "last_update_id": null,
+  "attempt_count": 0
 }
