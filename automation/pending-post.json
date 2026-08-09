@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "posted",
   "date": "2026-08-08",
   "destination_slug": "jeju",
   "destination_name": "🍊 제주",
@@ -11,5 +11,7 @@
   "threads_text": "짐 쌀 때 캐리어 무게 넘어서 공항에서 당황해본 적 있나요? ✈️ 조회수 426만 찍은 쇼츠에 나온 무게측정 기능 있는 확장형 기내용 캐리어, 승무원이 찐추천하더라고요. 어떤 건지 링크에서 확인해보세요 https://shortsbox.kr/watch/0GFp_yy0MBE/?utm_source=threads&utm_medium=social",
   "telegram_anchor_message_id": 32,
   "last_update_id": null,
-  "attempt_count": 1
+  "attempt_count": 1,
+  "threads_post_id": "18102155618237699",
+  "threads_permalink": "https://www.threads.com/@shortsbox.kr/post/DbzgEdUoI1I"
 }
