@@ -24,7 +24,7 @@
 
 대신 저장소의 정적 페이지를 읽는다. `travel/<slug>/index.html` 에 해당 목적지의 shorts 가 "제품 있는 영상 우선 → 조회수 내림차순"으로 정렬돼 박혀 있다(`shorts-card`, `data-youtube-id`, "조회수 OOO만").
 
-맨 위 카드의 youtube_id 로 `watch/<youtube_id>/index.html` 을 열면 제품명(`product-name`)이 있다. **제품명 1개와 조회수를 기록해둔다.**
+맨 위 카드의 youtube_id 로 `watch/<youtube_id>/index.html` 을 열면 제품명(`product-name`)이 있다. **제품명 1개, 조회수, 그리고 이 youtube_id 를 기록해둔다** — 캡션 링크가 이 값을 그대로 쓴다(3장 참고).
 
 목적지 slug 매핑은 `js/slugs.js` 의 `DESTINATION_SLUGS` 참고.
 
@@ -37,6 +37,7 @@
 
 - 실제 조회수를 넣어 신뢰도를 준다. "조회수 OOO만 찍은 쇼츠에 나온"
 - **판매·구매 유도 금지.** "구매처 확인하세요", "여기서 사세요" 안 쓴다. 대신 "어떤 건지 링크에서 확인해보세요" 처럼 정보 제공 톤으로. 원작자 수익을 가로채는 느낌을 주지 않기 위한 원칙이니 꼭 지킨다.
+- **링크는 홈이 아니라 오늘 카드에 나온 그 영상 페이지로 건다.** 캡션에서 소개한 제품·영상을 클릭 한 번에 바로 볼 수 있어야 한다. 모든 채널의 URL은 `https://shortsbox.kr/watch/<2단계에서 기록한 youtube_id>/?utm_source=<채널>&utm_medium=social` 형식을 쓴다(끝에 슬래시 포함, 그 뒤에 쿼리스트링). 아래 3-1~3-5 예시의 `shortsbox.kr/?utm_source=...` 는 형식 설명용이고 실제로는 이 watch 페이지 URL로 치환한다.
 
 ### 3-1. 스레드 (2~4문장)
 
@@ -133,6 +134,7 @@ push 후 1~2분이면 `https://shortsbox.kr/assets/card-news/daily-<slug>-<날�
   "date": "YYYY-MM-DD",
   "destination_slug": "<slug>",
   "destination_name": "<이모지+이름, 예: 🥐 파리>",
+  "youtube_id": "<2단계에서 기록한 youtube_id>",
   "headline": "<헤드라인>",
   "subline": "<보조문구>",
   "image_path": "assets/card-news/daily-<slug>-<날짜>.png",
