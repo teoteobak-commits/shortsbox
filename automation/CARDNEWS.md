@@ -137,7 +137,9 @@ git push
 
 push 가 거부되면 `git pull --rebase` 후 한 번만 재시도한다.
 
-push 후 1~2분이면 `https://shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png` 로 공개된다.
+push 후 1~2분이면 `https://www.shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png` 로 공개된다.
+
+**`image_url` 은 반드시 `www.` 를 붙인다.** non-www 는 308 로 www 로 넘기는데, 스레드가 이미지를 내려받을 때 리다이렉트를 한 번 더 타게 만들 이유가 없다. 캡션의 UTM 링크는 리다이렉트로 쿼리스트링이 보존되므로 기존 형태를 유지해도 되지만, 이미지는 페처가 직접 받아야 하므로 최종 주소를 그대로 준다.
 
 `pending-post.json` 구조:
 
@@ -151,7 +153,7 @@ push 후 1~2분이면 `https://shortsbox.kr/assets/card-news/daily-<slug>-<날�
   "headline": "<헤드라인 (| 를 공백으로 바꿔 한 줄로)>",
   "subline": "<보조문구>",
   "image_path": "assets/card-news/daily-<slug>-<날짜>.png",
-  "image_url": "https://shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png",
+  "image_url": "https://www.shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png",
   "threads_text": "<3-1 스레드 캡션 전문>",
   "telegram_anchor_message_id": null,
   "last_update_id": null,
