@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5788194649735645"
-     crossorigin="anonymous"></script>
+<!-- 레거시 URL(/video.html?v=). canonical 은 클라이언트 JS 가 /watch/{id}/ 로 잡는데
+     그쪽이 noindex 라서 여기도 맞춘다. 광고도 넣지 않는다 — 얇은 영상 페이지에
+     광고를 얹는 걸 애드센스 심사에서 걷어내는 중이다(generate-static-pages.js 참고). -->
+<meta name="robots" content="noindex, follow">
 <script>
 (function(){
   var saved = localStorage.getItem('shortsbox_theme');

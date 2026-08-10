@@ -51,7 +51,10 @@ function renderVideo(s){
   });
   const saved = isVideoSaved(s.youtubeId);
 
-  const guide = getDestinationGuide(dest.id);
+  /* 여행지 가이드 블록은 영상 페이지에서 걷어냈다(2026-08-11).
+     같은 여행지 영상 페이지끼리 텍스트가 91~93% 동일해지는 원인이었다 —
+     정적 생성기(scripts/generate-static-pages.js)의 buildVideoPage 주석 참고.
+     이중 렌더러라 한쪽만 고치면 하이드레이션이 다시 덮어쓴다. */
 
   document.getElementById('video-layout').innerHTML = `
     <span class="badge badge-gem" style="margin-bottom:10px">${dest.emoji} ${escapeHtml(dest.name)}</span>
@@ -79,8 +82,6 @@ function renderVideo(s){
       <span class="editorial-guide-tag">쇼츠박스 큐레이션 안내</span>
       <p>${CURATION_NOTE}</p>
     </div>
-
-    ${guide ? renderGuideBlockHtml(guide) : ''}
 
     <a href="${destinationUrl(dest)}" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
       ${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 더 보기

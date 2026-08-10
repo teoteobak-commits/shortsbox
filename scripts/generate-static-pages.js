@@ -46,9 +46,13 @@ function thumbUrl(s){
   return s.thumbnail_url || `https://i.ytimg.com/vi/${s.youtube_id}/hqdefault.jpg`;
 }
 
-function headHtml({ title, description, ogTitle, ogDescription, ogImage, ogImageWidth, ogImageHeight, ogType, canonicalUrl, jsonLd }){
+/* noindex: 검색 색인에서 빼되 링크는 따라가게 한다(follow). 영상 페이지에 쓴다.
+     robots.txt 로 Disallow 하면 안 된다 — 크롤을 막으면 noindex 를 읽지도 못한다.
+   ads: false 면 애드센스 스크립트를 넣지 않는다. 얇은 페이지에 광고를 얹으면
+     "낮은 가치의 콘텐츠"로 심사에서 걸린다. */
+function headHtml({ title, description, ogTitle, ogDescription, ogImage, ogImageWidth, ogImageHeight, ogType, canonicalUrl, jsonLd, noindex = false, ads = true }){
   return `<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">${noindex ? '\n<meta name="robots" content="noindex, follow">' : ''}
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VKCFJ8GSRX"></script>
 <script>
@@ -57,8 +61,8 @@ function headHtml({ title, description, ogTitle, ogDescription, ogImage, ogImage
   gtag('js', new Date());
   gtag('config', 'G-VKCFJ8GSRX');
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5788194649735645"
-     crossorigin="anonymous"></script>
+${ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5788194649735645"
+     crossorigin="anonymous"></script>` : ''}
 <script>
 (function(){
   var saved = localStorage.getItem('shortsbox_theme');
@@ -313,8 +317,15 @@ ${scriptsHtml('/js/detail-page.js', ['/js/destination-guides.js'])}
 `;
 }
 
+/* 영상 페이지는 검색·광고 대상이 아니다(2026-08-11).
+   원래는 여행지 가이드 블록을 통째로 복사해 넣었는데(카카오 애드핏의 자체 콘텐츠 요건 대응용),
+   애드핏을 포기한 뒤로는 존재 이유가 없어졌고 부작용만 남았다. 실측해보니 같은 여행지의
+   영상 페이지끼리 텍스트가 91~93% 동일했고, 페이지마다 고유한 텍스트는 중앙값 4%(제목+소개문구)뿐이었다.
+   전체 245개 중 200개가 그런 상태였으니, 구글 입장에선 사이트 82%가 얇고 중복된 페이지다.
+   색인이 19개에서 멈춘 것과 애드센스가 13일째 "준비 중"인 것의 공통 원인으로 보고,
+   가이드 복사를 걷어내고(각 영상 페이지가 고유해진다) noindex + 광고 제외로 돌린다.
+   사용자에게는 그대로 보인다. 되돌리려면 아래 두 플래그만 빼면 된다. */
 function buildVideoPage(s, dest, products){
-  const guide = DESTINATION_GUIDES[dest.id] || null;
   const description = `${dest.name} 여행 꿀템 쇼츠 "${s.title}" — 영상 속 아이템${products.length ? `(${products.map(p => p.name).slice(0, 3).join(', ')} 등)` : ''}과 구매처를 확인하세요.`;
   const canonicalUrl = `${SITE_URL}/watch/${s.youtube_id}/`;
 
@@ -338,9 +349,9 @@ function buildVideoPage(s, dest, products){
          fetched_at(우리가 수집한 시각)으로 대신 채우면 사실과 다른 날짜를 싣는 셈이다. */
       ...(s.published_at ? { uploadDate: new Date(s.published_at).toISOString() } : {}),
     },
+    noindex: true,
+    ads: false,
   });
-
-  const guideBlock = guide ? guideBlockHtml(guide) : '';
 
   const productList = products.length
     ? products.map(p => productRowHtml(p, s.youtube_id)).join('')
@@ -385,8 +396,6 @@ ${head}
         <span class="editorial-guide-tag">쇼츠박스 큐레이션 안내</span>
         <p>${CURATION_NOTE}</p>
       </div>
-
-      ${guideBlock}
 
       <a href="/travel/${destinationSlug(dest.id)}/" class="btn btn-outline btn-block" style="margin-top:var(--space-4)">
         ${icon('compass', 'icon-sm')}${escapeHtml(dest.name)} 여행 꿀템 더 보기
@@ -598,7 +607,9 @@ function buildSitemap(destinations, shorts){
     { loc: `${SITE_URL}/ranking/`, priority: '0.7', changefreq: 'weekly' },
     ...destinations.map(d => ({ loc: `${SITE_URL}/ranking/${destinationSlug(d.id)}/`, priority: '0.65', changefreq: 'weekly' })),
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
-    ...shorts.map(s => ({ loc: `${SITE_URL}/watch/${s.youtube_id}/`, priority: '0.6', changefreq: 'weekly' })),
+    /* 영상 페이지(/watch/)는 사이트맵에 넣지 않는다 — noindex 라서 넣으면 구글에
+       "색인하지 말라고 해놓고 색인해달라고 제출"하는 모순이 되고, 서치콘솔이 그걸
+       "사이트맵에 포함된 페이지가 noindex" 오류로 보고한다. buildVideoPage 의 주석 참고. */
   ];
   const body = urls.map(u => `  <url>
     <loc>${u.loc}</loc>
