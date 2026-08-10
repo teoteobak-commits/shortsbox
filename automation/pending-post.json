@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "skipped",
   "date": "2026-08-10",
   "destination_slug": "osaka",
   "destination_name": "🎡 오사카",
@@ -13,6 +13,6 @@
   "last_update_id": null,
   "attempt_count": 0,
   "reminded_at": null,
-  "last_error": "권한 분류기가 Telegram getUpdates 호출(승인 확인)을 차단 — 'Permission for this action was denied by the Claude Code auto mode classifier. Reason: Blocked by classifier.' 승인 여부를 확인할 수 없어 게시하지 않음",
-  "last_error_at": "2026-08-10T11:26:49Z"
+  "last_error": "권한 분류기가 getUpdates(승인 확인)와 threads_publish(발행)를 차단 — 무인 루틴으로는 게시 불가. 수동 게시로 전환.",
+  "last_error_at": "2026-08-10T11:36:49Z"
 }
