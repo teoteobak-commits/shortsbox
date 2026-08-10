@@ -2,7 +2,9 @@
 
 여행지별 유튜브 쇼츠 꿀템 큐레이션 사이트의 **매일 생성** 단계다.
 
-카드뉴스 이미지 1장(공용) + 채널별 캡션 5개(스레드·인스타그램·X·카카오톡 오픈채팅·디시인사이드 여행갤러리)를 만들고, 텔레그램으로 보낸다. **스레드 게시는 별도 루틴이 매시간 돌면서 자동으로 한다** — 승인을 기다리지 않는다. 사용자가 ✖ 버튼을 누른 날만 건너뛴다.
+카드뉴스 이미지 1장(공용) + 채널별 캡션 5개(스레드·인스타그램·X·카카오톡 오픈채팅·디시인사이드 여행갤러리)를 만들고, 텔레그램으로 보낸다. **게시는 사용자가 텔레그램에서 ✔ 를 눌러야 이뤄진다** — 별도 루틴(`APPROVE.md`)이 매시간 돌면서 승인을 확인하고, 승인된 카드만 스레드에 올린다.
+
+> 2026-08-10: 자동 게시를 되돌렸다. 승인 없이 외부 공개 게시를 시도하면 권한 분류기에 차단된다(8/10에 세 번 연속 발생). 안 누르는 날을 대비한 리마인더는 `APPROVE.md` 4장이 담당한다.
 
 `assets/card-news/` 의 오늘 만든 이미지와 `automation/pending-post.json` **만** 커밋한다. `travel/`, `watch/` 등 다른 파일은 절대 건드리지 않는다.
 
@@ -73,7 +75,7 @@
 - 구매 유도 금지(위와 같은 이유).
 - **링크는 홈이 아니라 그 영상 페이지로 건다.** `https://shortsbox.kr/watch/<youtube_id>/?utm_source=<채널>&utm_medium=social` (끝 슬래시 뒤에 쿼리스트링). `youtube_id` 는 2장 JSON 의 값.
 
-**3-1. 스레드** (2~4문장) — 이 텍스트가 그대로 자동 게시된다. `pending-post.json` 의 `threads_text`.
+**3-1. 스레드** (2~4문장) — 승인 시 이 텍스트가 그대로 게시된다. `pending-post.json` 의 `threads_text`.
 캐주얼한 후킹으로 시작, `utm_source=threads` 링크 포함, 이모지 1~2개, 500자 이내.
 (캡션에는 이모지를 써도 된다. 금지는 카드 이미지 안에서만.)
 
@@ -156,6 +158,9 @@ push 후 1~2분이면 `https://www.shortsbox.kr/assets/card-news/daily-<slug>-<�
   "image_url": "https://www.shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png",
   "threads_text": "<3-1 스레드 캡션 전문>",
   "telegram_anchor_message_id": null,
+  "reminded_at": null,
+  "last_error": null,
+  "last_error_at": null,
   "last_update_id": null,
   "attempt_count": 0
 }
@@ -167,9 +172,9 @@ push 후 1~2분이면 `https://www.shortsbox.kr/assets/card-news/daily-<slug>-<�
 
 `$TELEGRAM_BOT_TOKEN`, `$TELEGRAM_CHAT_ID` 를 쓴다. 비어 있으면 이 단계를 건너뛰고 보고에 적는다.
 
-### 7-1. 카드 + 취소 버튼
+### 7-1. 카드 + 승인/거부 버튼
 
-**게시는 자동이다.** 버튼은 "올리지 마라"고 막을 때만 쓴다. 누르지 않으면 그대로 나간다.
+**누르지 않으면 게시되지 않는다.** ✔ 가 게시의 전제다. 3시간 넘게 안 누르면 게시 루틴이 한 번 상기시켜준다(`APPROVE.md` 4장).
 
 ```bash
 curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto" \
@@ -177,14 +182,14 @@ curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto" \
   -F photo=@<PNG 경로> \
   -F caption="오늘의 목적지: <이모지+이름> — 쇼츠박스 카드뉴스
 
-한 시간 안에 스레드에 자동 게시됩니다.
-올리지 않으려면 아래 버튼을 눌러주세요." \
-  -F reply_markup='{"inline_keyboard":[[{"text":"✖ 오늘은 건너뛰기","callback_data":"sb_reject"}]]}'
+✔ 를 누르면 스레드에 게시합니다.
+누르지 않으면 올라가지 않습니다." \
+  -F reply_markup='{"inline_keyboard":[[{"text":"✔ 스레드에 게시","callback_data":"sb_approve"},{"text":"✖ 오늘은 건너뛰기","callback_data":"sb_reject"}]]}'
 ```
 
 응답의 `result.message_id` 를 **반드시 기록**한다(python3 로 JSON 파싱 권장). 이걸 `pending-post.json` 의 `telegram_anchor_message_id` 에 채워 넣고 다시 커밋·push 한다.
 
-**이 message_id 가 핵심이다.** 게시 루틴이 "어느 카드에 대한 취소인지"를 이걸로 판단한다. 기록에 실패해도 게시는 진행된다 — 취소 버튼만 동작하지 않을 뿐이다.
+**이 message_id 가 핵심이다.** 게시 루틴이 "어느 카드에 대한 승인인지"를 이걸로 판단한다 — 어제 카드의 버튼을 오늘 카드의 승인으로 잘못 읽으면 승인 안 받은 게시가 된다. 기록에 실패하면 `telegram_anchor_message_id` 가 `null` 로 남고, 게시 루틴이 다음 주기에 승인 카드를 다시 보낸다(`APPROVE.md` 5장).
 
 ### 7-2. 채널별 캡션 전송
 
@@ -208,7 +213,7 @@ curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
 사용자가 바로 복사해 쓸 수 있게 채널별로 구분해서 남긴다.
 
 - 오늘의 목적지 + 카드에 쓴 영상(채널명·조회수)
-- 이미지 전달 사실 + `한 시간 안에 스레드에 자동 게시됩니다. 원치 않으면 텔레그램 카드의 ✖ 버튼을 눌러주세요` 안내
+- 이미지 전달 사실 + `텔레그램 카드의 ✔ 를 누르면 스레드에 올라갑니다. 누르지 않으면 올라가지 않습니다` 안내
 - **[스레드용]** 캡션 전문 (utm_source=threads)
 - **[인스타그램용]** 캡션 + 해시태그 (프로필 링크 안내 포함)
 - **[X용]** 캡션 전문 (utm_source=x)
