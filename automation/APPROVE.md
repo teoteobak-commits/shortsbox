@@ -27,7 +27,16 @@
 
 보고는 한 줄. 예: `대기 중인 게시물 없음 (status: posted)`
 
-`$TELEGRAM_BOT_TOKEN` 이나 `$TELEGRAM_CHAT_ID` 가 비어 있으면 `⚠️ 텔레그램 환경변수 미설정` 을 남기고 종료한다.
+`$TELEGRAM_BOT_TOKEN` 이나 `$TELEGRAM_CHAT_ID` 가 비어 있으면 **종료하지 말고 2장(취소 확인)만 건너뛰고 3장으로 간다.** 텔레그램은 취소 버튼을 읽는 통로일 뿐이고, 그게 없다고 그날 게시를 통째로 날리는 게 더 큰 손해다. 보고에만 `텔레그램 환경변수 미설정 — 취소 확인 건너뜀` 을 적는다.
+
+> **대기 중인 카드가 있는데 게시하지 못했으면 반드시 흔적을 남긴다(2026-08-10 추가).**
+> 8/9 오사카 카드가 이 지시서의 조용한 종료 경로에 걸려 두 번 연속 아무 기록도 남기지 않고
+> 끝났다. 커밋도 없고 `attempt_count` 도 안 오르니, 겉보기엔 루틴이 아예 안 돈 것과 구별되지
+> 않았고 원인을 좁히는 데만 20분이 걸렸다.
+> **`status` 가 `pending` 인데 이번 실행에서 게시까지 가지 못했다면, 이유를 무엇이든
+> `pending-post.json` 의 `last_error`·`last_error_at` 에 적고 커밋·push 한다.**
+> `status` 는 `pending` 으로 유지해서 다음 주기에 다시 시도하게 둔다.
+> 할 일이 없어서 끝나는 경우(`status` 가 `pending` 이 아님)는 예외다 — 그건 조용히 끝내는 게 맞다.
 
 ---
 
@@ -93,7 +102,9 @@ curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/editMessageRepl
 
 ## 3. 스레드에 게시
 
-`$THREADS_ACCESS_TOKEN` 이 비어 있으면 `⚠️ THREADS_ACCESS_TOKEN 미설정으로 게시 불가` 를 남기고, `pending-post.json` 은 **그대로 둔다**(재시도 가능하게). 종료.
+`$THREADS_ACCESS_TOKEN` 이 비어 있으면 **조용히 끝내지 말고**, `pending-post.json` 의 `status` 는 `pending` 으로 둔 채 `last_error` 에 `THREADS_ACCESS_TOKEN 미설정` 과 `last_error_at`(UTC ISO)을 적어 커밋·push 하고, 텔레그램이 가능하면 `⚠️ THREADS_ACCESS_TOKEN 이 비어 있어 게시하지 못했습니다` 를 보낸 뒤 종료한다. `attempt_count` 는 올리지 않는다(게시를 시도한 게 아니라 시도조차 못 한 것이므로).
+
+**토큰이 있는데도 API가 인증 오류(190/OAuthException 등)를 주면** 그건 4장(게시 실패)으로 처리하되, `last_error` 에 API가 준 메시지를 그대로 옮겨 적는다 — 만료와 미설정을 구별할 수 있어야 한다.
 
 `image_url`, `threads_text` 를 쓴다.
 
