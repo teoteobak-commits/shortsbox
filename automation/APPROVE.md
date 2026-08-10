@@ -161,6 +161,13 @@ curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
 
 `attempt_count` 를 1 올리고 `status` 는 `pending` 으로 둔다(다음 주기에 재시도). 이미 3 이상이었으면(이번이 4번째) `status` 를 `failed` 로 바꿔 더는 재시도하지 않는다. `last_update_id` 도 갱신. 커밋(`스레드 게시 실패 기록 (날짜)`)·push.
 
+**`last_error` 와 `last_error_at`(UTC ISO)에 실패 사유를 반드시 적는다.** 1장의 규칙이 여기에도 그대로 적용된다 — 예전에는 이 장이 `attempt_count` 만 올리게 돼 있어서, 8/10에 세 번 실패했는데 저장소에 남은 정보가 숫자뿐이었다. 사유는 커밋 메시지 본문이 아니라 **`pending-post.json` 안에** 적는다(커밋 메시지는 `git log --format=%B` 를 봐야 나와서 놓치기 쉽다 — 실제로 놓쳤다).
+
+적을 내용은 짐작이 아니라 **받은 그대로**다:
+- API 가 응답을 줬으면 `error.message`·`error.code`·`error.error_subcode` 를 그대로
+- 도구·권한 차원에서 막혔으면 그 문구를 그대로(예: `권한 분류기가 외부 공개 게시를 차단`)
+- 타임아웃이면 어느 단계에서 몇 초 만에 끊겼는지
+
 ```bash
 curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
   -F chat_id="$TELEGRAM_CHAT_ID" -F text="⚠️ 스레드 게시 실패 (시도 <n>/4): <에러>"
