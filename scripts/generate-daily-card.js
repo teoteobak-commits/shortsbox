@@ -6,10 +6,11 @@
    사용법:
      node scripts/generate-daily-card.js <slug> \
        --badge "손에 든 게 뭐길래" \
-       --headline "전직 승무원이|꼽은 여행꿀템|3가지" \
-       --sub "손에 든 게 뭔지, 나머지 둘은|또 뭔지 궁금하다면." \
-       --foot "3가지 다 정리해뒀어요"
+       --headline "돈키호테 가서 이걸|안 사면 후회한다는데" \
+       --sub "파스, 소화제, 비졸림 감기약.|영상이 꼽은 건 이 세 개예요." \
+       --foot "세 가지 다 정리해뒀어요"
 
+   **목적지 이름은 헤드라인에 쓰지 않는다** — 스크립트가 라임색 첫 줄로 자동으로 붙인다.
    헤드라인·보조문구의 줄바꿈은 "|" 로 직접 넣는다. 자동 줄바꿈을 쓰지 않는 이유는
    어절 단위로 기계가 끊으면 "약부터 / 담으라는 이유" 처럼 줄 길이가 들쭉날쭉해지기 때문이다.
    폭을 넘기면 조용히 잘리는 대신 에러로 멈춘다(무인 실행이라 사람이 못 본다).
@@ -26,7 +27,6 @@ const FONTS = path.join(__dirname, 'vendor-fonts');
 GlobalFonts.registerFromPath(path.join(FONTS, 'paperlogy-black.woff2'), 'Paperlogy Black');
 GlobalFonts.registerFromPath(path.join(FONTS, 'paperlogy-extrabold.woff2'), 'Paperlogy XBold');
 GlobalFonts.registerFromPath(path.join(FONTS, 'anton.ttf'), 'Anton');
-GlobalFonts.registerFromPath(path.join(FONTS, 'plexmono-semibold.ttf'), 'Plex Mono');
 GlobalFonts.registerFromPath(path.join(FONTS, 'pretendard-bold.otf'), 'Pretendard Bold');
 GlobalFonts.registerFromPath(path.join(FONTS, 'pretendard-semibold.otf'), 'Pretendard SemiBold');
 
@@ -141,7 +141,7 @@ async function loadThumb(youtubeId) {
 }
 
 /* ── 카드 ───────────────────────────────────────────────────── */
-function renderCard({ img, destName, dateLabel, viewsMan, copy }) {
+function renderCard({ img, destName, viewsMan, copy }) {
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext('2d');
   const overflow = [];
@@ -155,17 +155,11 @@ function renderCard({ img, destName, dateLabel, viewsMan, copy }) {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
 
-  // 헤더 — 왼쪽 브랜드, 오른쪽 날짜+목적지
+  /* 헤더는 브랜드만 둔다.
+     원래 오른쪽에 "08.10 오사카"를 넣었는데, 목적지를 헤드라인 첫 줄로 올렸으므로
+     같은 정보를 두 번 보여줄 이유가 없다. 날짜는 피드에서 쓸모가 없어 뺐다. */
   const headerBase = PAD + 32;
   text(ctx, '쇼츠박스', PAD, headerBase, { size: 32, family: 'Paperlogy XBold', color: WHITE, lsEm: -0.02 });
-  /* mono 폰트에는 한글 글리프가 없다. 숫자만 mono 로 쓰고 목적지 이름은 Pretendard 로 나눠 그린다
-     (한 번에 그리면 목적지가 두부 □□ 로 나온다). */
-  const dOpt = { size: 22, family: 'Plex Mono', color: G2 };
-  const nOpt = { size: 22, family: 'Pretendard SemiBold', color: G2 };
-  const dW = widthOf(ctx, dateLabel, dOpt), nW = widthOf(ctx, destName, nOpt);
-  const hx = W - PAD - (dW + 10 + nW);
-  text(ctx, dateLabel, hx, headerBase - 4, dOpt);
-  text(ctx, destName, hx + dW + 10, headerBase - 4, nOpt);
 
   const footerLineY = (H - PAD) - 27 * 1.2 - 28;
   const bodyTop = headerBase + 12 + 44;
@@ -200,11 +194,15 @@ function renderCard({ img, destName, dateLabel, viewsMan, copy }) {
   fit('배지', [copy.badge], { size: 24, family: 'Pretendard Bold' }, colW - 36);
   y += badge.h + 22;
 
+  /* 목적지를 헤드라인 첫 줄로 올린다(라임). 헤더 오른쪽에 있던 "08.10 오사카" 라벨을
+     없앤 자리를 이게 대신한다. 카드에서 여행지를 알 수 있는 곳이 이제 여기 하나뿐이라,
+     색을 달리해서 카피 문장과 섞여 읽히지 않게 한다. */
   const hl = { size: 76, family: 'Paperlogy Black', color: WHITE, lsEm: -0.045 };
-  fit('헤드라인', copy.headline, hl, colW);
+  const headLines = [destName, ...copy.headline];
+  fit('헤드라인', headLines, hl, colW);
   y += hl.size * 0.82;
-  copy.headline.forEach((l, i) => text(ctx, l, colX, y + i * hl.size * 1.1, hl));
-  y += (copy.headline.length - 1) * hl.size * 1.1 + hl.size * 0.3 + 22;
+  headLines.forEach((l, i) => text(ctx, l, colX, y + i * hl.size * 1.1, { ...hl, color: i === 0 ? LIME : WHITE }));
+  y += (headLines.length - 1) * hl.size * 1.1 + hl.size * 0.3 + 22;
 
   const sub = { size: 31, family: 'Pretendard SemiBold', color: G1 };
   fit('보조문구', copy.sub, sub, colW);
@@ -262,7 +260,8 @@ async function main() {
     sub: opts.sub.split('|').map(s => s.trim()).filter(Boolean),
     foot: opts.foot.trim(),
   };
-  if (copy.headline.length > 4) throw new Error('헤드라인은 최대 4줄');
+  /* 목적지 한 줄이 앞에 자동으로 붙으므로 카피는 3줄까지다(총 4줄). */
+  if (copy.headline.length > 3) throw new Error('헤드라인 카피는 최대 3줄 — 목적지 줄이 자동으로 앞에 붙는다');
   if (copy.sub.length > 3) throw new Error('보조문구는 최대 3줄');
 
   let dest, data;
@@ -286,7 +285,6 @@ async function main() {
   const { canvas, overflow } = renderCard({
     img,
     destName: dest.name,
-    dateLabel: dateIso.slice(5).replace('-', '.'),
     viewsMan: Math.floor(data.views / 10000),
     copy,
   });
