@@ -66,10 +66,40 @@ function circle(ctx, cx, cy, r, fill) {
   ctx.fillStyle = fill;
   ctx.fill();
 }
-function drawCover(ctx, img, bx, by, bw, bh, bleed) {
+/* 원본 프레임에 검은 띠(레터박스)가 박혀 있는 영상이 있다. 세로 화면 안에 가로로 찍은
+   경우인데, 그대로 cover 하면 카드 왼쪽 패널에 그 띠가 그대로 보인다
+   (도쿄 OBgmsEFrAwg: 위 213px + 아래 392px = 높이의 31.5%).
+   블러를 걸어 쓰는 이미지라 정확도는 필요 없으니 어두운 행을 찾아 잘라낸다. */
+function cropLetterbox(img) {
+  const c = createCanvas(img.width, img.height);
+  const cx = c.getContext('2d');
+  cx.drawImage(img, 0, 0);
+  const d = cx.getImageData(0, 0, img.width, img.height).data;
+  const brightness = (row) => {
+    let sum = 0, n = 0;
+    for (let i = 0; i < img.width; i += 8) {
+      const p = (row * img.width + i) * 4;
+      sum += (d[p] + d[p + 1] + d[p + 2]) / 3;
+      n++;
+    }
+    return sum / n;
+  };
+  let top = 0, bot = img.height - 1;
+  while (top < bot && brightness(top) < 18) top++;
+  while (bot > top && brightness(bot) < 18) bot--;
+  const sh = bot - top + 1;
+  /* 절반 이상이 어둡게 나오면 밤 사진일 수 있다 — 그때는 건드리지 않는다. */
+  if (sh < img.height * 0.5) return { sy: 0, sh: img.height, cropped: 0 };
+  return { sy: top, sh, cropped: img.height - sh };
+}
+
+function drawCover(ctx, img, bx, by, bw, bh, bleed, src) {
+  const sy = src ? src.sy : 0;
+  const sh = src ? src.sh : img.height;
   const x = bx - bleed, y = by - bleed, w = bw + bleed * 2, h = bh + bleed * 2;
-  const s = Math.max(w / img.width, h / img.height);
-  ctx.drawImage(img, x + (w - img.width * s) / 2, y + (h - img.height * s) / 2, img.width * s, img.height * s);
+  const s = Math.max(w / img.width, h / sh);
+  const dw = img.width * s, dh = sh * s;
+  ctx.drawImage(img, 0, sy, img.width, sh, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
 /* ── 데이터 수집 ─────────────────────────────────────────────── */
@@ -128,16 +158,39 @@ async function readFromSupabase(destId) {
   };
 }
 
-/* 쇼츠는 세로 원본(oardefault)이 따로 있다. maxresdefault 는 가로 프레임 안에
-   세로 영상을 넣고 좌우를 흐린 띠로 채운 것이라, 세로 박스에 맞추면 그 띠가 같이 들어온다. */
-async function loadThumb(youtubeId) {
+/* 썸네일은 세 단계로 찾는다. 순서가 중요하다.
+
+   1) 저장소에 캐시된 파일(assets/thumbs/{youtubeId}.jpg)
+      **매일 카드를 만드는 클라우드 루틴 환경은 i.ytimg.com 이 아웃바운드 정책상 막혀 있다.**
+      그 환경에서는 이 캐시만 쓸 수 있다. 캐시는 네트워크가 열린 GitHub Actions
+      (generate-static-pages.js)가 매일 채워서 커밋한다.
+   2) i.ytimg.com 직접 요청 — 로컬처럼 네트워크가 열린 환경에서만 된다.
+      쇼츠는 세로 원본(oardefault)이 따로 있다. maxresdefault 는 가로 프레임 안에
+      세로 영상을 넣고 좌우를 흐린 띠로 채운 것이라 세로 박스에 맞추면 그 띠가 들어온다.
+   3) 둘 다 실패하면 사진 없이 렌더한다. **카드 생성 자체가 실패하게 두면 안 된다** —
+      2026-08-11에 실제로 그렇게 그날 카드가 통째로 빠졌다. */
+const THUMB_CACHE = path.join(ROOT, 'assets', 'thumbs');
+
+async function loadThumb(youtubeId, { noThumb = false } = {}) {
+  /* --no-thumb: 3단계 폴백(사진 없이 렌더)을 일부러 타서 눈으로 확인하는 용도.
+     이 경로를 검증 없이 넣어뒀다가 그날 카드를 날린 적이 있어서 테스트 수단을 남긴다. */
+  if (noThumb) return { img: null, kind: 'none(강제)' };
+  const cached = path.join(THUMB_CACHE, `${youtubeId}.jpg`);
+  if (fs.existsSync(cached)) {
+    try {
+      return { img: await loadImage(cached), kind: 'cache' };
+    } catch (e) {
+      console.error(`캐시 파일이 깨졌다(${cached}): ${e.message}`);
+    }
+  }
   for (const kind of ['oardefault', 'maxresdefault', 'hqdefault']) {
     try {
       const img = await loadImage(`https://i.ytimg.com/vi/${youtubeId}/${kind}.jpg`);
       if (img.width >= 320) return { img, kind };
     } catch (e) { /* 다음 후보 */ }
   }
-  throw new Error(`${youtubeId}: 썸네일을 못 받았다`);
+  console.error(`⚠️ ${youtubeId}: 캐시에도 없고 i.ytimg.com 도 막혔다 — 사진 없이 만든다`);
+  return { img: null, kind: 'none' };
 }
 
 /* ── 카드 ───────────────────────────────────────────────────── */
@@ -173,11 +226,26 @@ function renderCard({ img, destName, viewsMan, copy }) {
   ctx.clip();
   ctx.fillStyle = '#111';
   ctx.fillRect(tx, ty, tw, th);
-  ctx.filter = 'blur(14px)';
-  drawCover(ctx, img, tx, ty, tw, th, 40);
-  ctx.filter = 'none';
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
-  ctx.fillRect(tx, ty, tw, th);
+  if (img) {
+    const src = cropLetterbox(img);
+    if (src.cropped) console.error(`레터박스 ${src.cropped}px 잘라냄 (원본 높이의 ${(src.cropped / img.height * 100).toFixed(0)}%)`);
+    ctx.filter = 'blur(14px)';
+    drawCover(ctx, img, tx, ty, tw, th, 40, src);
+    ctx.filter = 'none';
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(tx, ty, tw, th);
+  } else {
+    /* 썸네일을 못 구한 경우. 사진이 없어도 "가려놨다"는 느낌은 남게 사선 패턴을 깐다.
+       티저 자체는 "?"가 만드는 것이므로 카드는 성립한다. */
+    ctx.strokeStyle = '#1C1C1C';
+    ctx.lineWidth = 12;
+    for (let x = -th; x < tw + th; x += 24) {
+      ctx.beginPath();
+      ctx.moveTo(tx + x, ty);
+      ctx.lineTo(tx + x + th, ty + th);
+      ctx.stroke();
+    }
+  }
   circle(ctx, tx + tw / 2, ty + th / 2, 75, LIME);
   text(ctx, '?', tx + tw / 2, ty + th / 2 + 4, {
     size: 76, family: 'Paperlogy Black', color: '#000', align: 'center', baseline: 'middle',
@@ -233,9 +301,11 @@ function renderCard({ img, destName, viewsMan, copy }) {
 function parseArgs(argv) {
   const slug = argv[0];
   const opts = {};
-  for (let i = 1; i < argv.length; i += 2) {
+  for (let i = 1; i < argv.length; i++) {
     if (!argv[i].startsWith('--')) throw new Error(`알 수 없는 인자: ${argv[i]}`);
-    opts[argv[i].slice(2)] = argv[i + 1];
+    const key = argv[i].slice(2);
+    if (key === 'no-thumb') { opts[key] = true; continue; }  // 값 없는 플래그
+    opts[key] = argv[++i];
   }
   return { slug, opts };
 }
@@ -279,7 +349,7 @@ async function main() {
     dest.name = (html.match(/<h1>([^<]*?)\s*여행 꿀템<\/h1>/) || [, slug])[1];
   }
 
-  const { img, kind } = await loadThumb(data.youtubeId);
+  const { img, kind } = await loadThumb(data.youtubeId, { noThumb: !!opts['no-thumb'] });
   const now = new Date();
   const dateIso = now.toISOString().slice(0, 10);
   const { canvas, overflow } = renderCard({

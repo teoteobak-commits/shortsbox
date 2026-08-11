@@ -597,6 +597,47 @@ function cleanupStaleDirs(dirName, validNames){
   return removed;
 }
 
+/* 매일 카드(scripts/generate-daily-card.js)가 쓸 썸네일을 저장소에 캐시한다.
+
+   카드를 만드는 클라우드 루틴 환경은 `i.ytimg.com` 이 아웃바운드 정책상 막혀 있어서
+   직접 받을 수 없다(2026-08-11에 그 때문에 그날 카드가 통째로 빠졌다).
+   이 생성기는 GitHub Actions(네트워크 열림)에서 매일 도니까 여기서 받아 커밋한다.
+
+   여행지별 1위 영상만 받는다 — 카드가 쓰는 게 그것이고, 200개를 다 받으면 20MB가 된다.
+   1위가 바뀌면 다음 실행에서 새로 받고 옛 파일은 지운다. */
+async function cacheThumbs(topIds){
+  const dir = path.join(ROOT, 'assets', 'thumbs');
+  fs.mkdirSync(dir, { recursive: true });
+  let saved = 0, kept = 0;
+  const failed = [];
+
+  for(const id of topIds){
+    const out = path.join(dir, `${id}.jpg`);
+    if(fs.existsSync(out)){ kept++; continue; }
+    let ok = false;
+    for(const kind of ['oardefault', 'maxresdefault', 'hqdefault']){
+      try {
+        const res = await fetch(`https://i.ytimg.com/vi/${id}/${kind}.jpg`);
+        if(!res.ok) continue;
+        const buf = Buffer.from(await res.arrayBuffer());
+        /* 유튜브는 없는 크기를 요청하면 작은 회색 플레이스홀더를 준다 — 크기로 걸러낸다. */
+        if(buf.length < 5000) continue;
+        fs.writeFileSync(out, buf);
+        ok = true; saved++;
+        break;
+      } catch(e){ /* 다음 후보 */ }
+    }
+    if(!ok) failed.push(id);
+  }
+
+  const valid = new Set(topIds.map(i => `${i}.jpg`));
+  let removed = 0;
+  for(const f of fs.readdirSync(dir)){
+    if(!valid.has(f)){ fs.rmSync(path.join(dir, f)); removed++; }
+  }
+  console.log(`썸네일 캐시: 새로 ${saved}개, 유지 ${kept}개, 제거 ${removed}개${failed.length ? `, 실패 ${failed.length}개(${failed.join(', ')})` : ''}`);
+}
+
 function buildSitemap(destinations, shorts){
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
@@ -641,6 +682,8 @@ async function main(){
 
   let destPages = 0;
   let videoPages = 0;
+  /* 여행지별 1위 영상 = 매일 카드가 쓰는 영상. 썸네일 캐시 대상이다. */
+  const topIds = [];
 
   for(const d of destinations){
     const destShorts = shorts
@@ -652,6 +695,8 @@ async function main(){
         return b.views - a.views;
       })
       .slice(0, 10);
+
+    if(destShorts[0]) topIds.push(destShorts[0].youtube_id);
 
     const related = destinations.filter(x => x.id !== d.id).slice(0, 4);
 
@@ -682,6 +727,8 @@ async function main(){
       .sort((a, b) => b.short.views - a.short.views);
     writeFile(`ranking/${destinationSlug(d.id)}/index.html`, buildDestinationRankingPage(d, destEntries));
   }
+
+  await cacheThumbs(topIds);
 
   writeFile('sitemap.xml', buildSitemap(destinations, shorts));
 
