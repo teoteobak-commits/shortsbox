@@ -1,0 +1,104 @@
+name: Daily card news
+
+# 매일 한국시간 08:00 (UTC 23:00) 에 그날 카드뉴스를 만들고 텔레그램으로 보낸다.
+#
+# 원래 Claude 클라우드 루틴이 하던 일인데, 그 환경은 i.ytimg.com 아웃바운드가 막혀 있고
+# 권한 분류기 때문에 흔적 없이 끝나는 실행이 반복됐다(2026-08-10~11 6회 연속 실패).
+# Actions 는 네트워크가 열려 있고 실행 로그가 남는다.
+#
+# 필요한 Secrets (저장소 Settings → Secrets and variables → Actions):
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# 없으면 카드까지는 만들어 커밋하고 전송만 건너뛴다(작업은 실패로 표시되지 않는다).
+
+on:
+  schedule:
+    # 정각은 전 세계 예약이 몰려 몇 시간씩 밀린다(정적 페이지 워크플로우에서 실제로 겪었다).
+    # 그래서 23:04 로 어중간하게 둔다. 한국시간 08:04.
+    - cron: '4 23 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# 같은 워크플로우가 겹쳐 돌면 push 가 충돌한다. 앞의 것이 끝날 때까지 기다린다.
+concurrency:
+  group: shortsbox-daily-card
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # @napi-rs/canvas 가 devDependencies 에 있다. package-lock.json 이 있으니 ci 를 쓴다.
+      - name: Install deps
+        run: npm ci
+
+      - name: Build today's card
+        id: build
+        run: |
+          set -o pipefail
+          node scripts/build-daily-post.js | tee /tmp/summary.json
+          echo "summary=$(cat /tmp/summary.json)" >> "$GITHUB_OUTPUT"
+
+      # 카드 이미지가 공개 URL로 접근돼야 스레드가 내려받을 수 있다. 그래서 먼저 커밋한다.
+      - name: Commit card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/card-news automation/pending-post.json
+          if git diff --cached --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "카드뉴스 생성 ($(date -u +%Y-%m-%d))"
+            git pull --rebase --autostash || true
+            git push
+          fi
+
+      # Vercel 배포가 전파돼야 image_url 이 200 을 준다. 스레드는 승인 후에 받아가므로
+      # 여기서 오래 기다릴 필요는 없지만, 텔레그램 카드가 먼저 도착하는 편이 자연스럽다.
+      - name: Wait for deploy
+        run: sleep 60
+
+      - name: Send to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/notify-daily-card.js
+
+      # anchor message_id 가 기록됐으면 커밋해야 매시간 워크플로우가 승인을 매칭할 수 있다.
+      - name: Commit anchor
+        run: |
+          git add automation/pending-post.json
+          if git diff --cached --quiet; then
+            echo "anchor 변경 없음"
+          else
+            git commit -m "텔레그램 anchor 기록 ($(date -u +%Y-%m-%d))"
+            git pull --rebase --autostash || true
+            git push
+          fi
+
+      - name: Summary
+        run: |
+          echo "### 오늘 카드뉴스" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/summary.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      # 어느 단계든 실패하면 텔레그램으로 알린다. 조용히 실패하는 게 이 프로젝트에서
+      # 제일 큰 문제였다 — 며칠 게시가 빠져도 아무도 몰랐다.
+      - name: Alert on failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$TELEGRAM_CHAT_ID" \
+            --data-urlencode "text=⚠️ 카드뉴스 생성 워크플로우가 실패했습니다. 로그: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            > /dev/null || true

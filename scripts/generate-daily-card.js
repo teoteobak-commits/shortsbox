@@ -304,7 +304,7 @@ function parseArgs(argv) {
   for (let i = 1; i < argv.length; i++) {
     if (!argv[i].startsWith('--')) throw new Error(`알 수 없는 인자: ${argv[i]}`);
     const key = argv[i].slice(2);
-    if (key === 'no-thumb') { opts[key] = true; continue; }  // 값 없는 플래그
+    if (key === 'no-thumb' || key === 'probe') { opts[key] = true; continue; }  // 값 없는 플래그
     opts[key] = argv[++i];
   }
   return { slug, opts };
@@ -317,22 +317,23 @@ function usage() {
 
 async function main() {
   const { slug, opts } = parseArgs(process.argv.slice(2));
-  if (!slug || !opts.badge || !opts.headline || !opts.sub || !opts.foot) {
+  const probe = !!opts.probe;   // 렌더 없이 그날 쓸 영상·조회수만 조회한다
+  if (!slug || (!probe && (!opts.badge || !opts.headline || !opts.sub || !opts.foot))) {
     usage();
     process.exit(1);
   }
   const destId = Object.entries(DESTINATION_SLUGS).find(([, s]) => s === slug)?.[0];
   if (!destId) { console.error(`알 수 없는 슬러그: ${slug}`); usage(); process.exit(1); }
 
-  const copy = {
+  const copy = probe ? null : {
     badge: opts.badge.trim(),
     headline: opts.headline.split('|').map(s => s.trim()).filter(Boolean),
     sub: opts.sub.split('|').map(s => s.trim()).filter(Boolean),
     foot: opts.foot.trim(),
   };
   /* 목적지 한 줄이 앞에 자동으로 붙으므로 카피는 3줄까지다(총 4줄). */
-  if (copy.headline.length > 3) throw new Error('헤드라인 카피는 최대 3줄 — 목적지 줄이 자동으로 앞에 붙는다');
-  if (copy.sub.length > 3) throw new Error('보조문구는 최대 3줄');
+  if (copy && copy.headline.length > 3) throw new Error('헤드라인 카피는 최대 3줄 — 목적지 줄이 자동으로 앞에 붙는다');
+  if (copy && copy.sub.length > 3) throw new Error('보조문구는 최대 3줄');
 
   let dest, data;
   try {
@@ -347,6 +348,24 @@ async function main() {
   if (!dest.name) {
     const html = fs.readFileSync(path.join(ROOT, 'travel', slug, 'index.html'), 'utf8');
     dest.name = (html.match(/<h1>([^<]*?)\s*여행 꿀템<\/h1>/) || [, slug])[1];
+  }
+
+  /* --probe: 그날 쓸 영상·조회수·아이템 개수만 알려주고 끝낸다.
+     카피를 영상 단위로 골라야 하는 호출자(scripts/build-daily-post.js)가
+     같은 조회 로직을 다시 구현하지 않게 하려고 둔 경로다. */
+  if (probe) {
+    console.log(JSON.stringify({
+      slug,
+      destination: dest.name,
+      youtube_id: data.youtubeId,
+      views: data.views,
+      views_man: Math.floor(data.views / 10000),
+      product_count: data.productCount,
+      title: data.title,
+      channel: data.channel,
+      data_source: data.source,
+    }, null, 2));
+    return;
   }
 
   const { img, kind } = await loadThumb(data.youtubeId, { noThumb: !!opts['no-thumb'] });

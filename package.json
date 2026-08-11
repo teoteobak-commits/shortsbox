@@ -6,7 +6,10 @@
   "scripts": {
     "generate": "node scripts/generate-static-pages.js",
     "generate:og-image": "node scripts/generate-og-image.js",
-    "generate:card-news": "node scripts/generate-card-news.js"
+    "generate:card-news": "node scripts/generate-card-news.js",
+    "daily:build": "node scripts/build-daily-post.js",
+    "daily:notify": "node scripts/notify-daily-card.js",
+    "threads:post": "node scripts/threads-post.js"
   },
   "devDependencies": {
     "@napi-rs/canvas": "^1.0.3"
