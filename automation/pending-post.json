@@ -1,5 +1,5 @@
 {
-  "status": "skipped",
+  "status": "pending",
   "date": "2026-08-11",
   "destination_slug": "tokyo",
   "destination_name": "🗼 도쿄",
@@ -13,6 +13,6 @@
   "last_update_id": null,
   "attempt_count": 0,
   "reminded_at": null,
-  "last_error": "자동 게시가 권한 분류기에 막혀 있어 수동 게시로 처리한다(2026-08-10 확인). 카드와 캡션은 준비 완료.",
-  "last_error_at": "2026-08-11T00:10:00Z"
+  "last_error": null,
+  "last_error_at": null
 }
