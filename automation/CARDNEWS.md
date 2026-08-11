@@ -161,6 +161,14 @@ push 후 1~2분이면 `https://www.shortsbox.kr/assets/card-news/daily-<slug>-<�
   "image_path": "assets/card-news/daily-<slug>-<날짜>.png",
   "image_url": "https://www.shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png",
   "threads_text": "<3-1 스레드 캡션 전문>",
+  "captions": {
+    "threads": "<3-1 전문 — threads_text 와 같은 값>",
+    "instagram": "<3-2 전문, 해시태그 줄 포함>",
+    "x": "<3-3 전문>",
+    "kakao": "<3-4 전문>",
+    "dcinside_title": "<3-5 제목>",
+    "dcinside_body": "<3-5 본문>"
+  },
   "telegram_anchor_message_id": null,
   "reminded_at": null,
   "last_error": null,
@@ -196,6 +204,10 @@ curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto" \
 **이 message_id 가 핵심이다.** 게시 루틴이 "어느 카드에 대한 승인인지"를 이걸로 판단한다 — 어제 카드의 버튼을 오늘 카드의 승인으로 잘못 읽으면 승인 안 받은 게시가 된다. 기록에 실패하면 `telegram_anchor_message_id` 가 `null` 로 남고, 게시 루틴이 다음 주기에 승인 카드를 다시 보낸다(`APPROVE.md` 5장).
 
 ### 7-2. 채널별 캡션 전송
+
+**5개 채널 캡션을 `pending-post.json` 의 `captions` 에 반드시 저장한다(2026-08-11 추가).**
+예전에는 최종 보고서에만 있어서 세션이 끝나면 사라졌고, 사용자가 폰에서 복사할 방법이
+스레드용 하나뿐이었다. 저장해두면 나중에 어느 루틴에서든 다시 보낼 수 있다.
 
 8번 최종 보고와 같은 텍스트를 저장소 밖 임시 디렉토리에 파일로 쓰고 그대로 보낸다.
 
