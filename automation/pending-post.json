@@ -22,6 +22,6 @@
   "last_update_id": null,
   "attempt_count": 0,
   "reminded_at": null,
-  "last_error": null,
-  "last_error_at": null
+  "last_error": "TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID 미설정 — 승인을 읽을 수 없어 게시하지 않음",
+  "last_error_at": "2026-08-12T05:18:35Z"
 }
