@@ -1,0 +1,70 @@
+name: Get Telegram chat id
+
+# 일회성 도구. TELEGRAM_CHAT_ID 를 알아내려고 만들었다.
+#
+# @userinfobot 같은 외부 봇이 응답하지 않는 경우가 있어서, 이미 등록한
+# TELEGRAM_BOT_TOKEN 으로 직접 getUpdates 를 호출해 chat.id 를 찾는다.
+#
+# 쓰는 방법
+#   1. 텔레그램에서 본인 봇에게 아무 메시지나 하나 보낸다(예: 안녕)
+#   2. Actions 탭에서 이 워크플로우를 Run workflow
+#   3. 로그에 찍힌 숫자를 TELEGRAM_CHAT_ID 시크릿에 넣는다
+#
+# chat_id 는 비밀값이 아니라 식별자다(그 자체로는 아무것도 할 수 없다. 봇 토큰이 있어야
+# 메시지를 보낼 수 있다). 그래도 개인 식별자이므로 로그에만 찍고 저장소에는 쓰지 않는다.
+#
+# 이 워크플로우는 예약 실행이 없다 — 수동으로만 돈다. 다 쓰면 지워도 된다.
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find chat id
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+            echo "::error::TELEGRAM_BOT_TOKEN 시크릿이 없습니다."
+            exit 1
+          fi
+
+          # 봇 자신을 먼저 확인한다 — 토큰이 유효한지 여기서 갈린다.
+          BOT=$(curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getMe")
+          echo "$BOT" | node -e '
+            let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{
+              const j=JSON.parse(d||"{}");
+              if(!j.ok){ console.log("::error::토큰이 유효하지 않습니다: "+(j.description||"알 수 없음")); process.exit(1); }
+              console.log(`봇 확인: @${j.result.username} (${j.result.first_name})`);
+            });'
+
+          # offset 을 주지 않으면 아직 소비되지 않은 업데이트를 전부 준다.
+          UPDATES=$(curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getUpdates")
+          echo "$UPDATES" | node -e '
+            let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{
+              const j=JSON.parse(d||"{}");
+              if(!j.ok){ console.log("::error::getUpdates 실패: "+(j.description||"알 수 없음")); process.exit(1); }
+              const ids=new Map();
+              for(const u of j.result||[]){
+                const c=u.message?.chat || u.callback_query?.message?.chat || u.edited_message?.chat;
+                if(c) ids.set(String(c.id), [c.type, c.title || [c.first_name,c.last_name].filter(Boolean).join(" "), c.username?"@"+c.username:""].filter(Boolean).join(" · "));
+              }
+              if(!ids.size){
+                console.log("::warning::찾은 대화가 없습니다.");
+                console.log("");
+                console.log("텔레그램에서 본인 봇에게 아무 메시지나 하나 보낸 뒤(예: 안녕) 이 워크플로우를 다시 실행하세요.");
+                console.log("이미 보냈는데도 비어 있으면, 예전 실행이 업데이트를 이미 가져가버린 경우입니다 — 새 메시지를 하나 더 보내면 됩니다.");
+                return;
+              }
+              console.log("");
+              console.log("=".repeat(52));
+              console.log("아래 숫자를 TELEGRAM_CHAT_ID 시크릿에 넣으세요");
+              console.log("=".repeat(52));
+              for(const [id,label] of ids) console.log(`  ${id}    (${label})`);
+              console.log("=".repeat(52));
+              console.log("본인 이름으로 표시된 private 항목의 숫자를 쓰면 됩니다.");
+            });'
