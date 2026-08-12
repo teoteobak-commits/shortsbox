@@ -111,8 +111,10 @@ function main() {
      image_url 은 www 를 붙인다 — non-www 는 308 이고, 스레드 페처가 리다이렉트를
      한 번 더 타게 만들 이유가 없다. */
   const emoji = destEmoji(slug);
+  /* status 는 남겨둔다 — 사람이 올렸는지 표시해두면 나중에 확인할 수 있다.
+     자동 게시를 걷어냈으므로 이 값을 읽고 동작하는 코드는 이제 없다. */
   const pending = {
-    status: 'pending',
+    status: 'ready',
     date: dateIso,
     destination_slug: slug,
     destination_name: emoji ? `${emoji} ${probe.destination}` : probe.destination,
@@ -124,12 +126,6 @@ function main() {
     threads_text: captions.threads,
     captions,
     copy_source: handWritten ? 'card-copy.js' : 'fallback',
-    telegram_anchor_message_id: null,
-    last_update_id: null,
-    attempt_count: 0,
-    reminded_at: null,
-    last_error: null,
-    last_error_at: null,
   };
   fs.writeFileSync(path.join(ROOT, 'automation', 'pending-post.json'), JSON.stringify(pending, null, 2) + '\n');
 

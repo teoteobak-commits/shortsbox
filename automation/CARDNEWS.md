@@ -12,9 +12,7 @@
 
 여행지별 유튜브 쇼츠 꿀템 큐레이션 사이트의 **매일 생성** 단계다.
 
-카드뉴스 이미지 1장(공용) + 채널별 캡션 5개(스레드·인스타그램·X·카카오톡 오픈채팅·디시인사이드 여행갤러리)를 만들고, 텔레그램으로 보낸다. **게시는 사용자가 텔레그램에서 ✔ 를 눌러야 이뤄진다** — 별도 루틴(`APPROVE.md`)이 매시간 돌면서 승인을 확인하고, 승인된 카드만 스레드에 올린다.
-
-> 2026-08-10: 자동 게시를 되돌렸다. 승인 없이 외부 공개 게시를 시도하면 권한 분류기에 차단된다(8/10에 세 번 연속 발생). 안 누르는 날을 대비한 리마인더는 `APPROVE.md` 4장이 담당한다.
+카드뉴스 이미지 1장(공용) + 채널별 캡션 5개(스레드·인스타그램·X·카카오톡 오픈채팅·디시인사이드 여행갤러리)를 만들고, 텔레그램으로 보낸다. **게시는 전부 사람이 직접 한다(2026-08-13).** 스레드도 인스타·X 처럼 멘트만 받는다. 승인 버튼과 자동 게시 루틴은 없앴다.
 
 `assets/card-news/` 의 오늘 만든 이미지와 `automation/pending-post.json` **만** 커밋한다. `travel/`, `watch/` 등 다른 파일은 절대 건드리지 않는다.
 
@@ -89,7 +87,7 @@
 - 구매 유도 금지(위와 같은 이유).
 - **링크는 홈이 아니라 그 영상 페이지로 건다.** `https://shortsbox.kr/watch/<youtube_id>/?utm_source=<채널>&utm_medium=social` (끝 슬래시 뒤에 쿼리스트링). `youtube_id` 는 2장 JSON 의 값.
 
-**3-1. 스레드** (2~4문장) — 승인 시 이 텍스트가 그대로 게시된다. `pending-post.json` 의 `threads_text`.
+**3-1. 스레드** (2~4문장) — `pending-post.json` 의 `threads_text` 와 `captions.threads`.
 캐주얼한 후킹으로 시작, `utm_source=threads` 링크 포함, 이모지 1~2개, 500자 이내.
 (캡션에는 이모지를 써도 된다. 금지는 카드 이미지 안에서만.)
 
@@ -139,7 +137,7 @@ PNG 가 실제로 생겼고 0바이트가 아닌지 확인하고, **Read 로 열
 
 ## 6. 커밋
 
-이미지가 공개 URL로 접근돼야 스레드 게시가 된다. 그래서 반드시 커밋한다.
+카드를 저장소에 남겨 공개 URL로도 열리게 한다 — 텔레그램을 놓쳐도 다시 볼 수 있다.
 
 ```bash
 git config user.email "noreply@anthropic.com"
@@ -155,13 +153,13 @@ push 가 거부되면 `git pull --rebase` 후 한 번만 재시도한다.
 
 push 후 1~2분이면 `https://www.shortsbox.kr/assets/card-news/daily-<slug>-<날짜>.png` 로 공개된다.
 
-**`image_url` 은 반드시 `www.` 를 붙인다.** non-www 는 308 로 www 로 넘기는데, 스레드가 이미지를 내려받을 때 리다이렉트를 한 번 더 타게 만들 이유가 없다. 캡션의 UTM 링크는 리다이렉트로 쿼리스트링이 보존되므로 기존 형태를 유지해도 되지만, 이미지는 페처가 직접 받아야 하므로 최종 주소를 그대로 준다.
+**`image_url` 은 `www.` 를 붙인다.** non-www 는 308 로 넘기니 최종 주소를 그대로 쓴다. 캡션의 UTM 링크는 리다이렉트로 쿼리스트링이 보존되므로 기존 형태를 유지한다.
 
 `pending-post.json` 구조:
 
 ```json
 {
-  "status": "pending",
+  "status": "ready",
   "date": "YYYY-MM-DD",
   "destination_slug": "<slug>",
   "destination_name": "<이모지+이름, 예: 🥐 파리>",
@@ -179,60 +177,23 @@ push 후 1~2분이면 `https://www.shortsbox.kr/assets/card-news/daily-<slug>-<�
     "dcinside_title": "<3-5 제목>",
     "dcinside_body": "<3-5 본문>"
   },
-  "telegram_anchor_message_id": null,
-  "reminded_at": null,
-  "last_error": null,
-  "last_error_at": null,
-  "last_update_id": null,
-  "attempt_count": 0
+  "copy_source": "card-copy.js 또는 fallback"
 }
 ```
 
 ---
 
-## 7. 텔레그램 전송 — 버튼을 단다
+## 7. 텔레그램 전송
 
 `$TELEGRAM_BOT_TOKEN`, `$TELEGRAM_CHAT_ID` 를 쓴다. 비어 있으면 이 단계를 건너뛰고 보고에 적는다.
 
-### 7-1. 카드 + 승인/거부 버튼
+**승인 버튼은 없다(2026-08-13).** 자동 게시를 걷어냈으므로 누를 대상이 없다.
+카드 이미지 하나와, 채널별 멘트 6개(스레드·인스타·X·카카오·디시 제목·디시 본문)를
+**각각 별도 메시지로** 보낸다 — 한 덩이로 보내면 폰에서 부분 복사가 안 된다.
 
-**누르지 않으면 게시되지 않는다.** ✔ 가 게시의 전제다. 3시간 넘게 안 누르면 게시 루틴이 한 번 상기시켜준다(`APPROVE.md` 4장).
+구현은 `scripts/notify-daily-card.js` 에 있다. 실패해도 종료코드 0 으로 끝낸다:
+카드는 이미 커밋됐고, 텔레그램이 안 갔다고 워크플로우 전체를 실패로 만들 이유가 없다.
 
-```bash
-curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto" \
-  -F chat_id="$TELEGRAM_CHAT_ID" \
-  -F photo=@<PNG 경로> \
-  -F caption="오늘의 목적지: <이모지+이름> — 쇼츠박스 카드뉴스
-
-✔ 를 누르면 스레드에 게시합니다.
-누르지 않으면 올라가지 않습니다." \
-  -F reply_markup='{"inline_keyboard":[[{"text":"✔ 스레드에 게시","callback_data":"sb_approve"},{"text":"✖ 오늘은 건너뛰기","callback_data":"sb_reject"}]]}'
-```
-
-응답의 `result.message_id` 를 **반드시 기록**한다(python3 로 JSON 파싱 권장). 이걸 `pending-post.json` 의 `telegram_anchor_message_id` 에 채워 넣고 다시 커밋·push 한다.
-
-**이 message_id 가 핵심이다.** 게시 루틴이 "어느 카드에 대한 승인인지"를 이걸로 판단한다 — 어제 카드의 버튼을 오늘 카드의 승인으로 잘못 읽으면 승인 안 받은 게시가 된다. 기록에 실패하면 `telegram_anchor_message_id` 가 `null` 로 남고, 게시 루틴이 다음 주기에 승인 카드를 다시 보낸다(`APPROVE.md` 5장).
-
-### 7-2. 채널별 캡션 전송
-
-**5개 채널 캡션을 `pending-post.json` 의 `captions` 에 반드시 저장한다(2026-08-11 추가).**
-예전에는 최종 보고서에만 있어서 세션이 끝나면 사라졌고, 사용자가 폰에서 복사할 방법이
-스레드용 하나뿐이었다. 저장해두면 나중에 어느 루틴에서든 다시 보낼 수 있다.
-
-8번 최종 보고와 같은 텍스트를 저장소 밖 임시 디렉토리에 파일로 쓰고 그대로 보낸다.
-
-```bash
-curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
-  -F chat_id="$TELEGRAM_CHAT_ID" -F text=<캡션모음.txt
-```
-
-각 응답이 `{"ok":true` 인지 확인한다. 실패하면 보고에 에러를 정확히 남긴다.
-
-### 7-3. SendUserFile
-
-생성된 PNG 를 `status: "proactive"` 로 사용자에게 전달한다.
-
----
 
 ## 8. 최종 보고
 

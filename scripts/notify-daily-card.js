@@ -1,12 +1,14 @@
 /* 만들어둔 오늘 카드를 텔레그램으로 보낸다. GitHub Actions 의 매일 워크플로우가 부른다.
 
    두 가지를 보낸다.
-   1. 카드 이미지 + [✔ 스레드에 게시] [✖ 오늘은 건너뛰기] 버튼
-      → 받은 message_id 를 pending-post.json 의 telegram_anchor_message_id 에 적는다.
-        이 값이 있어야 매시간 도는 게시 워크플로우가 "어느 카드에 대한 승인인지"를 판별한다.
-   2. 채널별 캡션(인스타·X·카카오·디시 제목·디시 본문)을 각각 별도 메시지로
+   1. 카드 이미지
+   2. 채널별 캡션(스레드·인스타·X·카카오·디시 제목·디시 본문)을 각각 별도 메시지로
       → 폰에서 하나씩 복사할 수 있게. 한 덩이로 보내면 부분 복사가 안 된다.
-        스레드용은 승인 시 워크플로우가 그대로 올리므로 보내지 않는다.
+
+   **2026-08-13: 스레드 자동 게시를 걷어냈다.** 승인 버튼도 없앴다.
+   자동 게시는 Claude 클라우드에서 권한 분류기에, GitHub Actions 에서는 토큰 발급 문턱에
+   걸려 여러 날 실패했다. 스레드도 인스타·X 처럼 멘트만 받아서 사람이 올린다 —
+   하루 30초면 되고, 실패할 수 있는 부분이 통째로 사라진다.
 
    실패해도 종료코드 0 으로 끝낸다. 카드는 이미 커밋됐고, 텔레그램이 안 갔다고
    워크플로우 전체를 실패로 표시하면 다음 단계(요약 출력)까지 날아간다.
@@ -19,12 +21,6 @@ const tg = require('./telegram.js');
 const ROOT = path.join(__dirname, '..');
 const PENDING = path.join(ROOT, 'automation', 'pending-post.json');
 
-const BUTTONS = {
-  inline_keyboard: [[
-    { text: '✔ 스레드에 게시', callback_data: 'sb_approve' },
-    { text: '✖ 오늘은 건너뛰기', callback_data: 'sb_reject' },
-  ]],
-};
 
 async function main() {
   if (!tg.configured()) {
@@ -42,23 +38,15 @@ async function main() {
 
   const failures = [];
 
-  /* 1. 카드 + 승인 버튼 */
+  /* 1. 카드 이미지. 승인 버튼은 없앴다 — 자동 게시를 걷어냈으므로 누를 대상이 없다. */
   const autoNote = post.copy_source === 'fallback'
-    ? '\n\n⚠️ 카피가 자동 생성됐습니다(손으로 쓴 카피가 없는 영상). 확인해보세요.'
+    ? '\n⚠️ 카피가 자동 생성됐습니다(손으로 쓴 카피가 없는 영상). 확인해보세요.'
     : '';
-  const caption = [
-    `오늘의 목적지: ${post.destination_name}`,
-    post.headline,
-    '',
-    '✔ 를 누르면 스레드에 게시합니다.',
-    '누르지 않으면 올라가지 않습니다.',
-  ].join('\n') + autoNote;
+  const caption = `오늘의 목적지: ${post.destination_name}\n${post.headline}${autoNote}`;
 
-  const photo = await tg.sendPhoto(imagePath, caption, BUTTONS);
+  const photo = await tg.sendPhoto(imagePath, caption);
   if (photo.ok) {
-    post.telegram_anchor_message_id = photo.result.message_id;
-    fs.writeFileSync(PENDING, JSON.stringify(post, null, 2) + '\n');
-    console.error(`카드 전송 완료 — anchor message_id ${photo.result.message_id}`);
+    console.error('카드 전송 완료');
   } else {
     failures.push(`카드 전송: ${photo.error}`);
     console.error(`카드 전송 실패: ${photo.error}`);
@@ -67,6 +55,7 @@ async function main() {
   /* 2. 채널별 캡션. 하나 실패해도 나머지는 계속 보낸다. */
   const c = post.captions || {};
   const blocks = [
+    ['[스레드]', c.threads],
     ['[인스타그램]', c.instagram],
     ['[X]', c.x],
     ['[카카오톡 오픈채팅]', c.kakao],
