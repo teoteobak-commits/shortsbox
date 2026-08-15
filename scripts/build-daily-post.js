@@ -7,7 +7,8 @@
    쓸 수 있고 실행 로그가 남는다.
 
    하는 일
-   1. UTC 날짜로 오늘의 여행지를 고른다(10곳 로테이션)
+   1. 한국시간 날짜로 오늘의 여행지를 고른다(10곳 로테이션). 날짜 계산은
+      scripts/kst-date.js 한 곳에서만 한다 — 왜 UTC 가 아닌지도 거기 적어뒀다.
    2. 그날 쓸 영상을 찾는다 — generate-daily-card.js --probe 를 그대로 쓴다.
       같은 조회 로직을 두 번 구현하면 서로 어긋난다.
    3. automation/card-copy.js 에서 그 영상의 손으로 쓴 카피를 꺼낸다.
@@ -28,15 +29,15 @@ const ROOT = path.join(__dirname, '..');
 const { DESTINATION_SLUGS } = require('../js/slugs.js');
 const { VIDEO_NOTES } = require('../js/video-notes.js');
 const { CARD_COPY, buildFallback, buildCaptions } = require('../automation/card-copy.js');
+const { kstDate } = require('./kst-date.js');
 
 /* 로테이션 10곳. automation/CARDNEWS.md 1장과 같은 목록이어야 한다. */
 const ROTATION = ['jeju', 'osaka', 'tokyo', 'bangkok', 'danang', 'chiangmai', 'paris', 'switzerland', 'bali', 'hawaii'];
 
 function todaySlug(now) {
-  /* UTC 연중 일수 % 10. UTC 23:00 에 도는 워크플로우라 한국시간으로는 다음날 08:00 이다. */
-  const start = Date.UTC(now.getUTCFullYear(), 0, 0);
-  const dayOfYear = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - start) / 86400000);
-  return { slug: ROTATION[dayOfYear % ROTATION.length], dayOfYear };
+  /* 한국시간 연중 일수 % 10. 워크플로우가 23:04 UTC = 한국시간 08:04 에 돈다. */
+  const { dateIso, dayOfYear } = kstDate(now);
+  return { slug: ROTATION[dayOfYear % ROTATION.length], dayOfYear, dateIso };
 }
 
 function node(args) {
@@ -66,9 +67,8 @@ function renderCard(slug, copy) {
 
 function main() {
   const now = new Date();
-  const { slug, dayOfYear } = todaySlug(now);
-  const dateIso = now.toISOString().slice(0, 10);
-  console.error(`오늘: ${dateIso} (UTC 연중 ${dayOfYear}일) → ${slug}`);
+  const { slug, dayOfYear, dateIso } = todaySlug(now);
+  console.error(`오늘: ${dateIso} (한국시간 연중 ${dayOfYear}일) → ${slug}`);
 
   /* 1. 그날 쓸 영상 확인 */
   const probe = JSON.parse(node([path.join('scripts', 'generate-daily-card.js'), slug, '--probe']));
@@ -119,7 +119,9 @@ function main() {
     destination_slug: slug,
     destination_name: emoji ? `${emoji} ${probe.destination}` : probe.destination,
     youtube_id: probe.youtube_id,
-    headline: copy.headline.join(' '),
+    /* 카드에 실제로 찍히는 문장 그대로 적는다 — 렌더러가 목적지를 첫 줄로 얹으므로
+       여기서도 붙여야 기록과 카드가 어긋나지 않는다(card-copy.js 의 headline 규칙 참고). */
+    headline: `${probe.destination} ${copy.headline.join(' ')}`,
     subline: copy.sub.join(' '),
     image_path: card.file,
     image_url: `https://www.shortsbox.kr/${card.file}`,

@@ -21,6 +21,7 @@ const path = require('path');
 const fs = require('fs');
 const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 const { DESTINATION_SLUGS } = require('../js/slugs.js');
+const { kstDate } = require('./kst-date.js');
 
 const ROOT = path.join(__dirname, '..');
 const FONTS = path.join(__dirname, 'vendor-fonts');
@@ -369,8 +370,9 @@ async function main() {
   }
 
   const { img, kind } = await loadThumb(data.youtubeId, { noThumb: !!opts['no-thumb'] });
-  const now = new Date();
-  const dateIso = now.toISOString().slice(0, 10);
+  /* 파일명 날짜는 한국시간 기준. 호출자(build-daily-post.js)의 date 필드와
+     같은 함수를 써야 둘이 어긋나지 않는다 — scripts/kst-date.js 참고. */
+  const { dateIso } = kstDate();
   const { canvas, overflow } = renderCard({
     img,
     destName: dest.name,
