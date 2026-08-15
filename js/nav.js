@@ -89,6 +89,8 @@ function renderFooter(){
       <p class="sub" style="margin-top:10px">이 서비스는 YouTube API Services를 사용합니다. (<a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener" style="text-decoration:underline">YouTube 서비스 약관</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="text-decoration:underline">Google 개인정보처리방침</a>)</p>
       <a href="/about.html" class="sub" style="text-decoration:underline">쇼츠박스 소개</a>
       <span class="sub"> · </span>
+      <a href="/contact.html" class="sub" style="text-decoration:underline">문의하기</a>
+      <span class="sub"> · </span>
       <a href="/ranking/" class="sub" style="text-decoration:underline">인기 아이템 랭킹</a>
       <span class="sub"> · </span>
       <a href="/privacy.html" class="sub" style="text-decoration:underline">개인정보처리방침</a>

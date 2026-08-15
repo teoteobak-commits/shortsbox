@@ -645,6 +645,7 @@ function buildSitemap(destinations, shorts){
     { loc: `${SITE_URL}/explore.html`, priority: '0.9', changefreq: 'daily' },
     { loc: `${SITE_URL}/privacy.html`, priority: '0.2', changefreq: 'yearly' },
     { loc: `${SITE_URL}/about.html`, priority: '0.4', changefreq: 'monthly' },
+    { loc: `${SITE_URL}/contact.html`, priority: '0.3', changefreq: 'yearly' },
     { loc: `${SITE_URL}/ranking/`, priority: '0.7', changefreq: 'weekly' },
     ...destinations.map(d => ({ loc: `${SITE_URL}/ranking/${destinationSlug(d.id)}/`, priority: '0.65', changefreq: 'weekly' })),
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
