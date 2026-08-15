@@ -197,7 +197,7 @@ function guideBlockHtml(guide){
     </div>`;
 }
 
-function buildDestinationPage(d, { topShorts, related, shortsCountByDest }){
+function buildDestinationPage(d, { topShorts, related, shortsCountByDest, hasRanking }){
   const guide = DESTINATION_GUIDES[d.id] || null;
   const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guide ? ' ' + guide.body.slice(0, 80) : ''}`;
   const canonicalUrl = `${SITE_URL}/travel/${destinationSlug(d.id)}/`;
@@ -266,9 +266,9 @@ ${head}
     </div>
     <div id="shorts-grid" class="shorts-grid">${shortsGrid}</div>
 
-    <a href="/ranking/${destinationSlug(d.id)}/" class="btn btn-outline btn-block" style="margin-bottom:var(--space-5)">
+    ${hasRanking ? `<a href="/ranking/${destinationSlug(d.id)}/" class="btn btn-outline btn-block" style="margin-bottom:var(--space-5)">
       ${icon('tag', 'icon-sm')}${escapeHtml(d.name)} 여행템 랭킹 보기
-    </a>
+    </a>` : ''}
   </section>
 
   <section class="container" style="padding-top:var(--space-5)">
@@ -428,7 +428,7 @@ function rankingRowHtml(entry, rank){
     </div>`;
 }
 
-function buildRankingPage(destinations, shorts, products){
+function buildRankingPage(destinations, shorts, products, rankingSlugs){
   const shortsById = {};
   for(const s of shorts) shortsById[s.youtube_id] = s;
   const destById = {};
@@ -487,7 +487,7 @@ ${head}
       <h2 style="font-size:16px">목적지별 랭킹도 있어요</h2>
     </div>
     <div class="card-grid" style="margin-bottom:var(--space-4)">
-      ${destinations.map(d => `
+      ${destinations.filter(d => rankingSlugs.has(destinationSlug(d.id))).map(d => `
         <a href="/ranking/${destinationSlug(d.id)}/" class="card">
           <div class="card-body" style="padding:var(--space-3) var(--space-4)">
             <div class="card-title" style="font-size:14px">${d.emoji} ${escapeHtml(d.name)}</div>
@@ -513,6 +513,11 @@ ${head}
 `;
 }
 
+/* 아이템이 하나라도 있는 여행지만 부른다(main 참고).
+   빈 랭킹 페이지는 만들지 않는다 — 본문이 "아직 정리된 아이템이 없어요." 한 줄인데
+   광고가 실리고 ItemList 구조화 데이터는 빈 배열이고 사이트맵에까지 들어가 있었다.
+   애드센스가 8/13 에 "가치가 별로 없는 콘텐츠"로 거부했을 때 광고 게재 페이지 48개 중
+   10개가 그 상태였다. 큐레이션이 붙으면 다음 실행에서 자동으로 다시 생긴다. */
 function buildDestinationRankingPage(dest, entries){
   const description = `${dest.name} 여행 유튜버들이 쇼츠에서 소개한 아이템을 영상 조회수 기준으로 모아봤어요. 정확히 같은 제품이 아니라 비슷한 상품으로 연결해드려요.`;
   const slug = destinationSlug(dest.id);
@@ -536,9 +541,7 @@ function buildDestinationRankingPage(dest, entries){
     },
   });
 
-  const rows = entries.length
-    ? entries.map((e, i) => rankingRowHtml(e, i + 1)).join('')
-    : `<div class="empty-shorts">아직 정리된 아이템이 없어요.</div>`;
+  const rows = entries.map((e, i) => rankingRowHtml(e, i + 1)).join('');
 
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -638,7 +641,7 @@ async function cacheThumbs(topIds){
   console.log(`썸네일 캐시: 새로 ${saved}개, 유지 ${kept}개, 제거 ${removed}개${failed.length ? `, 실패 ${failed.length}개(${failed.join(', ')})` : ''}`);
 }
 
-function buildSitemap(destinations, shorts){
+function buildSitemap(destinations, shorts, rankingSlugs){
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     { loc: `${SITE_URL}/`, priority: '1.0', changefreq: 'daily' },
@@ -647,7 +650,10 @@ function buildSitemap(destinations, shorts){
     { loc: `${SITE_URL}/about.html`, priority: '0.4', changefreq: 'monthly' },
     { loc: `${SITE_URL}/contact.html`, priority: '0.3', changefreq: 'yearly' },
     { loc: `${SITE_URL}/ranking/`, priority: '0.7', changefreq: 'weekly' },
-    ...destinations.map(d => ({ loc: `${SITE_URL}/ranking/${destinationSlug(d.id)}/`, priority: '0.65', changefreq: 'weekly' })),
+    /* 아이템 0개인 여행지의 랭킹 페이지는 생성 자체를 안 하므로 여기에도 넣지 않는다.
+       없는 URL 을 제출하면 서치콘솔이 404 로 보고한다. */
+    ...destinations.filter(d => rankingSlugs.has(destinationSlug(d.id)))
+      .map(d => ({ loc: `${SITE_URL}/ranking/${destinationSlug(d.id)}/`, priority: '0.65', changefreq: 'weekly' })),
     ...destinations.map(d => ({ loc: `${SITE_URL}/travel/${destinationSlug(d.id)}/`, priority: '0.8', changefreq: 'weekly' })),
     /* 영상 페이지(/watch/)는 사이트맵에 넣지 않는다 — noindex 라서 넣으면 구글에
        "색인하지 말라고 해놓고 색인해달라고 제출"하는 모순이 되고, 서치콘솔이 그걸
@@ -681,6 +687,24 @@ async function main(){
     shortsCountByDest[s.destination_id] = (shortsCountByDest[s.destination_id] || 0) + 1;
   }
 
+  /* 여행지별 랭킹 항목을 먼저 계산한다 — 여행지 페이지의 "랭킹 보기" 버튼과
+     사이트맵이 "그 랭킹 페이지가 실제로 생기는지"를 알아야 하기 때문이다.
+     항목이 0개면 페이지를 안 만들므로 링크도 걸면 안 된다. */
+  const shortsById = {};
+  for(const s of shorts) shortsById[s.youtube_id] = s;
+  const rankingEntriesByDest = new Map();
+  for(const d of destinations){
+    const entries = products
+      .map(p => {
+        const short = shortsById[p.youtube_id];
+        return short && short.destination_id === d.id ? { product: p, short, dest: d } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.short.views - a.short.views);
+    if(entries.length) rankingEntriesByDest.set(destinationSlug(d.id), entries);
+  }
+  const rankingSlugs = new Set(rankingEntriesByDest.keys());
+
   let destPages = 0;
   let videoPages = 0;
   /* 여행지별 1위 영상 = 매일 카드가 쓰는 영상. 썸네일 캐시 대상이다. */
@@ -701,7 +725,12 @@ async function main(){
 
     const related = destinations.filter(x => x.id !== d.id).slice(0, 4);
 
-    const html = buildDestinationPage(d, { topShorts: destShorts, related, shortsCountByDest });
+    const html = buildDestinationPage(d, {
+      topShorts: destShorts,
+      related,
+      shortsCountByDest,
+      hasRanking: rankingSlugs.has(destinationSlug(d.id)),
+    });
     writeFile(`travel/${destinationSlug(d.id)}/index.html`, html);
     destPages++;
   }
@@ -714,30 +743,25 @@ async function main(){
     videoPages++;
   }
 
-  writeFile('ranking/index.html', buildRankingPage(destinations, shorts, products));
+  writeFile('ranking/index.html', buildRankingPage(destinations, shorts, products, rankingSlugs));
 
-  const shortsById = {};
-  for(const s of shorts) shortsById[s.youtube_id] = s;
   for(const d of destinations){
-    const destEntries = products
-      .map(p => {
-        const short = shortsById[p.youtube_id];
-        return short && short.destination_id === d.id ? { product: p, short, dest: d } : null;
-      })
-      .filter(Boolean)
-      .sort((a, b) => b.short.views - a.short.views);
-    writeFile(`ranking/${destinationSlug(d.id)}/index.html`, buildDestinationRankingPage(d, destEntries));
+    const entries = rankingEntriesByDest.get(destinationSlug(d.id));
+    if(!entries) continue;   // 아이템 0개 — 페이지를 만들지 않는다
+    writeFile(`ranking/${destinationSlug(d.id)}/index.html`, buildDestinationRankingPage(d, entries));
   }
 
   await cacheThumbs(topIds);
 
-  writeFile('sitemap.xml', buildSitemap(destinations, shorts));
+  writeFile('sitemap.xml', buildSitemap(destinations, shorts, rankingSlugs));
 
   const removedTravel = cleanupStaleDirs('travel', destinations.map(d => destinationSlug(d.id)));
   const removedWatch = cleanupStaleDirs('watch', shorts.map(s => s.youtube_id));
-  cleanupStaleDirs('ranking', destinations.map(d => destinationSlug(d.id)));
+  /* 살릴 목록은 "여행지 전부"가 아니라 "이번에 실제로 만든 것"이다 —
+     아이템이 빠져서 0개가 된 여행지의 옛 페이지가 남아 있으면 안 된다. */
+  const removedRanking = cleanupStaleDirs('ranking', [...rankingSlugs]);
 
-  console.log(`완료: 여행지 페이지 ${destPages}개, 영상 페이지 ${videoPages}개, sitemap.xml 갱신 (제거된 페이지: 여행지 ${removedTravel}개, 영상 ${removedWatch}개)`);
+  console.log(`완료: 여행지 페이지 ${destPages}개, 영상 페이지 ${videoPages}개, 랭킹 페이지 ${rankingSlugs.size}개, sitemap.xml 갱신 (제거된 페이지: 여행지 ${removedTravel}개, 영상 ${removedWatch}개, 랭킹 ${removedRanking}개)`);
 }
 
 main().catch(err => {
