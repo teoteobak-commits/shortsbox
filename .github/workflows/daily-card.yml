@@ -60,7 +60,10 @@ jobs:
           if git diff --cached --quiet; then
             echo "변경 없음"
           else
-            git commit -m "카드뉴스 생성 ($(date -u +%Y-%m-%d))"
+            # 카드 파일명과 같은 한국시간 날짜를 쓴다. UTC 로 찍으면 23:04 실행이
+            # 만든 08-16 카드가 "카드뉴스 생성 (2026-08-15)" 로 기록돼 나중에
+            # git log 를 읽는 사람이 어느 날 카드인지 헷갈린다(실제로 그랬다).
+            git commit -m "카드뉴스 생성 ($(TZ=Asia/Seoul date +%Y-%m-%d))"
             git pull --rebase --autostash || true
             git push
           fi
