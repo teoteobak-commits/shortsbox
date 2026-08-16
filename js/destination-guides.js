@@ -1116,6 +1116,40 @@ function renderGuideBlockHtml(guide){
   `;
 }
 
+/* 검색어 실험 (2026-08-16 시작) — 4곳만.
+
+   여행지 페이지의 title·h1 이 20곳 전부 "{여행지} 여행 꿀템" 하나였다. 그런데
+   구글 관련검색어를 실측하면 "도쿄 여행" 쪽에 "꿀템"은 아예 없고, "도쿄 쇼핑" 쪽에
+   "쇼핑 리스트 / 쇼핑 스팟 / 쇼핑 추천"이 나온다. "꿀템"은 우리 브랜드 용어지
+   사람들이 치는 말이 아닐 가능성이 크다.
+
+   8/16 에 가이드에 더한 내용(어디서 사는 게 싼지·부가세 환급·면세 한도)이 전부
+   쇼핑 정보라, 이제는 페이지 내용과 제목이 어긋난 상태이기도 하다.
+
+   20곳을 한 번에 바꾸면 효과가 있었는지 알 방법이 없다. 그래서 4곳만 바꾸고
+   조건이 비슷한 4곳을 대조군으로 남긴다:
+     도쿄(3) ↔ 오사카(2)      일본 대도시
+     방콕(4) ↔ 치앙마이(6)    태국
+     다낭(5) ↔ 나트랑(12)     베트남
+     파리(7) ↔ 스위스(8)      유럽
+   2~4주 뒤 서치콘솔 실적을 페이지별로 비교할 것. 특히 검색어 탭에 "쇼핑리스트"
+   계열 질의가 실험군에만 붙는지를 본다.
+
+   판정이 끝나면 이 표를 지우고 한쪽으로 통일할 것 — 실험 상태로 방치하지 말 것. */
+const SEO_TITLE_TEST = {
+  3: '도쿄 쇼핑리스트',
+  4: '방콕 쇼핑리스트',
+  5: '다낭 쇼핑리스트',
+  7: '파리 쇼핑리스트',
+};
+
+/* 여행지 페이지의 h1·title·구조화 데이터가 전부 이걸 쓴다.
+   정적 생성기와 클라이언트(js/detail-page.js) 양쪽에서 부른다 — 한쪽만 고치면
+   하이드레이션이 다른 값으로 덮어써서 구글이 보는 것과 정적 HTML 이 달라진다. */
+function destinationHeading(dest) {
+  return SEO_TITLE_TEST[dest.id] || `${dest.name} 여행 꿀템`;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { DESTINATION_GUIDES, getDestinationGuide };
+  module.exports = { DESTINATION_GUIDES, getDestinationGuide, SEO_TITLE_TEST, destinationHeading };
 }

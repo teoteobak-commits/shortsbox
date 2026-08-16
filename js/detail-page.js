@@ -27,13 +27,17 @@ function resolveDestinationId(){
 })();
 
 function renderDetail(d){
-  document.title = `${d.name} 여행 꿀템 — 쇼츠박스`;
+  /* 제목·h1 은 destinationHeading() 하나에서만 나온다 — 정적 생성기와 같은 함수다.
+     여기서 다른 문자열을 쓰면 하이드레이션이 정적 HTML 의 제목을 덮어써서
+     구글이 실행 후에 보는 값과 어긋난다(uploadDate 때 실제로 겪었다). */
+  const heading = destinationHeading(d);
+  document.title = `${heading} — 쇼츠박스`;
   const guideForMeta = getDestinationGuide(d.id);
   const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guideForMeta ? ' ' + guideForMeta.body.slice(0, 80) : ''}`;
   const canonicalUrl = `https://www.shortsbox.kr${destinationUrl(d)}`;
   const graph = [{
     '@type': 'TouristAttraction',
-    name: `${d.name} 여행 꿀템`,
+    name: heading,
     description,
     url: canonicalUrl,
     touristType: '여행객',
@@ -50,7 +54,7 @@ function renderDetail(d){
   }
   setPageMeta({
     description,
-    ogTitle: `${d.name} 여행 꿀템 — 쇼츠박스`,
+    ogTitle: `${heading} — 쇼츠박스`,
     ogDescription: description,
     url: canonicalUrl,
     jsonLd: { '@context': 'https://schema.org', '@graph': graph },
@@ -61,7 +65,7 @@ function renderDetail(d){
     <div class="container">
       <div class="detail-cover">${d.emoji}</div>
       <div class="detail-info">
-        <h1>${escapeHtml(d.name)} 여행 꿀템</h1>
+        <h1>${escapeHtml(heading)}</h1>
         <div class="detail-meta">
           <span>${escapeHtml(d.country)}</span>
         </div>
@@ -111,8 +115,8 @@ function renderDetail(d){
     showToast(nowSaved ? '여행지를 저장했어요' : '저장을 취소했어요');
   });
   document.getElementById('share-btn').addEventListener('click', () => shareUrl({
-    title: `${d.name} 여행 꿀템 — 쇼츠박스`,
-    text: `${d.name} 여행 꿀템 쇼츠 모음 보러가기`,
+    title: `${heading} — 쇼츠박스`,
+    text: `${heading} 보러가기`,
     url: `https://www.shortsbox.kr${destinationUrl(d)}`,
     trackName: 'destination_detail',
   }));

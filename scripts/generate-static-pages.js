@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { icon } = require('../assets/icons.js');
-const { DESTINATION_GUIDES } = require('../js/destination-guides.js');
+const { DESTINATION_GUIDES, destinationHeading } = require('../js/destination-guides.js');
 const { VIDEO_NOTES } = require('../js/video-notes.js');
 const { getAgodaUrl, getKlookUrl, getCoupangUrl } = require('../js/affiliate-config.js');
 const { destinationSlug, coverStyle } = require('../js/slugs.js');
@@ -199,12 +199,13 @@ function guideBlockHtml(guide){
 
 function buildDestinationPage(d, { topShorts, related, shortsCountByDest, hasRanking }){
   const guide = DESTINATION_GUIDES[d.id] || null;
+  const heading = destinationHeading(d);
   const description = `${d.name} 여행 꿀템 쇼츠 TOP10과 영상 속 제품 구매처를 모아봤어요.${guide ? ' ' + guide.body.slice(0, 80) : ''}`;
   const canonicalUrl = `${SITE_URL}/travel/${destinationSlug(d.id)}/`;
 
   const graph = [{
     '@type': 'TouristAttraction',
-    name: `${d.name} 여행 꿀템`,
+    name: heading,
     description,
     url: canonicalUrl,
     touristType: '여행객',
@@ -221,7 +222,7 @@ function buildDestinationPage(d, { topShorts, related, shortsCountByDest, hasRan
   }
 
   const head = headHtml({
-    title: `${d.name} 여행 꿀템 — 쇼츠박스`,
+    title: `${heading} — 쇼츠박스`,
     description,
     ogType: 'website',
     canonicalUrl,
@@ -249,7 +250,7 @@ ${head}
   <div class="container">
     <div class="detail-cover">${d.emoji}</div>
     <div class="detail-info">
-      <h1>${escapeHtml(d.name)} 여행 꿀템</h1>
+      <h1>${escapeHtml(heading)}</h1>
       <div class="detail-meta"><span>${escapeHtml(d.country)}</span></div>
       <div class="detail-actions">
         <button class="btn btn-outline" id="save-btn">${icon('bookmark', 'icon-sm')}저장</button>
