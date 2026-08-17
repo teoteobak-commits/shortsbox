@@ -44,6 +44,49 @@ const AFFILIATE_PATTERN = /coupang\.com|link\.coupang|쿠팡\s*파트너스|amzn
    조회수 426만짜리 승무원 여행꿀템 영상이 실제로 그랬다. */
 const AD_SPAM_KEYWORDS = /핫딜|마감\s*임박|기회를\s*놓치|자유여행\s*패키지/;
 
+/* 여행지의 나라와 다른 나라를 제목에 밝힌 영상 차단.
+
+   2026-08-16에 괌 페이지 10개 중 2개가 일본 돈키호테 쇼핑 영상이었다(조회수 136만·89만).
+   괌은 한국어 콘텐츠가 얇아서 검색이 자리를 다 못 채우고, 다중 검색어로 자리를 채우는
+   과정에서 느슨한 매치가 들어온다. 그날 DB에서 지웠더니 다음날 수집이 그대로 다시
+   집어왔다 — 지우는 것만으로는 해결되지 않아서 수집 단계에서 막는다.
+
+   나라 단위로만 본다. 같은 나라 안에서의 혼선(삿포로에 붙은 #도쿄쇼핑 영상)은
+   도시 단위로 잡아야 하는데, 오사카 영상이 교토를 언급하는 것처럼 정상적인 경우가
+   많아 오탐이 커진다. 나라가 다르면 그건 거의 확실히 잘못 들어온 것이다.
+
+   "돈키호테"는 일부러 일본 토큰에 넣지 않았다 — 괌에도 돈키호테 매장이 있어서
+   진짜 괌 영상을 걸러낼 수 있다. 위 두 영상은 "일본"만으로 충분히 걸린다.
+
+   자기 나라를 언급했으면 통과시킨다. "미국인이 놀란 일본 물건"(도쿄)처럼 두 나라가
+   같이 나오는 정상 영상을 살리기 위한 것이다.
+
+   DB shorts 200개 제목에 실측해서 의도한 2건만 걸리고 오탐 0인 것을 확인했다. */
+const COUNTRY_TOKENS: Record<string, RegExp> = {
+  "대한민국": /한국|국내|제주/,
+  "일본": /일본|도쿄|오사카|후쿠오카|삿포로|오키나와|japan/,
+  "태국": /태국|방콕|치앙마이|thai/,
+  "베트남": /베트남|다낭|나트랑|호이안|vietnam/,
+  "프랑스": /프랑스|파리|france/,
+  "스위스": /스위스|인터라켄|융프라우/,
+  "인도네시아": /인도네시아|발리|우붓/,
+  "미국": /미국|하와이|괌|호놀룰루|와이키키|guam|hawaii/,
+  "대만": /대만|타이완|타이베이|타이페이|taiwan/,
+  "필리핀": /필리핀|세부|보홀|cebu/,
+  "홍콩": /홍콩|hong\s?kong/,
+  "싱가포르": /싱가포르|싱가폴|singapore/,
+  "중국": /중국|상하이|상해|china/,
+};
+
+function isForeignToDestination(title: string, country: string | null){
+  if (!country) return false;
+  const own = COUNTRY_TOKENS[country];
+  if (!own) return false;                    // 모르는 나라면 판단하지 않는다
+  const t = String(title).toLowerCase();
+  if (own.test(t)) return false;             // 자기 나라를 언급했으면 통과
+  return Object.entries(COUNTRY_TOKENS).some(([c, re]) => c !== country && re.test(t));
+}
+
 function classify(title: string, description: string){
   const hasAffiliate = AFFILIATE_PATTERN.test(description || "");
   const hasWarning = WARNING_KEYWORDS.test(title);
@@ -270,6 +313,7 @@ Deno.serve(async (req) => {
 
       const picked = new Map<string, any>();
       const tried: string[] = [];
+      let foreign = 0;
       for (const q of queries) {
         if (picked.size >= remainingSlots) break;
         const list = await searchTopShorts(q, wanted);
@@ -277,11 +321,14 @@ Deno.serve(async (req) => {
         for (const it of list) {
           if (picked.size >= remainingSlots) break;
           if (curatedIds.has(it.youtubeId) || claimedIds.has(it.youtubeId) || picked.has(it.youtubeId)) continue;
+          /* 다른 나라 영상은 자리를 비워두는 게 낫다. 채우려고 넣으면 괌 페이지에
+             일본 돈키호테 영상이 걸리는 일이 반복된다. */
+          if (isForeignToDestination(it.title, dest.country)) { foreign++; continue; }
           picked.set(it.youtubeId, it);
         }
       }
       const fresh = [...picked.values()];
-      const diag = `slots:${remainingSlots} got:${fresh.length} | ${tried.join(" ")}`;
+      const diag = `slots:${remainingSlots} got:${fresh.length}${foreign ? ` foreign:${foreign}` : ""} | ${tried.join(" ")}`;
 
       if (!fresh.length) {
         // 새로 가져온 게 없으면 기존 데이터를 그대로 둔다 (삭제하지 않음)
