@@ -176,17 +176,72 @@ const COUNT_WORD = ['', '한 가지', '두 가지', '세 가지', '네 가지', 
    VIDEO_NOTES(영상마다 사람이 쓴 한 문장)를 재료로 쓴다. 사람 카피보다 심심하지만
    카드가 아예 안 나오는 것보다는 낫다. auto: true 로 표시해서 텔레그램 보고에
    "카피 자동 생성 — 확인 필요"가 붙게 한다. */
-function buildFallback({ destName, note, productCount }) {
+/* 한 문장을 카드 보조문구 두 줄로 나눈다. 어절 단위로 갈라 균형을 맞춘다.
+   **두 줄에 다 안 들어가면 null 을 돌려준다** — 문장을 중간에 자르면
+   "…일본 편의점 / 아이템 — 버터맛 샌드 쿠키와 돈코츠" 처럼 말이 끊긴 카드가 나간다.
+   자르느니 안 쓰는 게 낫다. */
+function splitTwoLines(sentence, maxPerLine = 22){
+  const words = String(sentence).trim().split(/\s+/);
+  const lines = [[], []];
+  let i = 0;
+  for (const w of words) {
+    if (i === 0 && (lines[0].join(' ') + ' ' + w).trim().length > maxPerLine) i = 1;
+    if (i === 1 && (lines[1].join(' ') + ' ' + w).trim().length > maxPerLine) return null;
+    lines[i].push(w);
+  }
+  return lines.map(l => l.join(' ')).filter(Boolean);
+}
+
+/* 소개문구는 이미 "~예요/~어요." 로 끝나는 완성된 문장이다. 거기에 "더라고요" 를
+   덧붙이면 "눈에 띄어요.더라고요" 가 된다. 끝맺음이 있으면 그대로 쓴다. */
+function asSentence(note){
+  const s = String(note || '').trim().replace(/\s+/g, ' ');
+  if (!s) return '';
+  return /(요|다)\.?$/.test(s) ? s.replace(/\.$/, '') : `${s}더라고요`;
+}
+
+/* 폴백 헤드라인 후보. 전부 **어떤 영상에도 성립하는 문장**이어야 한다 —
+   `?` 가 가린 게 무엇이든 맞는 말이어야 하고, 제품을 특정하거나 확인 못 한 걸
+   주장하면 안 된다(카피 원칙 A2). 목적지 한 줄이 앞에 자동으로 붙으니 최대 3줄.
+   하나로 고정하면 폴백 카드가 전부 같은 헤드라인으로 나가서 매일 봐도 똑같아 보인다. */
+const FALLBACK_HEADLINES = [
+  ['영상에서 꼽은', '아이템만', '모았어요'],
+  ['이 영상이', '챙기라고 한', '것들'],
+  ['조회수가 말해주는', '그 리스트'],
+  ['다들 뭘 담았나', '싶으면'],
+  ['영상 보고', '정리한 목록'],
+];
+
+/* youtube_id 로 고르므로 같은 영상은 늘 같은 헤드라인이 나온다(재실행해도 안 흔들림). */
+function pickHeadline(seed){
+  const s = String(seed || '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return FALLBACK_HEADLINES[h % FALLBACK_HEADLINES.length];
+}
+
+function buildFallback({ destName, note, productCount, youtubeId }) {
   const cnt = COUNT_WORD[productCount] || `${productCount}가지`;
-  const trimmed = String(note || '').replace(/\s*이에요\.?$|\s*예요\.?$|\s*해요\.?$/, '');
+  const sentence = asSentence(note);
+
+  /* **제품이 0개면 "정리해뒀어요"라고 하면 안 된다.** 그 영상 페이지에는 큐레이션된
+     아이템이 없고 쿠팡 검색 링크만 있다. 확인 못 한 걸 말하지 않는 게 카피 원칙이다. */
+  const hasItems = productCount > 0;
+
+  /* 예전 폴백은 헤드라인이 늘 "오늘의 꿀템 쇼츠"였고 보조문구도 고정이라, 영상이
+     달라져도 카드가 똑같아 보였다. 영상마다 다른 VIDEO_NOTES 를 쓴다.
+     단, 카드에 두 줄로 안 들어가는 긴 소개문구는 잘라 쓰지 않고 포기한다(위 주석). */
+  const sub = (sentence && splitTwoLines(`${sentence}.`)) || ['어떤 걸 꼽았는지', '한번 보세요.'];
+
   return {
     auto: true,
-    badge: '이게 뭐길래',
-    headline: ['오늘의', '꿀템 쇼츠'],
-    sub: [`${destName} 쇼츠에서 꼽은`, '아이템을 정리해뒀어요.'],
-    foot: productCount ? `${cnt} 정리해뒀어요` : '정리해뒀어요',
+    badge: hasItems ? '이게 뭐길래' : '이런 것도 있네',
+    headline: hasItems ? pickHeadline(youtubeId) : ['이 영상이', '꼽은 것들'],
+    sub,
+    foot: hasItems ? `${cnt} 정리해뒀어요` : '영상에서 확인해보세요',
     hook: `${destName} 쇼츠 중에 조회수 {views}만짜리가 있는데`,
-    detail: trimmed ? `${trimmed}더라고요` : '아이템을 정리해뒀어요',
+    /* 캡션은 카드와 달리 길이 제약이 없으니 소개문구를 통째로 쓴다. */
+    detail: sentence || '어떤 걸 꼽았는지 한번 보세요',
     dcTitle: `${destName} 갈 때 뭐 챙겨감?`,
     dcBody: `조회수 {views}만 찍은 쇼츠 보다가 알았는데 나는 안 챙긴 게 꽤 있더라`,
   };

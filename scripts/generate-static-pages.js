@@ -722,7 +722,11 @@ async function main(){
       })
       .slice(0, 10);
 
-    if(destShorts[0]) topIds.push(destShorts[0].youtube_id);
+    /* 매일 카드는 이제 그 여행지의 1위만 쓰지 않는다 — 최근에 쓴 영상을 피해
+       2·3위로 내려간다(scripts/build-daily-post.js 의 card-history). 그래서 캐시도
+       상위 3개를 받아둔다. 캐시가 없으면 i.ytimg.com 직접 요청으로 폴백하지만,
+       그 경로가 막히는 환경이 있어서 캐시가 있는 편이 안전하다. */
+    topIds.push(...destShorts.slice(0, 3).map(s => s.youtube_id));
 
     const related = destinations.filter(x => x.id !== d.id).slice(0, 4);
 

@@ -116,11 +116,14 @@ async function fetchTable(table, query) {
    그때는 이미 만들어져 있는 정적 페이지에서 같은 값을 읽는다 —
    travel/{slug}/index.html 의 쇼츠 순서가 "제품 있는 영상 우선 → 조회수" 로
    이미 정렬돼 있어서, 맨 위 카드가 우리가 쓰려는 그 영상이다. */
-function readFromStatic(slug) {
+function readFromStatic(slug, exclude = new Set()) {
   const file = path.join(ROOT, 'travel', slug, 'index.html');
   const html = fs.readFileSync(file, 'utf8');
-  const card = html.match(/<a href="\/watch\/([^/"]+)\/" class="shorts-card"[\s\S]*?shorts-card-meta">([^<]*)<\/div>/);
-  if (!card) throw new Error(`${slug}: 정적 페이지에서 쇼츠를 못 찾았다`);
+  const all = [...html.matchAll(/<a href="\/watch\/([^/"]+)\/" class="shorts-card"[\s\S]*?shorts-card-meta">([^<]*)<\/div>/g)];
+  if (!all.length) throw new Error(`${slug}: 정적 페이지에서 쇼츠를 못 찾았다`);
+  /* 최근에 쓴 영상은 건너뛴다. 전부 최근에 썼으면 어쩔 수 없이 맨 위를 쓴다 —
+     카드가 안 나오는 것보다 겹치는 게 낫다. */
+  const card = all.find(m => !exclude.has(m[1])) || all[0];
   const youtubeId = card[1];
   const meta = card[2];
   const viewText = (meta.match(/조회수\s*([\d.,]+)(만?)/) || [])[0] || '';
@@ -136,7 +139,7 @@ function readFromStatic(slug) {
   return { youtubeId, views, productCount, source: 'static' };
 }
 
-async function readFromSupabase(destId) {
+async function readFromSupabase(destId, exclude = new Set()) {
   const [shorts, products] = await Promise.all([
     fetchTable('shorts', `select=youtube_id,title,channel_name,views&destination_id=eq.${destId}&order=views.desc`),
     fetchTable('products', 'select=youtube_id'),
@@ -148,7 +151,9 @@ async function readFromSupabase(destId) {
     const d = (withProducts.has(b.youtube_id) ? 1 : 0) - (withProducts.has(a.youtube_id) ? 1 : 0);
     return d !== 0 ? d : b.views - a.views;
   });
-  const top = shorts[0];
+  /* 최근에 쓴 영상은 건너뛴다. 전부 최근에 썼으면 맨 위를 쓴다 —
+     카드가 안 나오는 것보다 겹치는 게 낫다. */
+  const top = shorts.find(s => !exclude.has(s.youtube_id)) || shorts[0];
   return {
     youtubeId: top.youtube_id,
     views: top.views,
@@ -336,19 +341,27 @@ async function main() {
   if (copy && copy.headline.length > 3) throw new Error('헤드라인 카피는 최대 3줄 — 목적지 줄이 자동으로 앞에 붙는다');
   if (copy && copy.sub.length > 3) throw new Error('보조문구는 최대 3줄');
 
+  /* 최근에 쓴 영상 목록. 호출자(build-daily-post.js)가 automation/card-history.json 을
+     읽어서 넘긴다. 이게 없으면 매번 그 여행지의 1위 영상만 나와서, 10일 주기로
+     같은 카드·같은 캡션이 반복된다(8/09 와 8/19 오사카가 실제로 그랬다). */
+  const exclude = new Set(String(opts.exclude || '').split(',').map(s => s.trim()).filter(Boolean));
+
   let dest, data;
   try {
     dest = (await fetchTable('destinations', `select=id,name&id=eq.${destId}`))[0];
-    data = await readFromSupabase(destId);
+    data = await readFromSupabase(destId, exclude);
   } catch (err) {
     console.error(`Supabase 실패(${err.message}) → 정적 페이지에서 읽는다`);
     dest = { id: Number(destId), name: null };
-    data = readFromStatic(slug);
+    data = readFromStatic(slug, exclude);
   }
   /* 목적지 이름은 정적 페이지의 h1 에서 가져온다(Supabase 가 막힌 경우). */
   if (!dest.name) {
     const html = fs.readFileSync(path.join(ROOT, 'travel', slug, 'index.html'), 'utf8');
-    dest.name = (html.match(/<h1>([^<]*?)\s*여행 꿀템<\/h1>/) || [, slug])[1];
+    /* h1 은 "{여행지} 여행 꿀템" 또는 "{여행지} 쇼핑리스트"다(제목 검색어 실험,
+       js/destination-guides.js 의 SEO_TITLE_TEST). 꼬리말을 고정으로 박으면
+       실험군 4곳에서 목적지 이름을 못 읽는다. */
+    dest.name = (html.match(/<h1>(.*?)\s*(?:여행 꿀템|쇼핑리스트)<\/h1>/) || [, slug])[1];
   }
 
   /* --probe: 그날 쓸 영상·조회수·아이템 개수만 알려주고 끝낸다.
