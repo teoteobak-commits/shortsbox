@@ -400,7 +400,7 @@ async function main() {
   }
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  const outName = `daily-${slug}-${dateIso}.png`;
+  const outName = `daily-${slug}-${dateIso}${opts.suffix || ''}.png`;
   fs.writeFileSync(path.join(OUT_DIR, outName), canvas.toBuffer('image/png'));
 
   console.log(JSON.stringify({

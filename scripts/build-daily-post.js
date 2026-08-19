@@ -79,7 +79,26 @@ function destEmoji(slug) {
   }
 }
 
-function renderCard(slug, copy, exclude) {
+/* 같은 날 카드를 다시 만들 때 파일명을 바꾼다.
+
+   **같은 URL 에 내용만 바꿔 올리면 Vercel CDN 이 한동안 옛 이미지를 준다.**
+   스레드·인스타는 게시 시점에 이미지를 내려받으므로 구 카드가 그대로 박힌다.
+   그래서 이미 그 날짜의 카드가 있는데 영상이 달라졌으면 -v2, -v3 로 붙인다.
+   같은 영상을 다시 렌더하는 경우(재실행)는 덮어써도 내용이 같으니 그대로 둔다. */
+function cardSuffix(slug, dateIso, youtubeId){
+  const dir = path.join(ROOT, 'assets', 'card-news');
+  const base = `daily-${slug}-${dateIso}`;
+  if (!fs.existsSync(path.join(dir, `${base}.png`))) return '';
+  try {
+    const prev = JSON.parse(fs.readFileSync(path.join(ROOT, 'automation', 'pending-post.json'), 'utf8'));
+    if (prev.date === dateIso && prev.youtube_id === youtubeId) return '';   // 같은 카드 재생성
+  } catch (e) { /* 없으면 접미사를 붙이는 쪽이 안전하다 */ }
+  let n = 2;
+  while (fs.existsSync(path.join(dir, `${base}-v${n}.png`))) n++;
+  return `-v${n}`;
+}
+
+function renderCard(slug, copy, exclude, suffix) {
   const args = [
     path.join('scripts', 'generate-daily-card.js'), slug,
     '--badge', copy.badge,
@@ -87,6 +106,7 @@ function renderCard(slug, copy, exclude) {
     '--sub', copy.sub.join('|'),
     '--foot', copy.foot,
     '--exclude', exclude,
+    '--suffix', suffix,
   ];
   return JSON.parse(node(args));
 }
@@ -120,10 +140,13 @@ function main() {
     console.error(`⚠️ ${probe.youtube_id} 의 손으로 쓴 카피가 없다 — 폴백으로 만든다. automation/card-copy.js 에 추가할 것.`);
   }
 
+  const suffix = cardSuffix(slug, dateIso, probe.youtube_id);
+  if (suffix) console.error(`같은 날 다른 영상이라 파일명에 ${suffix} 를 붙인다(CDN 캐시)`);
+
   /* 3. 렌더. 카피가 자리를 넘치면 폴백으로 한 번 더. */
   let card;
   try {
-    card = renderCard(slug, copy, exclude);
+    card = renderCard(slug, copy, exclude, suffix);
   } catch (err) {
     console.error(`카드 렌더 실패(${err.status ?? err.message}) → 폴백 카피로 재시도`);
     copy = buildFallback({
@@ -131,7 +154,7 @@ function main() {
       note: VIDEO_NOTES[probe.youtube_id],
       productCount: probe.product_count,
     });
-    card = renderCard(slug, copy, exclude);   // 여기서도 실패하면 진짜 문제다 — 그대로 던진다
+    card = renderCard(slug, copy, exclude, suffix);   // 여기서도 실패하면 진짜 문제다 — 그대로 던진다
   }
 
   /* 4. 캡션 */
