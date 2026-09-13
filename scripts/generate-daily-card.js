@@ -22,6 +22,7 @@ const fs = require('fs');
 const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 const { DESTINATION_SLUGS } = require('../js/slugs.js');
 const { kstDate } = require('./kst-date.js');
+const { DESTINATION_HEADING_SUFFIX } = require('../js/destination-guides.js');
 
 const ROOT = path.join(__dirname, '..');
 const FONTS = path.join(__dirname, 'vendor-fonts');
@@ -358,10 +359,11 @@ async function main() {
   /* 목적지 이름은 정적 페이지의 h1 에서 가져온다(Supabase 가 막힌 경우). */
   if (!dest.name) {
     const html = fs.readFileSync(path.join(ROOT, 'travel', slug, 'index.html'), 'utf8');
-    /* h1 은 "{여행지} 여행 꿀템" 또는 "{여행지} 쇼핑리스트"다(제목 검색어 실험,
-       js/destination-guides.js 의 SEO_TITLE_TEST). 꼬리말을 고정으로 박으면
-       실험군 4곳에서 목적지 이름을 못 읽는다. */
-    dest.name = (html.match(/<h1>(.*?)\s*(?:여행 꿀템|쇼핑리스트)<\/h1>/) || [, slug])[1];
+    /* h1 은 destinationHeading() 이 만든 "{여행지}{꼬리말}"이다. 꼬리말을 여기 따로 박으면
+       제목을 바꿀 때 이쪽만 안 따라가서 이름이 "도쿄 여행 꿀템·" 처럼 잘못 뽑힌다 —
+       평소엔 안 타는 폴백 경로라 조용히 틀린다. 같은 상수에서 떼어낸다. */
+    const h1 = (html.match(/<h1>(.*?)<\/h1>/) || [, ''])[1];
+    dest.name = h1.endsWith(DESTINATION_HEADING_SUFFIX) ? h1.slice(0, -DESTINATION_HEADING_SUFFIX.length) : slug;
   }
 
   /* --probe: 그날 쓸 영상·조회수·아이템 개수만 알려주고 끝낸다.
