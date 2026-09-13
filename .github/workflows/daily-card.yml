@@ -51,9 +51,14 @@ jobs:
 
       # rebuild=false 로 부르면 만들지 않는다. 손으로 만들어 커밋해둔 카드를 다시 보낼 때 쓴다 —
       # 그냥 다시 돌리면 최근 사용 이력 때문에 또 다른 영상이 뽑혀 카드가 하나 더 생긴다.
+      #
+      # ⚠️ 조건을 `inputs.rebuild != false` 로 쓰면 안 된다. 스케줄 실행에는 입력이 없어서
+      # inputs.rebuild 가 null 인데, GitHub 표현식은 != 비교에서 null 과 false 를 둘 다 0 으로
+      # 바꾼다 → 거짓 → 생성이 건너뛰어진다. 2026-08-20 ~ 09-13 스케줄 실행 24번이 전부 그렇게
+      # 생성을 건너뛰고 8/19 카드만 다시 보냈다(실행은 전부 success). 이벤트 종류로 가를 것.
       - name: Build today's card
         id: build
-        if: ${{ inputs.rebuild != false }}
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.rebuild }}
         run: |
           set -o pipefail
           node scripts/build-daily-post.js | tee /tmp/summary.json
@@ -61,7 +66,7 @@ jobs:
 
       # 카드를 저장소에 남겨 공개 URL로도 열리게 한다(텔레그램을 놓쳐도 다시 볼 수 있다).
       - name: Commit card
-        if: ${{ inputs.rebuild != false }}
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.rebuild }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -85,7 +90,7 @@ jobs:
         run: node scripts/notify-daily-card.js
 
       - name: Summary
-        if: ${{ inputs.rebuild != false }}
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.rebuild }}
         run: |
           echo "### 오늘 카드뉴스" >> "$GITHUB_STEP_SUMMARY"
           echo '```json' >> "$GITHUB_STEP_SUMMARY"

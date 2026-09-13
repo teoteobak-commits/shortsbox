@@ -17,6 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const tg = require('./telegram.js');
+const { kstDate } = require('./kst-date.js');
 
 const ROOT = path.join(__dirname, '..');
 const PENDING = path.join(ROOT, 'automation', 'pending-post.json');
@@ -29,6 +30,21 @@ async function main() {
   }
 
   const post = JSON.parse(fs.readFileSync(PENDING, 'utf8'));
+
+  /* 오늘 날짜가 아닌 카드는 보내지 않는다 — 이것만은 조용히 넘기지 않고 실패로 끝낸다.
+
+     2026-08-20 ~ 09-13 에 워크플로우의 생성 단계가 매번 건너뛰어졌는데(조건식 버그),
+     전송 단계는 계속 돌면서 8/19 카드를 25일 내내 다시 보냈다. 실행은 26번 전부
+     success 였다. 원인이 무엇이든 "옛 카드를 오늘 카드처럼 보내는 것"은 이 한 줄로 막힌다.
+     종료코드 1 → 워크플로우의 Alert on failure 가 텔레그램으로 알린다.
+
+     일부러 옛 카드를 다시 보내야 할 때만 RESEND_STALE=1 로 부른다. */
+  const today = kstDate().dateIso;
+  if (post.date !== today && process.env.RESEND_STALE !== '1') {
+    console.error(`❌ pending-post.json 이 오늘(${today}) 카드가 아니다: ${post.date} ${post.destination_slug}. 전송하지 않는다.`);
+    console.error('   생성 단계가 돌았는지 먼저 확인할 것 — 조용히 건너뛰어진 적이 있다.');
+    process.exit(1);
+  }
   const imagePath = path.join(ROOT, post.image_path);
   if (!fs.existsSync(imagePath)) {
     await tg.sendMessage(`⚠️ 오늘 카드 파일이 없습니다: ${post.image_path}`);
