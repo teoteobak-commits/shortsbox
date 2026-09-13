@@ -104,7 +104,6 @@ function renderCard(slug, copy, exclude, suffix) {
     '--badge', copy.badge,
     '--headline', copy.headline.join('|'),
     '--sub', copy.sub.join('|'),
-    '--foot', copy.foot,
     '--exclude', exclude,
     '--suffix', suffix,
   ];

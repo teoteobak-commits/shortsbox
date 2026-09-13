@@ -7,8 +7,7 @@
      node scripts/generate-daily-card.js <slug> \
        --badge "손에 든 게 뭐길래" \
        --headline "돈키호테 가서 이걸|안 사면 후회한다는데" \
-       --sub "파스, 소화제, 비졸림 감기약.|영상이 꼽은 건 이 세 개예요." \
-       --foot "세 가지 다 정리해뒀어요"
+       --sub "파스, 소화제, 비졸림 감기약.|영상이 꼽은 건 이 세 개예요."
 
    **목적지 이름은 헤드라인에 쓰지 않는다** — 스크립트가 라임색 첫 줄로 자동으로 붙인다.
    헤드라인·보조문구의 줄바꿈은 "|" 로 직접 넣는다. 자동 줄바꿈을 쓰지 않는 이유는
@@ -290,15 +289,14 @@ function renderCard({ img, destName, viewsMan, copy }) {
   const numW = widthOf(ctx, String(viewsMan), { size: 96, family: 'Anton' });
   text(ctx, '만이 봤어요', colX + numW + 12, viewsBase - 8, { size: 34, family: 'Paperlogy XBold', color: G2 });
 
-  /* 푸터 — 이미지는 피드에서 클릭이 안 되므로 버튼처럼 보이는 요소를 쓰지 않는다.
-     왼쪽은 사이트에 뭐가 있는지, 오른쪽은 주소. */
+  /* 푸터 — 구분선과 오른쪽 주소만 둔다. 이미지는 피드에서 클릭이 안 되므로 버튼처럼
+     보이는 요소를 쓰지 않는다.
+     왼쪽의 "세 가지 정리해뒀어요" 는 2026-09-13 에 뺐다(사용자 요청). 헤드라인·보조문구가
+     이미 영상을 설명하고 있어서 같은 말을 한 번 더 하는 자리였다. */
   ctx.fillStyle = LINE;
   ctx.fillRect(PAD, footerLineY, W - PAD * 2, 2);
   const fBase = footerLineY + 28 + 27 * 0.8;
   const addr = { size: 26, family: 'Paperlogy XBold', color: LIME };
-  const footOpt = { size: 27, family: 'Pretendard SemiBold', color: G2 };
-  fit('푸터', [copy.foot], footOpt, W - PAD * 2 - widthOf(ctx, 'shortsbox.kr', addr) - 24);
-  text(ctx, copy.foot, PAD, fBase, footOpt);
   text(ctx, 'shortsbox.kr', W - PAD, fBase, { ...addr, align: 'right' });
 
   return { canvas, overflow };
@@ -318,14 +316,14 @@ function parseArgs(argv) {
 }
 
 function usage() {
-  console.error(`사용법: node scripts/generate-daily-card.js <slug> --badge "..." --headline "1줄|2줄|3줄" --sub "1줄|2줄" --foot "..."`);
+  console.error(`사용법: node scripts/generate-daily-card.js <slug> --badge "..." --headline "1줄|2줄|3줄" --sub "1줄|2줄"`);
   console.error(`슬러그: ${Object.values(DESTINATION_SLUGS).join(', ')}`);
 }
 
 async function main() {
   const { slug, opts } = parseArgs(process.argv.slice(2));
   const probe = !!opts.probe;   // 렌더 없이 그날 쓸 영상·조회수만 조회한다
-  if (!slug || (!probe && (!opts.badge || !opts.headline || !opts.sub || !opts.foot))) {
+  if (!slug || (!probe && (!opts.badge || !opts.headline || !opts.sub))) {
     usage();
     process.exit(1);
   }
@@ -336,7 +334,6 @@ async function main() {
     badge: opts.badge.trim(),
     headline: opts.headline.split('|').map(s => s.trim()).filter(Boolean),
     sub: opts.sub.split('|').map(s => s.trim()).filter(Boolean),
-    foot: opts.foot.trim(),
   };
   /* 목적지 한 줄이 앞에 자동으로 붙으므로 카피는 3줄까지다(총 4줄). */
   if (copy && copy.headline.length > 3) throw new Error('헤드라인 카피는 최대 3줄 — 목적지 줄이 자동으로 앞에 붙는다');
