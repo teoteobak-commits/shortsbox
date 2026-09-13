@@ -22,6 +22,7 @@ const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 const { DESTINATION_SLUGS } = require('../js/slugs.js');
 const { kstDate } = require('./kst-date.js');
 const { DESTINATION_HEADING_SUFFIX } = require('../js/destination-guides.js');
+const { orderCandidates, pickCandidate } = require('./card-rotation.js');
 
 const ROOT = path.join(__dirname, '..');
 const FONTS = path.join(__dirname, 'vendor-fonts');
@@ -145,15 +146,10 @@ async function readFromSupabase(destId, exclude = new Set()) {
     fetchTable('products', 'select=youtube_id'),
   ]);
   if (!shorts.length) throw new Error('쇼츠가 없다');
+  /* 정렬·선택 규칙은 scripts/card-rotation.js 한 곳에 있다 — 큐레이션 리포트의
+     "앞으로 2주 카드" 계산도 같은 함수를 쓴다. 여기서 따로 고치면 둘이 어긋난다. */
   const withProducts = new Set(products.map(p => p.youtube_id));
-  /* 사이트와 같은 정렬을 쓴다 — 제품이 달린 영상을 먼저, 그다음 조회수. */
-  shorts.sort((a, b) => {
-    const d = (withProducts.has(b.youtube_id) ? 1 : 0) - (withProducts.has(a.youtube_id) ? 1 : 0);
-    return d !== 0 ? d : b.views - a.views;
-  });
-  /* 최근에 쓴 영상은 건너뛴다. 전부 최근에 썼으면 맨 위를 쓴다 —
-     카드가 안 나오는 것보다 겹치는 게 낫다. */
-  const top = shorts.find(s => !exclude.has(s.youtube_id)) || shorts[0];
+  const top = pickCandidate(orderCandidates(shorts, withProducts), exclude);
   return {
     youtubeId: top.youtube_id,
     views: top.views,

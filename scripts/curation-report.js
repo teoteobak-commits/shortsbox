@@ -20,8 +20,15 @@
 const fs = require('fs');
 const path = require('path');
 const { VIDEO_NOTES } = require('../js/video-notes.js');
-const { destinationSlug } = require('../js/slugs.js');
+const { destinationSlug, DESTINATION_SLUGS } = require('../js/slugs.js');
 const { kstDate } = require('./kst-date.js');
+const { ROTATION, orderCandidates, simulate } = require('./card-rotation.js');
+const { CARD_COPY } = require('../automation/card-copy.js');
+
+/* 앞으로 며칠치 카드를 미리 볼지. 리포트가 1일·15일에 도니 다음 리포트까지 최대 17일
+   (15일 → 다음 달 1일). 그만큼 봐야 두 리포트 사이에 폴백 카피가 새어 나가지 않는다. */
+const LOOKAHEAD_DAYS = 17;
+const HISTORY_FILE = path.join(__dirname, '..', 'automation', 'card-history.json');
 
 const SUPABASE_URL = 'https://iftolinvhwxdcclrtavw.supabase.co';
 /* anon(공개) 키 — RLS로 읽기 전용만 허용됨. generate-static-pages.js 와 같은 값 */
@@ -64,6 +71,30 @@ async function main(){
   const noteOnly    = shorts.filter(s => !withProduct.has(s.youtube_id) &&  withNote.has(s.youtube_id)).sort(byViews);
 
   const { dateIso } = kstDate();
+
+  /* ④ 앞으로 카드에 쓸 영상 중 손 카피가 없는 것.
+     2026-09-13: 손 카피가 10개뿐이라 자동 생성(폴백) 카피가 매일 나갔고, 사용자가
+     "후킹이 전혀 안 된다"고 지적했다. 카드와 **같은 함수**(scripts/card-rotation.js)로
+     앞으로 뽑힐 영상을 계산해, 미리 써둘 목록을 만든다. */
+  let history = [];
+  try { history = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8')); } catch (e) { /* 없으면 빈 이력 */ }
+  /* 오늘 카드(08:04 KST)가 이미 나갔으면 이력 맨 앞이 오늘이다 — 그때는 내일부터 본다. */
+  const from = new Date(Date.now() + (history[0]?.date === dateIso ? 86400000 : 0));
+  const destIdOf = Object.fromEntries(Object.entries(DESTINATION_SLUGS).map(([id, slug]) => [slug, Number(id)]));
+  const orderedBySlug = Object.fromEntries(ROTATION.map(slug =>
+    [slug, orderCandidates(shorts.filter(s => s.destination_id === destIdOf[slug]), withProduct)]));
+  const upcoming = simulate({ history, orderedBySlug, from, days: LOOKAHEAD_DAYS });
+  const needCopy = upcoming.filter(u => u.video && !CARD_COPY[u.video.youtube_id]);
+  const copySection = `## ④ 앞으로 ${LOOKAHEAD_DAYS}일 카드 중 손 카피가 없는 영상 (${needCopy.length}개)
+카드와 같은 로테이션 규칙(\`scripts/card-rotation.js\`)으로 계산했다. 여기 나온 영상은 그날 **자동 생성 카피**로
+나간다 — \`automation/card-copy.js\` 에 미리 써둘 것. 근거는 소개문구와 제품 목록, 원칙은 \`automation/CARDNEWS.md\` 3장.
+${upcoming[0] ? `(계산 범위 ${upcoming[0].date} ~ ${upcoming[upcoming.length - 1].date})` : ''}
+
+${needCopy.length
+  ? needCopy.map(u => `- ${u.date} **${u.slug}** · ${man(u.video.views)} — ${u.video.title} → \`${u.video.youtube_id}\` · 제품 ${products.filter(p => p.youtube_id === u.video.youtube_id).length}개${VIDEO_NOTES[u.video.youtube_id] ? '' : ' · ⚠️ 소개문구 없음'}`).join('\n')
+  : '없음 — 계산 범위 안의 카드는 전부 손 카피가 있다.'}
+`;
+
   const md = `# 큐레이션 점검 리포트 (${dateIso})
 
 전체 쇼츠 ${shorts.length}개 · 제품 보유 영상 ${withProduct.size}개 · 소개문구 보유 ${withNote.size}개.
@@ -74,11 +105,12 @@ async function main(){
 
 ${section('① 미처리 — 제품도 소개문구도 없음', untouched, '조회수 내림차순. 위에서부터 처리하면 노출 대비 효율이 가장 좋다.')}
 ${section('② 제품은 있는데 소개문구 없음', productOnly, '`js/video-notes.js` 에 한 문장씩 채우면 된다. 제목을 옮기지 말고 영상이 실제로 다루는 내용을 쓸 것.')}
-${section('③ 소개문구는 있는데 제품 없음 (참고용)', noteOnly, '대부분 의도적으로 큐레이션에서 뺀 것들이다(쇼핑 콘텐츠가 아님 / 알코올 / 럭셔리 브랜드 하울 / 중복). 처리 대상이 아니다.')}`;
+${section('③ 소개문구는 있는데 제품 없음 (참고용)', noteOnly, '대부분 의도적으로 큐레이션에서 뺀 것들이다(쇼핑 콘텐츠가 아님 / 알코올 / 럭셔리 브랜드 하울 / 중복). 처리 대상이 아니다.')}
+${copySection}`;
 
   fs.writeFileSync(OUT, md);
 
-  console.error(`쇼츠 ${shorts.length} · 미처리 ${untouched.length} · 제품○문구✗ ${productOnly.length} · 문구○제품✗ ${noteOnly.length}`);
+  console.error(`쇼츠 ${shorts.length} · 미처리 ${untouched.length} · 제품○문구✗ ${productOnly.length} · 문구○제품✗ ${noteOnly.length} · 카피 필요 ${needCopy.length}/${upcoming.length}일`);
   /* 워크플로우가 파싱하는 유일한 stdout */
   console.log(JSON.stringify({
     date: dateIso,
@@ -89,6 +121,8 @@ ${section('③ 소개문구는 있는데 제품 없음 (참고용)', noteOnly, '
     top: untouched.slice(0, 5).map(s => ({
       slug: destinationSlug(s.destination_id), views_man: man(s.views), title: s.title, youtube_id: s.youtube_id,
     })),
+    copy_needed: needCopy.length,
+    copy_needed_list: needCopy.map(u => ({ date: u.date, slug: u.slug, youtube_id: u.video.youtube_id })),
   }));
 }
 
