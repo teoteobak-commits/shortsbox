@@ -1,23 +1,17 @@
 # 큐레이션 점검 리포트 (2026-09-13)
 
-전체 쇼츠 200개 · 제품 보유 영상 79개 · 소개문구 보유 240개.
+전체 쇼츠 200개 · 제품 보유 영상 83개 · 소개문구 보유 246개.
 매월 1일·15일에 `.github/workflows/curation-report.yml` 이 자동 갱신한다.
 
 **영상을 보고 제품을 고르는 일은 사람이 한다** — 대화형 세션에서 `/watch` 로 직접 보면서,
 원작자가 추천한 정확한 상품이 아니라 같은 용도의 일반적인 상품으로 연결할 것.
 
-## ① 미처리 — 제품도 소개문구도 없음 (27개)
+## ① 미처리 — 제품도 소개문구도 없음 (21개)
 조회수 내림차순. 위에서부터 처리하면 노출 대비 효율이 가장 좋다.
 
 - **danang** · 54만 — 다낭 여행 가볼만한곳 필수 코스 BEST6 추천 #베트남 #다낭 → https://youtube.com/shorts/U_Ahzm0cx3U
 - **hawaii** · 32만 — 입기만 하면 화제! 채정안의 26 SS 강력추천! 하와이 여행룩 종결템 총출동 #채정안 #채컬렉티브 #CJonstyle #채정안패션  #26ssfashion  #채정안tv → https://youtube.com/shorts/6KDZ5C7jxWY
-- **guam** · 26만 — 괌 쇼핑 총정리✈️안보고 가면 손해 → https://youtube.com/shorts/DMSTMjFfVG8
 - **hongkong** · 25만 — 홍콩 가야할 곳 추천😗😀 #홍콩여행 #홍콩여행지추천 #hongkong #소호벽화거리 #미드레벨에스컬레이터 #셩완역 #홍콩디즈니랜드 #침사추이 → https://youtube.com/shorts/KUyzDtmf8Dw
-- **taipei** · 23만 — 한국인이 많이 사가는 대만까르푸 쇼핑리스트✨ #대만여행 #대만기념품 #대만쇼핑리스트 #대만여행선물 #타이베이여행 #대만까르푸 → https://youtube.com/shorts/3fZiEt-k3z4
-- **fukuoka** · 21만 — 후쿠오카 무조건 가야하는 마트 #후쿠오카 #후쿠오카여행 #후쿠오카쇼핑 #후쿠오카마트 #후쿠오카브이로그 #후쿠오카맛집 #일본 #일본여행 #하카타 → https://youtube.com/shorts/F5NXrfzgaJA
-- **sapporo** · 19만 — 일본에서 꼭 사야할 갓성비 쇼핑 리스트 추천 #일본여행 #기념품 #일본여행기념품 #기념품추천 → https://youtube.com/shorts/7gILMul0bcc
-- **guam** · 16만 — 괌여행가서 사야할 쇼핑리스트 8가지를 공유합니다 😍 #괌여행 #괌쇼핑 #괌쇼핑리스트 → https://youtube.com/shorts/jjIRRUfIcWE
-- **fukuoka** · 15만 — 후쿠오카 기념품 추천 TOP3⭐️⭐️⭐️ #일본여행 #일본여행추천 #후쿠오카여행 #후쿠오카브이로그 #일본기념품 #후쿠오카 #해외여행 #travel #travelvlog → https://youtube.com/shorts/M6Wo0jRNDJY
 - **sapporo** · 10만 — 삿포로 여행 호텔 추천! 위치깡패 가성비 숙소 → https://youtube.com/shorts/wYwYGeFdq3s
 - **cebu** · 4만 — 🇵🇭말이 필요 없는 세부 아얄라몰 🛒쇼핑 필수 추천템🛍️ #세부 #브이로그 #여행 #cebu #shorts → https://youtube.com/shorts/VlZxAXzqg-M
 - **sapporo** · 3만 — 삿포로 여행 위스키 쇼핑 추천 리쿼샵 Top 5 #whisky → https://youtube.com/shorts/QqtT7OblBzs
@@ -42,7 +36,7 @@
 
 없음
 
-## ③ 소개문구는 있는데 제품 없음 (참고용) (94개)
+## ③ 소개문구는 있는데 제품 없음 (참고용) (96개)
 대부분 의도적으로 큐레이션에서 뺀 것들이다(쇼핑 콘텐츠가 아님 / 알코올 / 럭셔리 브랜드 하울 / 중복). 처리 대상이 아니다.
 
 - **sapporo** · 485만 — 일본 현지인이 추천하는 돈키호테 족보정리 TOP5 → https://youtube.com/shorts/jYZGBTF_rPY
@@ -73,12 +67,14 @@
 - **bali** · 29만 — [조용한] 다이소 해외여행 준비물 9가지 → https://youtube.com/shorts/p9Nrx-pF4FQ
 - **shanghai** · 27만 — 상해여행갔는데 뭘 사야 할지 모르겠다구? 중국유학생 추천 받아봐!!!!! #상해 #상해쇼핑리스트 #상하이여행 #상해여행 #중국여행 #상하이여행 #상해여행추천 #shanghai → https://youtube.com/shorts/dH8ecCla_6o
 - **nhatrang** · 27만 — 🛍 나트랑 기념품 쇼핑리스트 추천! #나트랑 #나트랑여행 → https://youtube.com/shorts/DmtLbQOEX1U
+- **guam** · 26만 — 괌 쇼핑 총정리✈️안보고 가면 손해 → https://youtube.com/shorts/DMSTMjFfVG8
 - **nhatrang** · 25만 — 베트남 여행 준비 다이소에서 끝내기 #다이소추천 #다이소추천템 #베트남여행준비물 #동남아여행준비물#나트랑여행준비물 #daiso #다이소 #여행준비 #여행준비 → https://youtube.com/shorts/uJO7gJA8GTo
 - **chiangmai** · 25만 — 태국 여행 기념품 이건 어떠세요? 쇼핑리스트 추천! → https://youtube.com/shorts/Ar_MgP9xDhY
 - **taipei** · 24만 — 대만 여행 가기 전 필수 시청‼️쇼핑리스트 2탄 → https://youtube.com/shorts/6UvAI12SVog
 - **shanghai** · 23만 — 상하이여행 마트 쇼핑 추천템 → https://youtube.com/shorts/UHGyInUvwvM
 - **hongkong** · 23만 — 홍콩여행 쇼핑리스트 현지인이 딱 정리해드려요😎 → https://youtube.com/shorts/-Nj32W1jsMQ
 - **fukuoka** · 23만 — 후쿠오카 여행 준비물 추천템 (패션블로거&직장인) #후쿠오카여행 #여행준비물 → https://youtube.com/shorts/6snqQLQGhK0
+- **fukuoka** · 21만 — 후쿠오카 무조건 가야하는 마트 #후쿠오카 #후쿠오카여행 #후쿠오카쇼핑 #후쿠오카마트 #후쿠오카브이로그 #후쿠오카맛집 #일본 #일본여행 #하카타 → https://youtube.com/shorts/F5NXrfzgaJA
 - **sapporo** · 20만 — 2-3만 원대💸 갓성비 겨울 스커트 추천 (ft. 기모, 코듀로이, 울..) → https://youtube.com/shorts/NH6x4Uo01rQ
 - **fukuoka** · 19만 — 다이소 아이템으로 일본 여행 준비하기✨ → https://youtube.com/shorts/-YX4DHD0d6Q
 - **cebu** · 17만 — 세부, 보라카이 여행 필수 준비물 체크리스트 | things for a trip to the Philippines → https://youtube.com/shorts/fCVkhBT-fSA
