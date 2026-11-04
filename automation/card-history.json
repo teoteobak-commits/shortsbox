@@ -1,5 +1,10 @@
 [
   {
+    "date": "2026-11-04",
+    "slug": "bali",
+    "youtube_id": "buyp9UQ8SuQ"
+  },
+  {
     "date": "2026-11-03",
     "slug": "switzerland",
     "youtube_id": "1fPZT7-mWy4"
@@ -293,10 +298,5 @@
     "date": "2026-08-13",
     "slug": "chiangmai",
     "youtube_id": "38_NDhcZ-SA"
-  },
-  {
-    "date": "2026-08-12",
-    "slug": "danang",
-    "youtube_id": "sCo6gqOOVnk"
   }
 ]
