@@ -1,5 +1,10 @@
 [
   {
+    "date": "2026-11-12",
+    "slug": "paris",
+    "youtube_id": "XhIxJk0Vl24"
+  },
+  {
     "date": "2026-11-11",
     "slug": "chiangmai",
     "youtube_id": "38_NDhcZ-SA"
@@ -293,10 +298,5 @@
     "date": "2026-09-14",
     "slug": "switzerland",
     "youtube_id": "jviFD7dzVTs"
-  },
-  {
-    "date": "2026-09-13",
-    "slug": "paris",
-    "youtube_id": "gIEuIZXNVR0"
   }
 ]
