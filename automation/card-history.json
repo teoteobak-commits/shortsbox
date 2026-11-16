@@ -1,5 +1,10 @@
 [
   {
+    "date": "2026-11-16",
+    "slug": "jeju",
+    "youtube_id": "0GFp_yy0MBE"
+  },
+  {
     "date": "2026-11-15",
     "slug": "hawaii",
     "youtube_id": "dehphwm-amk"
@@ -293,10 +298,5 @@
     "date": "2026-09-18",
     "slug": "osaka",
     "youtube_id": "Wg0GKLZsLQQ"
-  },
-  {
-    "date": "2026-09-17",
-    "slug": "jeju",
-    "youtube_id": "duejQqWCFds"
   }
 ]
