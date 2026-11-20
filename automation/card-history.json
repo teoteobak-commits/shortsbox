@@ -1,5 +1,10 @@
 [
   {
+    "date": "2026-11-20",
+    "slug": "danang",
+    "youtube_id": "7IBiVpBIXR0"
+  },
+  {
     "date": "2026-11-19",
     "slug": "bangkok",
     "youtube_id": "MZNTGGkE9e8"
@@ -293,10 +298,5 @@
     "date": "2026-09-22",
     "slug": "chiangmai",
     "youtube_id": "pFK3dQZlCT4"
-  },
-  {
-    "date": "2026-09-21",
-    "slug": "danang",
-    "youtube_id": "fVyh8q5hFt8"
   }
 ]
